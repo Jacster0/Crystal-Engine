@@ -23,5 +23,29 @@ namespace CrystalEditor.GameProject
         {
             InitializeComponent();
         }
+
+        private void OnToggleButtonClick(object sender, RoutedEventArgs e)
+        {
+            if(sender == OpenProjectButton)
+            {
+                if(CreateProjectButton.IsChecked == true)
+                {
+                    CreateProjectButton.IsChecked = false;
+                    BrowserContent.Margin = new Thickness(0);
+                }
+
+                OpenProjectButton.IsChecked = true;
+            }
+            else
+            {
+                if (OpenProjectButton.IsChecked == true)
+                {
+                    OpenProjectButton.IsChecked = false;
+                    BrowserContent.Margin = new Thickness(-800,0,0,0);
+                }
+
+                CreateProjectButton.IsChecked = true;
+            }
+        }
     }
 }
