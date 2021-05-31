@@ -1,7 +1,7 @@
-﻿using CrystalEditor.GameProject;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +16,13 @@ using System.Windows.Shapes;
 
 namespace CrystalEditor
 {
+    public static class EngineApi
+    {
+        private const string path = @"..\CrystalDll.dll";
+
+        [DllImport(path)]
+        public static extern void create_render_surface();
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -24,27 +31,11 @@ namespace CrystalEditor
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += OnMainWindowLoaded;
         }
 
-        private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Loaded -= OnMainWindowLoaded;
-            OpenProjectBrowserDialog();
-        }
-
-        private void OpenProjectBrowserDialog()
-        {
-            var projectBrowser = new ProjectBrowserDialog();
-
-            if (projectBrowser.ShowDialog() == false)
-            {
-                Application.Current.Shutdown();
-            }
-            else
-            {
-
-            }
+            EngineApi.create_render_surface();
         }
     }
 }
