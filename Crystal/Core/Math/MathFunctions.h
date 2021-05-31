@@ -1,13 +1,9 @@
-module;
-
 #include <numbers>
 #include <concepts>
 #include <limits>
 #include <bit>
 
-export module MathFunctions;
-
-export namespace Crystal::Math {
+namespace Crystal::Math {
     template<typename T>
     concept Divisble = requires (T x) { x / x; };
 

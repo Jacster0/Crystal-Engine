@@ -18,7 +18,7 @@
     <ClCompile Include="Crystal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Math\MathFunctions.ixx">
+    <ClCompile Include="Core\Math\MathFunctions.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Windows\Window.h">

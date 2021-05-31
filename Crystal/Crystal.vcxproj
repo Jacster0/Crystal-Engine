@@ -160,7 +160,7 @@
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Input\Mouse.cpp" />
-    <ClCompile Include="Core\Math\MathFunctions.ixx" />
+    <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Platform\Windows\Window.cpp" />
     <ClCompile Include="Platform\Windows\Window.h" />
