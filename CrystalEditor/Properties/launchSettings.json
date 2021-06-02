@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CrystalEditor": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false,
+      "nativeDebugging": true
+    }
+  }
+}

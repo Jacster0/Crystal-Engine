@@ -4,27 +4,27 @@
 #include <string>
 #include "../Core/Input/Keyboard.h"
 #include "../Core/Input/Mouse.h"
+#include "Types.h"
 
 namespace Crystal {
 	enum class MouseButton { Left, Right };
-
-	struct WindowInfo {
-		HWND HWnd;
-		RECT WindowRect;
-		int Width{ 1300 };
-		int Height{ 800 };
-		std::wstring Name = L"Crystal";
-	};
 
 	struct MouseInfo {
 		int LastPosX{};
 		int LastPosY{};
 	};
 
+	struct WindowID {
+		int64_t ID;
+		static constexpr int64_t INVALID_ID = -1;
+
+		[[nodiscard]] constexpr static auto IsValid(int64_t id) noexcept { return id != INVALID_ID; }
+		[[nodiscard]] constexpr auto IsValid() const noexcept { return ID != INVALID_ID; }
+	};
+
 	class Window {
 	public:
-		explicit Window(const WindowInfo& info) noexcept;
-		Window() noexcept;
+		explicit Window(const ApplicationCreateInfo& info) noexcept;
 		Window(const Window&)            = delete;
 		Window& operator=(const Window&) = delete;
 		Window(Window&&)                 = delete;
@@ -48,6 +48,9 @@ namespace Crystal {
 		void EnableCursor() noexcept { m_mouse.cursor.Enable(); }
 		void DisableCursor() noexcept { m_mouse.cursor.Disable(m_windowInfo.HWnd); }
 
+		void SetID(WindowID id) noexcept { m_id = id; }
+		[[nodiscard]] constexpr auto GetID() const noexcept { return m_id; }
+
 		Keyboard Kbd;
 		Mouse m_mouse;
 	private:
@@ -58,7 +61,7 @@ namespace Crystal {
 		private:
 			WindowClass();
 			~WindowClass();
-			WindowClass(const WindowClass&) = delete;
+			WindowClass(const WindowClass&)              = delete;
 			WindowClass& operator = (const WindowClass&) = delete;
 			static constexpr const wchar_t* wndClassName = L"Crystal Window";
 			static WindowClass wndClass;
@@ -72,9 +75,11 @@ namespace Crystal {
 		void CreateMainWindow() noexcept;
 		void Resize() noexcept;
 
-		WindowInfo m_windowInfo;
+		ApplicationCreateInfo m_windowInfo;
 		MouseInfo m_mouseInfo;
 		bool m_fullScreen;
+		std::wstring m_name = L"Crystal";
 		std::vector<std::byte> m_rawInputBuffer;
+		WindowID m_id;
 	};
 }

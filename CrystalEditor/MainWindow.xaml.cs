@@ -1,28 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CrystalEditor.API;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CrystalEditor
 {
-    public static class EngineApi
-    {
-        private const string path = @"..\CrystalDll.dll";
-
-        [DllImport(path)]
-        public static extern void create_render_surface();
-    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -35,7 +15,6 @@ namespace CrystalEditor
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            EngineApi.create_render_surface();
         }
     }
 }

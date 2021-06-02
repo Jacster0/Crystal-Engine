@@ -1,9 +1,10 @@
 #include "Application.h"
 #include "../Platform/Windows/Window.h"
+#include "../Platform/Windows/Types.h"
 
 namespace Crystal {
-	Application::Application() {
-		m_window = std::make_unique<Window>();
+	Application::Application(const ApplicationCreateInfo& info) {
+		m_window = std::make_unique<Window>(info);
 
 		SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 		Initialize();
@@ -11,20 +12,8 @@ namespace Crystal {
 
 	Application::~Application() { }
 
-	int Application::Run() {
-		if (!m_isInitialized) [[unlikely]] {
-			return 1;
-		}
-		while (true) {
-			if (const auto ecode = MessagePump()) {
-				//return exit code
-				return *ecode;
-			}
-			else {
-				//Render/Graphics stuff
-				HandleInput();
-			}
-		}
+	Window& Application::GetWindow() const noexcept {
+		return *m_window;
 	}
 
 	void Application::Initialize() noexcept {
@@ -85,19 +74,5 @@ namespace Crystal {
 			}
 		}
 	}
-
-	std::optional<int> Application::MessagePump() noexcept {
-		MSG msg{ 0 };
-
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			if (msg.message == WM_QUIT)
-				return msg.wParam;
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		return {};
-	}
-
 }
 

@@ -10,7 +10,6 @@ namespace Crystal {
 	{
 		HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		if (FAILED(hr)) [[unlikely]] {
-			//It is not a good sign if we are in this branch
 			_com_error err(hr);
 			auto ErrorMsg = std::wstring(err.ErrorMessage());
 
@@ -24,11 +23,12 @@ namespace Crystal {
 		    .cbClsExtra    = 0,
 		    .cbWndExtra    = 0,
 		    .hInstance     = GetInstance(),
-		    .hIcon         = nullptr,
-		    .hbrBackground = nullptr,
+		    .hIcon         = LoadIcon(nullptr, IDI_APPLICATION),
+			.hCursor       = LoadCursor(nullptr, IDC_ARROW),
+		    .hbrBackground = CreateSolidBrush(RGB(176, 196, 222)),
 		    .lpszMenuName  = nullptr,
 		    .lpszClassName = GetName(),
-		    .hIconSm       = nullptr
+		    .hIconSm       = LoadIcon(NULL, IDI_APPLICATION)
 		};
 
 		ATOM atom = RegisterClassExW(&wc);
@@ -42,14 +42,10 @@ namespace Crystal {
 	const wchar_t* Window::WindowClass::GetName() noexcept { return wndClassName; }
 	HINSTANCE Window::WindowClass::GetInstance() noexcept { return wndClass.hInst; }
 
-	Window::Window(const WindowInfo& info) noexcept
+	Window::Window(const ApplicationCreateInfo& info) noexcept
 		:
 		m_windowInfo(info)
 	{
-		CreateMainWindow();
-	}
-
-	Window::Window() noexcept {
 		CreateMainWindow();
 	}
 
@@ -226,14 +222,15 @@ namespace Crystal {
 
 	LRESULT Window::SetupProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
 		if (msg == WM_NCCREATE) {
-			const CREATESTRUCTW* const pCreateStruct = reinterpret_cast<CREATESTRUCTW*>(lParam);
-			Window* const pWnd                       = static_cast<Window*>(pCreateStruct->lpCreateParams);
+			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+			Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
 
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 			SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::RedirectProc));
 
 			return pWnd->MsgProc(hwnd, msg, wParam, lParam);
 		}
+
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 
@@ -246,7 +243,7 @@ namespace Crystal {
 	LRESULT Window::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
 		switch (msg) {
 		case WM_ACTIVATE:
-			if (!m_mouse.cursor.IsEnabled()) {
+			if (!CursorEnabled()) {
 				if (wParam & WA_ACTIVE) {
 					m_mouse.cursor.Confine(m_windowInfo.HWnd);
 					m_mouse.cursor.Hide();
@@ -308,21 +305,26 @@ namespace Crystal {
 	}
 
 	void Window::CreateMainWindow() noexcept {
+		auto style = WS_VISIBLE;
+		style |= m_windowInfo.ParentHwnd ? WS_CHILD : WS_OVERLAPPEDWINDOW;
+
 		RECT wndRect = { 0,0, m_windowInfo.Width, m_windowInfo.Height };
-		AdjustWindowRect(&wndRect, WS_OVERLAPPED, false);
+		AdjustWindowRect(&wndRect, style, false);
 
 		int width  = wndRect.right - wndRect.left;
 		int height = wndRect.bottom - wndRect.top;
+		
+		m_windowInfo.WindowRect = wndRect;
 
 		m_windowInfo.HWnd = CreateWindow(
 			Window::WindowClass::GetName(),
-			m_windowInfo.Name.c_str(),
-			WS_OVERLAPPEDWINDOW,
+			L"Cyrex",
+			style,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			width,
 			height,
-			nullptr,
+			m_windowInfo.ParentHwnd,
 			nullptr,
 			Window::WindowClass::GetInstance(),
 			this);
