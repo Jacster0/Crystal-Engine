@@ -18,8 +18,6 @@ namespace Crystal {
 
 	void Application::Initialize() noexcept {
 		m_window->Kbd.EnableAutorepeat();
-		m_window->Show();
-
 		m_isInitialized = true;
 	}
 

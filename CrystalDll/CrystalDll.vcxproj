@@ -124,7 +124,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>D:\Crystal engine\Crystal\x64\Release;D:\Crystal engine\Crystal\x64\Debug;D:\Crystal engine\Crystal\Crystal\Crystal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Crystal engine\Crystal\Crystal\Crystal;D:\Crystal engine\Crystal\x64\Release;D:\Crystal engine\Crystal\x64\Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>D:\Crystal engine\Crystal\x64\Release;D:\Crystal engine\Crystal\x64\Debug;D:\Crystal engine\Crystal\Crystal\Crystal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Crystal engine\Crystal\Crystal\Crystal;D:\Crystal engine\Crystal\x64\Release;D:\Crystal engine\Crystal\x64\Debug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

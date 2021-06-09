@@ -18,7 +18,7 @@ namespace Crystal {
 
 		WNDCLASSEX wc = {
 			.cbSize        = sizeof(wc),
-		    .style         = CS_OWNDC,
+		    .style         = CS_HREDRAW | CS_VREDRAW,
 		    .lpfnWndProc   = SetupProc,
 		    .cbClsExtra    = 0,
 		    .cbWndExtra    = 0,
@@ -223,7 +223,7 @@ namespace Crystal {
 	LRESULT Window::SetupProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
 		if (msg == WM_NCCREATE) {
 			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
-			Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+			Window* const pWnd                 = static_cast<Window*>(pCreate->lpCreateParams);
 
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 			SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::RedirectProc));
@@ -305,11 +305,10 @@ namespace Crystal {
 	}
 
 	void Window::CreateMainWindow() noexcept {
-		auto style = WS_VISIBLE;
-		style |= m_windowInfo.ParentHwnd ? WS_CHILD : WS_OVERLAPPEDWINDOW;
+		m_windowInfo.Style |= m_windowInfo.ParentHwnd ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
 		RECT wndRect = { 0,0, m_windowInfo.Width, m_windowInfo.Height };
-		AdjustWindowRect(&wndRect, style, false);
+		AdjustWindowRect(&wndRect, m_windowInfo.Style, false);
 
 		int width  = wndRect.right - wndRect.left;
 		int height = wndRect.bottom - wndRect.top;
@@ -319,7 +318,7 @@ namespace Crystal {
 		m_windowInfo.HWnd = CreateWindow(
 			Window::WindowClass::GetName(),
 			L"Cyrex",
-			style,
+			m_windowInfo.Style,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			width,

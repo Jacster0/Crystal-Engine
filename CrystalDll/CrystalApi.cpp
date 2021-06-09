@@ -21,6 +21,7 @@ CRYSTAL_API void create_render_surface(HWND parent, const uint32_t width, const 
 }
 
 CRYSTAL_API void destroy_render_surface() noexcept {
+	delete applications.front();
 	applications.erase(applications.begin());	
 }
 

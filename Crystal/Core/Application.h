@@ -14,7 +14,7 @@ namespace Crystal {
         Application& operator=(Application&& rhs)      = delete;
         ~Application();
 
-        Window& GetWindow() const noexcept;
+        [[nodiscard]] Window& GetWindow() const noexcept;
     private:
         void Initialize() noexcept;
         void HandleInput() noexcept;

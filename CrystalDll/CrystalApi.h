@@ -14,5 +14,5 @@
 #endif
 
 CRYSTAL_API void create_render_surface(HWND parent, const uint32_t width, const uint32_t height) noexcept;
-CRYSTAL_API void  destroy_render_surface() noexcept;
+CRYSTAL_API void destroy_render_surface() noexcept;
 CRYSTAL_API HWND get_window_handle() noexcept;
