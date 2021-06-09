@@ -12,10 +12,7 @@ namespace CrystalEditor.API
         private const string path    = @"..\CrystalDll.dll";
 
         #region public_API_interface
-        public static IntPtr WindowHandle 
-        { 
-            get { return get_window_handle(); }
-        }
+        public static IntPtr WindowHandle { get { return get_window_handle(); } }
 
         public static void CreateRenderSurface(IntPtr parent, uint width, uint height) => create_render_surface(parent, width, height);
         public static void DestroyRenderSurface() => destroy_render_surface();

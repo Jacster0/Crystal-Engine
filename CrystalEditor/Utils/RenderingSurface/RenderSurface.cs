@@ -9,8 +9,6 @@ namespace CrystalEditor.API
         public uint SurfaceWidth { get; private set; } = 1300;
         public uint SurfaceHeight { get; private set; } = 800;
 
-        private IntPtr windowHandle = IntPtr.Zero;
-
         public RenderSurface() { }
         public RenderSurface(uint width, uint height) => (SurfaceWidth, SurfaceHeight) = (width, height);
 
@@ -24,7 +22,6 @@ namespace CrystalEditor.API
         protected override void DestroyWindowCore(HandleRef hwnd)
         {
             EngineApi.DestroyRenderSurface();
-            windowHandle = IntPtr.Zero;
         }
     }
 }
