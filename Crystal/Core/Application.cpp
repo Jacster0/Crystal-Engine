@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "../Platform/Windows/Window.h"
 #include "../Platform/Windows/Types.h"
+#include "../RHI/D3D12/D3D12Core.h"
 
 namespace Crystal {
 	Application::Application(const ApplicationCreateInfo& info) {
@@ -17,6 +18,8 @@ namespace Crystal {
 	}
 
 	void Application::Initialize() noexcept {
+		RHICore::Intialize();
+
 		m_window->Kbd.EnableAutorepeat();
 		m_isInitialized = true;
 	}

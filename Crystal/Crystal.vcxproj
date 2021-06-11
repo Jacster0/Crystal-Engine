@@ -127,6 +127,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>D:\Crystal engine\Crystal\Crystal\Crystal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -147,6 +149,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>D:\Crystal engine\Crystal\Crystal\Crystal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -162,15 +166,28 @@
     <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Crystal.cpp" />
+    <ClCompile Include="Core\Exceptions\CrystalException.cpp" />
     <ClCompile Include="Platform\Windows\Window.cpp" />
     <ClCompile Include="Platform\Windows\Window.h" />
+    <ClCompile Include="RHI\D3D12\D3D12Core.cpp" />
+    <ClCompile Include="Core\Utils\StringUtils.h" />
+    <ClCompile Include="RHI\D3D12\LinearAllocator.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12DescriptorHeap.cpp" />
+    <ClCompile Include="RHI\D3D12\Utils\D3D12Exception.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Application.h" />
     <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Input\Mouse.h" />
+    <ClInclude Include="Core\Exceptions\CrystalException.h" />
+    <ClInclude Include="Core\Memory\MemoryConstants.h" />
     <ClInclude Include="Platform\Windows\CrystalWindow.h" />
     <ClInclude Include="Platform\Windows\Types.h" />
+    <ClInclude Include="RHI\D3D12\D3D12Core.h" />
+    <ClInclude Include="RHI\D3D12\LinearAllocator.h" />
+    <ClInclude Include="RHI\D3D12\D3D12DescriptorHeap.h" />
+    <ClInclude Include="RHI\D3D12\Utils\D3D12Exception.h" />
+    <ClInclude Include="RHI\D3D12\Utils\d3dx12.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
