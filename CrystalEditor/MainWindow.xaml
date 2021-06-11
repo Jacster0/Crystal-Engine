@@ -11,13 +11,7 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
-       
-        <!--<Button Width="50" Height="20" Click="Button_Click">
-            Click me
-        </Button>-->
-        <Utils:RenderSurfaceView/>
-
+        <Utils:RenderSurfaceView />
     </Grid>
-
-   
+    
 </Window>
