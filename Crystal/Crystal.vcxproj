@@ -164,6 +164,8 @@
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Input\Mouse.cpp" />
+    <ClCompile Include="Core\InstructionSet\CpuInfo.cpp" />
+    <ClCompile Include="Core\InstructionSet\InstructionSet.cpp" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Core\Exceptions\CrystalException.cpp" />
@@ -180,6 +182,8 @@
     <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\Exceptions\CrystalException.h" />
+    <ClInclude Include="Core\InstructionSet\CpuInfo.h" />
+    <ClInclude Include="Core\InstructionSet\InstructionSet.h" />
     <ClInclude Include="Core\Memory\MemoryConstants.h" />
     <ClInclude Include="Platform\Windows\CrystalWindow.h" />
     <ClInclude Include="Platform\Windows\Types.h" />
