@@ -1,3 +1,5 @@
+#pragma once
+
 #include <numbers>
 #include <concepts>
 #include <limits>
@@ -33,28 +35,28 @@ namespace Crystal::Math {
     }
 
     template<typename T>
-    [[nodiscard]] inline constexpr T AlignUpWithMask(auto value, size_t mask) noexcept {
+    [[nodiscard]] inline T AlignUpWithMask(T value, size_t mask) noexcept {
         return static_cast<T>((static_cast<size_t>(value + mask) & ~mask));
     }
 
     template <typename T>
-    [[nodiscard]] inline constexpr T AlignDownWithMask(T value, size_t mask) noexcept {
+    [[nodiscard]] inline auto AlignDownWithMask(T value, size_t mask) noexcept {
         return static_cast<T>((static_cast<size_t>(value) & ~mask));
     }
 
-    [[nodiscard]] inline constexpr auto AlignUp(auto value, size_t alignment) noexcept {
+    [[nodiscard]] inline auto AlignUp(auto value, size_t alignment) noexcept {
         return AlignUpWithMask(value, alignment - 1);
     }
 
-    [[nodiscard]] inline constexpr auto AlignDown(auto value, size_t alignment) noexcept {
+    [[nodiscard]] inline auto AlignDown(auto value, size_t alignment) noexcept {
         return AlignDownWithMask(value, alignment - 1);
     }
 
-    [[nodiscard]] inline constexpr bool IsAligned(auto value, size_t alignment) noexcept {
+    [[nodiscard]] inline bool IsAligned(auto value, size_t alignment) noexcept {
         return 0 == (static_cast<size_t>(value) & (alignment - 1));
     }
 
-    [[nodiscard]] constexpr auto DivideByMultiple(Divisble auto value, Divisble auto alignment) {
+    [[nodiscard]] auto DivideByMultiple(Divisble auto value, Divisble auto alignment) {
         return (value + alignment - 1) / alignment;
     }
 
@@ -89,7 +91,6 @@ namespace Crystal::Math {
         const auto n = next - val;
         const auto m = val - prev;
 
-        return (roundUp) ? ((n <= m) ? next : prev)
-            : ((n < m) ? next : prev);
+        return (roundUp) ? ((n <= m) ? next : prev) : ((n < m) ? next : prev);
     }
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "CrystalWindow.h"
 #include <vector>
 #include <cstdint>
