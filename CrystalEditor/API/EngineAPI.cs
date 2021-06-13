@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalEditor.API
 {
     public static class EngineApi
     {
-        private const string path    = @"..\CrystalDll.dll";
+        private const string path = @"CrystalDll.dll";
 
         #region public_API_interface
         public static IntPtr WindowHandle { get { return get_window_handle(); } }
@@ -27,6 +23,9 @@ namespace CrystalEditor.API
 
         [DllImport(path)]
         private static extern IntPtr get_window_handle();
+
+        [DllImport(path)]
+        private static extern IntPtr get_cpu_information();
         #endregion
     }
 }

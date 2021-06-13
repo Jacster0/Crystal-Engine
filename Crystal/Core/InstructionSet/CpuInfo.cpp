@@ -78,15 +78,13 @@ const int Crystal::CpuInfo::GetNumberOfCores() const noexcept {
 
     std::vector<SYSTEM_LOGICAL_PROCESSOR_INFORMATION> buffer(numElements);
 
-    const auto coreCounterLambda = [&numCores](const SYSTEM_LOGICAL_PROCESSOR_INFORMATION& processorInfo) {
-        if (processorInfo.Relationship == RelationProcessorCore) {
-            numCores++;
-        }
-    };
-
     //Fill the buffer. If the function succed we can start counting cores.
     if (GetLogicalProcessorInformation(buffer.data(), &sizeInBytes)) [[likely]] {
-        std::ranges::for_each(buffer, coreCounterLambda);
+        std::ranges::for_each(buffer, [&numCores](const SYSTEM_LOGICAL_PROCESSOR_INFORMATION& processorInfo) {
+            if (processorInfo.Relationship == RelationProcessorCore) {
+                numCores++;
+            }
+        });
     }
     return numCores;
 }

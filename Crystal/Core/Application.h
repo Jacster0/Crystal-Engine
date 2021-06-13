@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include <memory>
+#include "InstructionSet/CpuInfo.h"
 
 namespace Crystal {
     struct ApplicationCreateInfo;
@@ -15,6 +16,7 @@ namespace Crystal {
         ~Application();
 
         [[nodiscard]] Window& GetWindow() const noexcept;
+        [[nodiscard]] CpuInfo& GetCpuInfo() noexcept { return m_cpuInfo; };
     private:
         void Initialize() noexcept;
         void HandleInput() noexcept;
@@ -22,7 +24,7 @@ namespace Crystal {
         void MouseInput() noexcept;
 
         std::unique_ptr<Window> m_window = nullptr;
-
+        CpuInfo m_cpuInfo;
         bool m_isInitialized = false;
     };
 }

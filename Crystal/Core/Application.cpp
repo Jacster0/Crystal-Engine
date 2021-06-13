@@ -7,6 +7,8 @@ namespace Crystal {
 	Application::Application(const ApplicationCreateInfo& info) {
 		m_window = std::make_unique<Window>(info);
 
+		m_cpuInfo = CpuInfo{};
+
 		SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 		Initialize();
 	}

@@ -36,7 +36,7 @@ namespace CrystalEditor.Utils
             Loaded -= OnRenderSurfaceViewLoaded;
 
             renderSurface = new RenderSurface((uint)ActualWidth, (uint)ActualHeight);
-            Content = renderSurface;
+            Content       = renderSurface;
         }
         protected virtual void Dispose(bool disposing)
         {
