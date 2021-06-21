@@ -11,6 +11,10 @@ void Logger::SetLevel(LogLevel lvl) {
 	m_level = lvl;
 }
 
-void Logger::AttachSink(std::unique_ptr<ISink> sink) noexcept {
-	m_sink = std::move(sink);
+void Logger::AttachSink(const std::shared_ptr<ISink>& sink) noexcept {
+	m_sinks.emplace(sink->GetName(), sink);
+}
+
+void Crystal::Logger::RemoveSink(const std::string_view name) noexcept {
+	m_sinks.erase(name);
 }

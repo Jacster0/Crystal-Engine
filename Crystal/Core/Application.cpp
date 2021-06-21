@@ -3,7 +3,7 @@
 #include "../Platform/Windows/Types.h"
 #include "../RHI/D3D12/D3D12Core.h"
 #include "Logging/Logger.h"
-#include "Logging/ManagedLoggerViewSink.h"
+#include "Logging/ManagedLoggerSink.h"
 
 namespace Crystal {
 	Application::Application(const ApplicationCreateInfo& info) {
@@ -29,7 +29,7 @@ namespace Crystal {
 		RHICore::Intialize();
 
 		auto& logger = Logger::Get();
-		logger.AttachSink(std::make_unique<ManagedLoggerSink>());
+		logger.AttachSink(std::make_shared<ManagedLoggerSink>("ManagedLogger"));
 
 		m_window->Kbd.EnableAutorepeat();
 		m_isInitialized = true;

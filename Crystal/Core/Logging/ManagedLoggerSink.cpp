@@ -3,8 +3,9 @@
 
 using namespace Crystal;
 
-ManagedLoggerSink::ManagedLoggerSink() noexcept
+ManagedLoggerSink::ManagedLoggerSink(const std::string& name) noexcept
 	:
+	ISink(name),
 	m_namedPipe("ManagedLogger"),
 	m_messageInfo{}
 {}

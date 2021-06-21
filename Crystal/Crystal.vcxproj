@@ -169,6 +169,7 @@
     <ClCompile Include="Core\Logging\Logger.cpp" />
     <ClCompile Include="Core\Logging\ManagedLoggerSink.cpp" />
     <ClCompile Include="Core\Logging\ManagedLoggerSink.h" />
+    <ClCompile Include="Core\Logging\Sink.cpp" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Core\Exceptions\CrystalException.cpp" />

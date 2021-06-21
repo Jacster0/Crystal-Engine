@@ -4,6 +4,7 @@
 #include <string>
 #include <format>
 #include <memory>
+#include <unordered_map>
 
 #include "Sink.h"
 #include "LogLevels.h"
@@ -16,7 +17,8 @@ namespace Crystal {
 
 		void Log(LogLevel lvl, auto&&... args) noexcept;
 		void FormatLog(LogLevel lvl, std::string_view fmt, auto&&... args) noexcept;
-		void AttachSink(std::unique_ptr<ISink> sink) noexcept;
+		void AttachSink(const std::shared_ptr<ISink>& sink) noexcept;
+		void RemoveSink(const std::string_view name) noexcept;
 	private:
 		Logger()                             = default;
 		Logger(const Logger& rhs)            = delete;
@@ -31,7 +33,8 @@ namespace Crystal {
 
 		std::mutex m_loggingMutex;
 		LogLevel m_level = LogLevel::normal;
-		std::unique_ptr<ISink> m_sink;
+		
+		std::unordered_map<std::string_view, std::shared_ptr<ISink>> m_sinks;
 	};
 
 	inline void Logger::Log(LogLevel lvl, auto&& ...args) noexcept {
@@ -50,13 +53,17 @@ namespace Crystal {
 		std::stringstream ss;
 		(ss << ... << args);
 
-		m_sink->Emit(ss.str(), m_level);
+		for (const auto& [key, sink] : m_sinks) {
+			sink->Emit(ss.str(), m_level);
+		}
 	}
 
 	inline void Logger::FormatLog(std::string_view fmt, auto&& ...args) const noexcept {
 		std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
 
-		m_sink->Emit(message, m_level);
+		for (const auto& [key, sink] : m_sinks) {
+			sink->Emit(message, m_level);
+		}
 	}
 }
 
