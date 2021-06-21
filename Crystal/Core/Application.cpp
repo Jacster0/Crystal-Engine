@@ -2,6 +2,8 @@
 #include "../Platform/Windows/Window.h"
 #include "../Platform/Windows/Types.h"
 #include "../RHI/D3D12/D3D12Core.h"
+#include "Logging/Logger.h"
+#include "Logging/ManagedLoggerViewSink.h"
 
 namespace Crystal {
 	Application::Application(const ApplicationCreateInfo& info) {
@@ -11,6 +13,10 @@ namespace Crystal {
 
 		SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 		Initialize();
+
+		//Testing the logging system
+		crylog::info("Test123", " Hello", " World");
+		cryfmtlog::info("{0} Test fmt logger\n{1} ", "Test123", "Hello World\n");
 	}
 
 	Application::~Application() { }
@@ -21,6 +27,9 @@ namespace Crystal {
 
 	void Application::Initialize() noexcept {
 		RHICore::Intialize();
+
+		auto& logger = Logger::Get();
+		logger.AttachSink(std::make_unique<ManagedLoggerSink>());
 
 		m_window->Kbd.EnableAutorepeat();
 		m_isInitialized = true;

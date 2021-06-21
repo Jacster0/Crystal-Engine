@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Crystal", "Crystal\Crystal.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrystalDll", "CrystalDll\CrystalDll.vcxproj", "{1642FD42-FE55-42BB-8533-0A74D1C2555F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystalEditor", "CrystalEditor\CrystalEditor.csproj", "{251E0395-BFC9-4F13-A9C4-F4C0E35E7AFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystalEditor", "CrystalEditor\CrystalEditor.csproj", "{251E0395-BFC9-4F13-A9C4-F4C0E35E7AFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

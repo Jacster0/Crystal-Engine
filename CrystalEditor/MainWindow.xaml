@@ -11,7 +11,6 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
-        <Utils:RenderSurfaceView />
+        <Utils:RenderSurfaceView/>
     </Grid>
-    
 </Window>

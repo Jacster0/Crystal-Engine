@@ -166,9 +166,13 @@
     <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\InstructionSet\CpuInfo.cpp" />
     <ClCompile Include="Core\InstructionSet\InstructionSet.cpp" />
+    <ClCompile Include="Core\Logging\Logger.cpp" />
+    <ClCompile Include="Core\Logging\ManagedLoggerSink.cpp" />
+    <ClCompile Include="Core\Logging\ManagedLoggerSink.h" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Core\Exceptions\CrystalException.cpp" />
+    <ClCompile Include="Networking\NamedPipeClient.cpp" />
     <ClCompile Include="Platform\Windows\Window.cpp" />
     <ClCompile Include="Platform\Windows\Window.h" />
     <ClCompile Include="RHI\D3D12\D3D12Core.cpp" />
@@ -184,7 +188,11 @@
     <ClInclude Include="Core\Exceptions\CrystalException.h" />
     <ClInclude Include="Core\InstructionSet\CpuInfo.h" />
     <ClInclude Include="Core\InstructionSet\InstructionSet.h" />
+    <ClInclude Include="Core\Logging\Logger.h" />
+    <ClInclude Include="Core\Logging\LogLevels.h" />
+    <ClInclude Include="Core\Logging\Sink.h" />
     <ClInclude Include="Core\Memory\MemoryConstants.h" />
+    <ClInclude Include="Networking\NamedPipeClient.h" />
     <ClInclude Include="Platform\Windows\CrystalWindow.h" />
     <ClInclude Include="Platform\Windows\Types.h" />
     <ClInclude Include="RHI\D3D12\D3D12Core.h" />
