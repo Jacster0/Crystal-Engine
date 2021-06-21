@@ -9,21 +9,28 @@ namespace CrystalEditor.Utils.Extensions
     {
         private const int MAX_STACKALLOC_SIZE = 512;
 
-        public static T ReadStruct<T>(this Stream stream) where T : struct
+        public static unsafe T ReadStruct<T>(this Stream stream) where T : struct
         {
             var length = Marshal.SizeOf<T>();
             Span<byte> buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
 
             stream.Read(buffer);
-            return MemoryMarshal.Read<T>(buffer);
+
+            fixed(byte* ptr = buffer)
+            {
+                return Marshal.PtrToStructure<T>((IntPtr)ptr);
+            }
         }
 
-        public static void WriteStruct<T>(this Stream stream, ref T structure) where T : struct
+        public static unsafe void WriteStruct<T>(this Stream stream, ref T structure) where T : struct
         {
             var length = Marshal.SizeOf<T>();
             Span<byte> buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
 
-            MemoryMarshal.Write(buffer, ref structure);
+            fixed(byte* ptr = buffer)
+            {
+                Marshal.StructureToPtr(structure, (IntPtr)ptr, true);
+            }
             stream.Write(buffer);
         }
     }
