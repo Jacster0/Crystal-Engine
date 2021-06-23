@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 using System.IO;
 
 namespace CrystalEditor.Utils.Extensions
@@ -22,7 +21,7 @@ namespace CrystalEditor.Utils.Extensions
             }
         }
 
-        public static unsafe void WriteStruct<T>(this Stream stream, ref T structure) where T : struct
+        public static unsafe void WriteStruct<T>(this Stream stream, in T structure) where T : struct
         {
             var length = Marshal.SizeOf<T>();
             Span<byte> buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];

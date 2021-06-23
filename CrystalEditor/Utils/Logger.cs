@@ -8,17 +8,14 @@ namespace CrystalEditor.Utils
 {
     public enum LogLevel
     {
-        NORMAL,
-        DEBUG,
-        INFO,
-        WARNING,
-        ERROR,
-        CRITICAL
+        Info    = 0x01,
+        Warning = 0x02,
+        Error   = 0x04,
     };
 
     public class Logger
     {
-        public static void Log(string message, LogLevel lvl = LogLevel.NORMAL)
+        public static void Log(string message, LogLevel lvl = LogLevel.Info)
         {
             MessageBox.Show(message + lvl.ToString());
         }

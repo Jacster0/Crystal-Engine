@@ -1,5 +1,6 @@
 ﻿using CrystalEditor.Utils.Extensions;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
@@ -12,49 +13,51 @@ namespace CrystalEditor.Networking
 {
     public class NamedPipeServer<T> where T : struct
     {
-        bool running;
         EventWaitHandle terminateHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
 
-        public Queue<T> data { get; private set; } = new Queue<T>();
+        public ConcurrentQueue<T> data { get; private set; } = new ConcurrentQueue<T>();
         public string PipeName { get; set; }
         public int NumberOfServerInstances { get; set; }
+        public bool Running { get; private set; }
 
         public void Run()
         {
-            running = true;
-            new Thread(ProcessClients).Start();
+            Running = true;
+
+            new Thread(() => 
+            { 
+                Thread.CurrentThread.IsBackground = true; 
+                ProcessClients(); 
+            }).Start();
         }
 
         public void Stop()
         {
-            running = false;
+            Running = false;
             terminateHandle.WaitOne();
         }
         private void ProcessClients()
         {
-            while (running)
+            while (Running)
             {
                 ProcessNextClient();
             }
             terminateHandle.Set();
         }
 
-        private void ProcessNextClient()
+        private async void ProcessNextClient()
         {
             var pipeStream = new NamedPipeServerStream(PipeName, PipeDirection.InOut, NumberOfServerInstances, PipeTransmissionMode.Byte);
             pipeStream.WaitForConnection();
 
-            new Thread(() => ProcessClientThread(pipeStream)).Start();
+            await Task.Run(() =>
+            {
+                using var streamReader = new StreamReader(pipeStream);
+                data.Enqueue(streamReader.BaseStream.ReadStruct<T>());
+
+                pipeStream.Close();
+                pipeStream.Dispose();
+            });
         }
-
-        private void ProcessClientThread(NamedPipeServerStream pipeStream)
-        {
-            using var streamReader = new StreamReader(pipeStream);
-            data.Enqueue(streamReader.BaseStream.ReadStruct<T>());
-
-            pipeStream.Close();
-            pipeStream.Dispose();
-        }
-
     }
 }

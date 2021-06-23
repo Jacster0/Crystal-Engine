@@ -32,7 +32,7 @@ namespace Crystal {
 		void SetLevel(LogLevel lvl);
 
 		std::mutex m_loggingMutex;
-		LogLevel m_level = LogLevel::normal;
+		LogLevel m_level = LogLevel::info;
 		
 		std::unordered_map<std::string_view, std::shared_ptr<ISink>> m_sinks;
 	};
@@ -53,8 +53,10 @@ namespace Crystal {
 		std::stringstream ss;
 		(ss << ... << args);
 
+		const std::string message = ss.str();
+
 		for (const auto& [key, sink] : m_sinks) {
-			sink->Emit(ss.str(), m_level);
+			sink->Emit(message, m_level);
 		}
 	}
 
@@ -79,10 +81,6 @@ namespace Crystal::crylog {
 	inline void error(auto&&... args) noexcept {
 		Logger::Get().Log(LogLevel::error, std::forward<decltype(args)>(args)..., Logger::NewLine());
 	}
-
-	inline void critical(auto&&... args) noexcept {
-		Logger::Get().Log(LogLevel::critical, std::forward<decltype(args)>(args)..., Logger::NewLine());
-	}
 }
 
 namespace Crystal::cryfmtlog {
@@ -96,9 +94,5 @@ namespace Crystal::cryfmtlog {
 
 	inline void error(std::string_view fmt, auto&&... args) noexcept {
 		Logger::Get().FormatLog(LogLevel::error, fmt, std::forward<decltype(args)>(args)...);
-	}
-
-	inline void critical(std::string_view fmt, auto&&... args) noexcept {
-		Logger::Get().FormatLog(LogLevel::critical, fmt, std::forward<decltype(args)>(args)...);
 	}
 }

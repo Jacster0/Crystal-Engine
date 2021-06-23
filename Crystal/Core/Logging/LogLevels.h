@@ -2,11 +2,8 @@
 
 namespace Crystal {
 	enum class LogLevel {
-		normal,
-		debug,
-		info,
-		warning,
-		error,
-		critical
+		info    = 0x01,
+		warning = 0x02,
+		error   = 0x04,
 	};
 }

@@ -15,11 +15,7 @@ namespace CrystalEditor
             InitializeComponent();
 
             LogManager manager = new LogManager();
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                manager.StartUp();
-            }).Start();
+            manager.StartUp();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

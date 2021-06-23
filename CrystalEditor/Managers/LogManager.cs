@@ -26,14 +26,17 @@ namespace CrystalEditor.Managers
             public LogLevel Level;
         }
 
-        public void StartUp()
+        public async void StartUp()
         {
-            ListenForUnmanagedLogCalls();
+            await Task.Run(() => ListenForUnmanagedLogCalls());
         }
 
         public void ShutDown()
         {
-            server.Stop();
+            if (server.Running)
+            {
+                server.Stop();
+            }
         }
 
         public void ListenForUnmanagedLogCalls()
@@ -50,9 +53,10 @@ namespace CrystalEditor.Managers
             {
                 if (!server.data.Empty())
                 {
-                    messageInfo = server.data.Dequeue();
-
-                    Logger.Log(messageInfo.Message, messageInfo.Level);
+                    if(server.data.TryDequeue(out messageInfo))
+                    {
+                        Logger.Log(messageInfo.Message, messageInfo.Level);
+                    }
                 }
             }
         }
