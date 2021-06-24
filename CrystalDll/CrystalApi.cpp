@@ -6,7 +6,7 @@
 
 using namespace Crystal;
 
-std::vector<Application*> applications;
+Application* application;
 
 struct {
 	int NumLogicalProcessors;
@@ -17,29 +17,26 @@ struct {
 } cpuInfo;
 
 
-CRYSTAL_API void create_render_surface(HWND parent, const uint32_t width, const uint32_t height)  noexcept {
-	Application* app = new Application(
+CRYSTAL_API void create_render_surface(HWND parent, const uint32_t width, const uint32_t height) noexcept {
+	application = new Application(
 		ApplicationCreateInfo {
 			.ParentHwnd = parent,
 			.Width      = width,
 			.Height     = height
 		}
 	);
-
-	applications.push_back(app);
 }
 
 CRYSTAL_API void destroy_render_surface() noexcept {
-	delete applications.front();
-	applications.erase(applications.begin());	
+	delete application;	
 }
 
 CRYSTAL_API HWND get_window_handle() noexcept {
-	return applications.front()->GetWindow().GetWindowHandle();
+	return application->GetWindow().GetWindowHandle();
 }
 
 CRYSTAL_API void* get_cpu_information() noexcept {
-	auto& info = applications.front()->GetCpuInfo();
+	auto& info = application->GetCpuInfo();
 
 	cpuInfo.NumLogicalProcessors = info.Info.NumLogicalProcessors;
 	cpuInfo.NumCores             = info.Info.NumCores;
