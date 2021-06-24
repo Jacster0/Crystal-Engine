@@ -34,10 +34,7 @@ namespace CrystalEditor.Managers
             public LogLevel Level;
         }
 
-        public async void StartUp()
-        {
-            await Task.Run(() => ListenForUnmanagedLogCalls());
-        }
+        public async void StartUp() => await Task.Run(() => ListenForUnmanagedLogCalls());
 
         public void ShutDown()
         {
@@ -51,8 +48,7 @@ namespace CrystalEditor.Managers
         {
             server = new NamedPipeServer<MessageInfo>()
             {
-                PipeName = "ManagedLogger",
-                NumberOfServerInstances = -1
+                PipeName = "ManagedLogger"
             };
 
             server.Run();
@@ -63,7 +59,12 @@ namespace CrystalEditor.Managers
                 {
                     if(server.data.TryDequeue(out messageInfo))
                     {
-                        Logger.Log(messageInfo.Message, messageInfo.Level, messageInfo.FileName, messageInfo.FunctionName, messageInfo.Line);
+                        Logger.Log(
+                            messageInfo.Message, 
+                            messageInfo.Level, 
+                            messageInfo.FileName, 
+                            messageInfo.FunctionName, 
+                            messageInfo.Line);
                     }
                 }
             }
