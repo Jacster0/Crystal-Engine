@@ -8,9 +8,9 @@
         xmlns:local="clr-namespace:CrystalEditor" 
         xmlns:Utils="clr-namespace:CrystalEditor.Utils"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Crystal" Height="450" Width="800">
     <Grid>
-        <Grid Grid.Row="1">
+        <Grid>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
