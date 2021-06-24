@@ -68,7 +68,6 @@ namespace Crystal {
 		std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
 
 		for (const auto& [key, sink] : m_sinks) {
-			if(m_sourceLoc)
 			sink->Emit(message, m_level, m_sourceLoc);
 		}
 	}
