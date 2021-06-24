@@ -171,6 +171,10 @@
     <ClCompile Include="Core\Logging\ManagedLoggerSink.h" />
     <ClCompile Include="Core\Logging\Sink.cpp" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
+    <ClCompile Include="Core\Math\Quaternion.cpp" />
+    <ClCompile Include="Core\Math\Vector2.cpp" />
+    <ClCompile Include="Core\Math\Vector3.cpp" />
+    <ClCompile Include="Core\Math\Vector4.cpp" />
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Core\Exceptions\CrystalException.cpp" />
     <ClCompile Include="Networking\NamedPipeClient.cpp" />
@@ -192,6 +196,11 @@
     <ClInclude Include="Core\Logging\Logger.h" />
     <ClInclude Include="Core\Logging\LogLevels.h" />
     <ClInclude Include="Core\Logging\Sink.h" />
+    <ClInclude Include="Core\Math\Matrix.h" />
+    <ClInclude Include="Core\Math\Quaternion.h" />
+    <ClInclude Include="Core\Math\Vector2.h" />
+    <ClInclude Include="Core\Math\Vector3.h" />
+    <ClInclude Include="Core\Math\Vector4.h" />
     <ClInclude Include="Core\Memory\MemoryConstants.h" />
     <ClInclude Include="Networking\NamedPipeClient.h" />
     <ClInclude Include="Platform\Windows\CrystalWindow.h" />
