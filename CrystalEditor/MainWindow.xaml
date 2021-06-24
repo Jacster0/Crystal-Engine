@@ -16,11 +16,11 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid>
-                    <Utils:RenderSurfaceView Grid.Row="0" Margin="0,0,0,-75"/>
+                <Grid Grid.Row="0" Margin="0,0,0,-75">
+                    <Utils:RenderSurfaceView Grid.Row="0" Margin="0,0,0,0"/>
                 </Grid>
-                <Grid Grid.Row="1" Margin="0,0,0,0">
-                    <Utils:LoggerView Margin="0,75,0,0"/>
+                <Grid Grid.Row="1" Margin="0,75,0,0">
+                    <Utils:LoggerView Margin="0,0,0,0"/>
                 </Grid>
             </Grid>
         </Grid>

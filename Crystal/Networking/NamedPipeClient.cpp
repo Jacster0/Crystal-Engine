@@ -19,10 +19,11 @@ void NamedPipeClient::Open() noexcept {
 		nullptr);
 }
 
-void Crystal::NamedPipeClient::Close() const noexcept {
+void NamedPipeClient::Close() const noexcept {
 	CloseHandle(m_hPipe);
 }
 
 void NamedPipeClient::Send(const void* buffer, size_t numBytesToWrite) const noexcept {
 	WriteFile(m_hPipe, buffer, numBytesToWrite, nullptr, nullptr);
 }
+

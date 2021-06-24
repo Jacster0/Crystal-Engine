@@ -32,6 +32,7 @@ namespace Crystal {
 		void Open() noexcept;
 		void Close() const noexcept;
 		void Send(const void* buffer, size_t numBytesToWrite) const noexcept;
+		void Call(const auto& structure) noexcept;
 
 		void SetPipeAccess(PipeAccess flags) noexcept { m_access = flags; }
 		void SetPipeSharing(PipeSharing flags) noexcept { m_shareMode = flags; }
@@ -45,4 +46,10 @@ namespace Crystal {
 		PipeSharing m_shareMode = PipeSharing::None;
 		PipeCreationDisposition m_creationDisposition = PipeCreationDisposition::OpenExisting;
 	};
+
+	void Crystal::NamedPipeClient::Call(const auto& structure) noexcept {
+		Open();
+		Send(static_cast<const void*>(&structure), sizeof(structure));
+		Close();
+	}
 }

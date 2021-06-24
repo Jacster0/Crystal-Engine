@@ -68,7 +68,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </DockPanel.Style>
-                            <TextBlock Text="{Binding Time, StringFormat= [hh:mm:ss]}" Margin="5,0">
+                            <TextBlock Text="{Binding Time, StringFormat= [HH:mm:ss]}" Margin="5,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="LimeGreen"/>

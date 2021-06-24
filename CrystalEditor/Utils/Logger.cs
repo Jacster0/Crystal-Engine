@@ -24,7 +24,7 @@ namespace CrystalEditor.Utils
         public string File { get; private set; }
         public string Method { get; private set; }
         public int Line { get; private set; }
-        public string MetaData => $"{File}: {Method} ({Line})";
+        public string MetaData => $"<{Level}> {File}: {Method} ({Line})";
         public LogMessage(string message, LogLevel level, string file, string method, int line)
         {
             Time = DateTime.Now;
