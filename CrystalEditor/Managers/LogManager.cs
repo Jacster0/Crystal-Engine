@@ -14,7 +14,10 @@ namespace CrystalEditor.Managers
 {
     class LogManager
     {
-        private const int MAX_LOG_SIZE = 1024;
+        private const int MAX_LOG_SIZE = 512;
+        private const int MAX_FILE_NAME_LENGTH = 260;
+        private const int MAX_FUNCTION_NAME_LENGTH = 64;
+     
         private MessageInfo messageInfo;
         NamedPipeServer<MessageInfo> server;
 
@@ -23,6 +26,11 @@ namespace CrystalEditor.Managers
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_LOG_SIZE)]
             public string Message;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_FILE_NAME_LENGTH)]
+            public string FileName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_FUNCTION_NAME_LENGTH)]
+            public string FunctionName;
+            public int Line;
             public LogLevel Level;
         }
 
@@ -55,7 +63,7 @@ namespace CrystalEditor.Managers
                 {
                     if(server.data.TryDequeue(out messageInfo))
                     {
-                        Logger.Log(messageInfo.Message, messageInfo.Level);
+                        Logger.Log(messageInfo.Message, messageInfo.Level, messageInfo.FileName, messageInfo.FunctionName, messageInfo.Line);
                     }
                 }
             }

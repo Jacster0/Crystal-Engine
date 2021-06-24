@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <source_location>
 #include "LogLevels.h"
 
 namespace Crystal {
@@ -9,7 +10,7 @@ namespace Crystal {
 		virtual ~ISink() = default;
 
 		[[nodiscard]] const std::string& GetName() const noexcept { return m_name; }
-		virtual void Emit(std::string_view message, LogLevel lvl) noexcept = 0;
+		virtual void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc = std::source_location::current()) noexcept = 0;
 	protected:
 		std::string m_name;
 	};

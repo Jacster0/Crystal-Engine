@@ -9,8 +9,12 @@
         xmlns:Utils="clr-namespace:CrystalEditor.Utils"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-
     <Grid>
-        <Utils:RenderSurfaceView/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="191*"/>
+            <RowDefinition Height="26*"/>
+        </Grid.RowDefinitions>
+        <Utils:RenderSurfaceView Margin="0,0,0,127"/>
+        <Utils:LoggerView Margin="0,255,0,0" Grid.RowSpan="2"/>
     </Grid>
 </Window>

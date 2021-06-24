@@ -15,8 +15,25 @@ namespace Crystal {
 		Initialize();
 
 		//Testing the logging system
-		crylog::info("Test123", " Hello", " World");
-		cryfmtlog::info("{0} Test fmt logger\n{1} ", "Test123", "Hello World\n");
+		crylog_info("Test123", " Hello", "World");
+		crylog_warning("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		crylog_error("Test123", " Hello", " World");
+		cryfmtlog_info("{0} Test fmt logger\n{1} ", "Test123", "Hello World\n");
 	}
 
 	Application::~Application() { }
