@@ -7,6 +7,7 @@ namespace CrystalEditor.Utils
 {
     public class CpuInfo
     {
+#pragma warning disable 0649
         private struct CpuInfo_t
         {
             public int NumLogicalProcessors;
@@ -15,6 +16,7 @@ namespace CrystalEditor.Utils
             public string Vendor;
             public string Architecture;
         }
+#pragma warning restore 0649
 
         private CpuInfo_t cpuInfo;
 

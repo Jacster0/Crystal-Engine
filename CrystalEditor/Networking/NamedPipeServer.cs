@@ -45,19 +45,19 @@ namespace CrystalEditor.Networking
             terminateHandle.Set();
         }
 
-        private async void ProcessNextClient()
+        private void ProcessNextClient()
         {
             var pipeStream = new NamedPipeServerStream(PipeName, PipeDirection.InOut, NumberOfServerInstances, PipeTransmissionMode.Byte);
             pipeStream.WaitForConnection();
 
-            await Task.Run(() =>
+            new Thread(() =>
             {
                 using var streamReader = new StreamReader(pipeStream);
                 data.Enqueue(streamReader.BaseStream.ReadStruct<T>());
 
                 pipeStream.Close();
                 pipeStream.Dispose();
-            });
+            }).Start();
         }
     }
 }

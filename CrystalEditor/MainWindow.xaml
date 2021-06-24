@@ -10,11 +10,20 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="191*"/>
-            <RowDefinition Height="26*"/>
-        </Grid.RowDefinitions>
-        <Utils:RenderSurfaceView Margin="0,0,0,127"/>
-        <Utils:LoggerView Margin="0,255,0,0" Grid.RowSpan="2"/>
+        <Grid Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Utils:RenderSurfaceView Grid.Row="0" Margin="0,0,0,0"/>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,0,0,0">
+                    <Utils:LoggerView Margin="0,0,0,0"/>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
