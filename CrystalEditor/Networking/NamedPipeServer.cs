@@ -12,7 +12,7 @@ namespace CrystalEditor.Networking
     {
         public ConcurrentQueue<T> data { get; private set; } = new ConcurrentQueue<T>();
         public string PipeName { get; set; }
-        public bool Running { get; private set; }
+        public bool Running { get; private set; } = false;
         public void Run()
         {
             Running = true;
@@ -50,8 +50,7 @@ namespace CrystalEditor.Networking
 
                 ProcessClients();
 
-                using var streamReader = new StreamReader(pipeStream);
-                data.Enqueue(streamReader.BaseStream.ReadStruct<T>());
+                data.Enqueue(pipeStream.ReadStruct<T>());
             }
             catch (Exception e)
             {
