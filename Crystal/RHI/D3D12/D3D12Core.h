@@ -20,6 +20,7 @@ namespace Crystal {
 		static [[nodiscard]] ID3D12Device8& GetDevice() noexcept { return *m_d3d12Device.Get(); }
 		static [[nodiscard]] IDXGIAdapter4& GetPhysicalDevice() noexcept { return *m_dxgiAdapter.Get(); }
 		static [[nodiscard]] std::wstring GetPhysicalDeviceDescription() noexcept { return m_adapterDesc.Description; }
+		static [[nodiscard]] D3D_ROOT_SIGNATURE_VERSION GetHighestRootSignatureVersion() noexcept { return m_highestRootSignatureVersion; }
 
 		static [[nodiscard]] DescriptorAllocation AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1) noexcept;
 		static void ReleaseStaleDescriptors() noexcept;
