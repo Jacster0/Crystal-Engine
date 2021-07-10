@@ -102,16 +102,10 @@ void RootSignature::SetRootSignatureDesc(const D3D12_ROOT_SIGNATURE_DESC1& rootS
 	}
 
 	auto numStaticSamplers = rootSignatureDesc.NumStaticSamplers;
-	D3D12_STATIC_SAMPLER_DESC* staticSamplers =
-		numStaticSamplers > 0
-		? new D3D12_STATIC_SAMPLER_DESC[numStaticSamplers]
-		: nullptr;
+	D3D12_STATIC_SAMPLER_DESC* staticSamplers = numStaticSamplers > 0 ? new D3D12_STATIC_SAMPLER_DESC[numStaticSamplers] : nullptr;
 
 	if (staticSamplers) {
-		memcpy(
-			staticSamplers,
-			rootSignatureDesc.pStaticSamplers,
-			sizeof(D3D12_STATIC_SAMPLER_DESC) * numStaticSamplers);
+		memcpy(staticSamplers, rootSignatureDesc.pStaticSamplers, sizeof(D3D12_STATIC_SAMPLER_DESC) * numStaticSamplers);
 	}
 
 	m_rootSignatureDesc.NumParameters     = numParams;
