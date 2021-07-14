@@ -2,10 +2,10 @@
 #include "../Networking/NamedPipeClient.h"
 
 namespace Crystal {
-	class ManagedLoggerSink final : public ISink {
+	class ManagedLoggerSink final : public ISink<ManagedLoggerSink> {
 	public:
 		ManagedLoggerSink(const std::string& name) noexcept;
-		virtual void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc = std::source_location::current()) noexcept override;
+		void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc = std::source_location::current()) noexcept;
 	private:
 		NamedPipeClient m_namedPipe;
 

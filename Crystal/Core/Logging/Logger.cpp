@@ -15,7 +15,7 @@ void Crystal::Logger::SetSourceLoc(const std::source_location& loc) noexcept {
 	m_sourceLoc = loc;
 }
 
-void Logger::AttachSink(const std::shared_ptr<ISink>& sink) noexcept {
+void Logger::AttachSink(const std::shared_ptr<ISinkBase>& sink) noexcept {
 	m_sinks.emplace(sink->GetName(), sink);
 }
 

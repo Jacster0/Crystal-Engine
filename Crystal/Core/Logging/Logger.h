@@ -5,6 +5,7 @@
 #include <format>
 #include <memory>
 #include <unordered_map>
+#include <variant>
 
 #include "Sink.h"
 #include "LogLevels.h"
@@ -17,7 +18,7 @@ namespace Crystal {
 
 		void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) noexcept;
 		void FormatLog(LogLevel lvl, std::string_view fmt, const std::source_location& loc, auto&&... args) noexcept;
-		void AttachSink(const std::shared_ptr<ISink>& sink) noexcept;
+		void AttachSink(const std::shared_ptr<ISinkBase>& sink) noexcept;
 		void RemoveSink(const std::string_view name) noexcept;
 	private:
 		Logger()                             = default;
@@ -35,8 +36,8 @@ namespace Crystal {
 		std::mutex m_loggingMutex;
 		LogLevel m_level = LogLevel::info;
 		std::source_location m_sourceLoc;
-		
-		std::unordered_map<std::string_view, std::shared_ptr<ISink>> m_sinks;
+
+		std::unordered_map<std::string_view, std::shared_ptr<ISinkBase>> m_sinks;
 	};
 
 	inline void Logger::Log(LogLevel lvl, const std::source_location& loc, auto && ...args) noexcept {
