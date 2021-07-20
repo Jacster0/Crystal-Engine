@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\ECS\Entity.cpp" />
     <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\InstructionSet\CpuInfo.cpp" />
@@ -169,7 +170,6 @@
     <ClCompile Include="Core\Logging\Logger.cpp" />
     <ClCompile Include="Core\Logging\ManagedLoggerSink.cpp" />
     <ClCompile Include="Core\Logging\ManagedLoggerSink.h" />
-    <ClCompile Include="Core\Logging\Sink.cpp" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Core\Math\Quaternion.cpp" />
     <ClCompile Include="Core\Math\Vector2.cpp" />
@@ -180,36 +180,64 @@
     <ClCompile Include="Networking\NamedPipeClient.cpp" />
     <ClCompile Include="Platform\Windows\Window.cpp" />
     <ClCompile Include="Platform\Windows\Window.h" />
+    <ClCompile Include="RHI\D3D12\D3D12Buffer.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12CommandContext.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12CommandQueue.cpp" />
     <ClCompile Include="RHI\D3D12\D3D12Core.cpp" />
     <ClCompile Include="Core\Utils\StringUtils.h" />
+    <ClCompile Include="RHI\D3D12\D3D12DynamicDescriptorHeap.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12RenderTarget.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12RootSignature.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12Texture.cpp" />
     <ClCompile Include="RHI\D3D12\LinearAllocator.cpp" />
     <ClCompile Include="RHI\D3D12\D3D12DescriptorHeap.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12PipelineState.cpp" />
     <ClCompile Include="RHI\D3D12\Utils\D3D12Exception.cpp" />
+    <ClCompile Include="RHI\D3D12\Utils\ResourceStateTracker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Application.h" />
+    <ClInclude Include="Core\ECS\Entity.h" />
+    <ClInclude Include="Core\ECS\entt.hpp" />
     <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\Exceptions\CrystalException.h" />
     <ClInclude Include="Core\InstructionSet\CpuInfo.h" />
     <ClInclude Include="Core\InstructionSet\InstructionSet.h" />
+    <ClInclude Include="Core\Lib\ThreadSafeQueue.h" />
     <ClInclude Include="Core\Logging\Logger.h" />
     <ClInclude Include="Core\Logging\LogLevels.h" />
     <ClInclude Include="Core\Logging\Sink.h" />
     <ClInclude Include="Core\Math\Matrix.h" />
     <ClInclude Include="Core\Math\Quaternion.h" />
+    <ClInclude Include="Core\Math\Rectangle.h" />
+    <ClInclude Include="Core\Math\RNG.h" />
     <ClInclude Include="Core\Math\Vector2.h" />
     <ClInclude Include="Core\Math\Vector3.h" />
     <ClInclude Include="Core\Math\Vector4.h" />
     <ClInclude Include="Core\Memory\MemoryConstants.h" />
+    <ClInclude Include="Graphics\Types\Types.h" />
+    <ClInclude Include="Graphics\Viewport.h" />
     <ClInclude Include="Networking\NamedPipeClient.h" />
     <ClInclude Include="Platform\Windows\CrystalWindow.h" />
     <ClInclude Include="Platform\Windows\Types.h" />
+    <ClInclude Include="RHI\D3D12\D3D12Buffer.h" />
+    <ClInclude Include="RHI\D3D12\D3D12CommandContext.h" />
+    <ClInclude Include="RHI\D3D12\D3D12CommandQueue.h" />
     <ClInclude Include="RHI\D3D12\D3D12Core.h" />
+    <ClInclude Include="RHI\D3D12\D3D12DynamicDescriptorHeap.h" />
+    <ClInclude Include="RHI\D3D12\D3D12RenderTarget.h" />
+    <ClInclude Include="RHI\D3D12\D3D12RootSignature.h" />
+    <ClInclude Include="RHI\D3D12\D3D12Texture.h" />
     <ClInclude Include="RHI\D3D12\LinearAllocator.h" />
     <ClInclude Include="RHI\D3D12\D3D12DescriptorHeap.h" />
+    <ClInclude Include="RHI\D3D12\D3D12PipelineState.h" />
     <ClInclude Include="RHI\D3D12\Utils\D3D12Exception.h" />
     <ClInclude Include="RHI\D3D12\Utils\d3dx12.h" />
+    <ClInclude Include="RHI\D3D12\Utils\ResourceStateTracker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Core\ECS\LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,6 +14,7 @@ namespace Crystal {
 		void Destroy();
 
 		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature() const noexcept { return m_rootSignature; }
+		[[nodiscard]] D3D12_ROOT_SIGNATURE_DESC1 GetRootSignatureDesc() const noexcept { return m_rootSignatureDesc; }
 		[[nodiscard]] uint32_t GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType) const;
 		[[nodiscard]] uint32_t GetNumDescriptors(uint32_t rootIndex) const noexcept { return m_numDescriptorsPerTable.at(rootIndex); }
 	private:
