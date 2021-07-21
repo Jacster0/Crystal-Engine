@@ -131,11 +131,14 @@ void RHICore::CreateDevice() {
 			D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE
 		};
 
-		D3D12_INFO_QUEUE_FILTER newFilter = {};
-		newFilter.DenyList.NumSeverities  = severities.size();
-		newFilter.DenyList.pSeverityList  = severities.data();
-		newFilter.DenyList.NumIDs         = denyIds.size();
-		newFilter.DenyList.pIDList        = denyIds.data();
+		D3D12_INFO_QUEUE_FILTER newFilter = {
+			.DenyList = {
+				.NumSeverities = severities.size(),
+				.pSeverityList = severities.data(),
+				.NumIDs = denyIds.size(),
+				.pIDList = denyIds.data() 
+			}
+		};
 
 		ThrowIfFailed(infoQueue->PushStorageFilter(&newFilter));
 	}
