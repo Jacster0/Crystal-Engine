@@ -48,10 +48,7 @@ namespace Crystal {
 	}
 
 	inline void Logger::InternalLog(auto&& ...args) const noexcept {
-		std::stringstream ss;
-		(ss << ... << args);
-
-		const std::string message = ss.str();
+		const std::string& message = (std::stringstream{} << ... << args).str();
 
 		for (const auto& [key, sink] : m_sinks) {
 			sink->Emit(message, m_level, m_sourceLoc);

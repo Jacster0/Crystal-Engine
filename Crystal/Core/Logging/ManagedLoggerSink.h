@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Sink.h"
 #include "../Networking/NamedPipeClient.h"
 

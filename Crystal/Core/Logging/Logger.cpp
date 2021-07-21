@@ -11,7 +11,7 @@ void Logger::SetLevel(LogLevel lvl) {
 	m_level = lvl;
 }
 
-void Crystal::Logger::SetSourceLoc(const std::source_location& loc) noexcept {
+void Logger::SetSourceLoc(const std::source_location& loc) noexcept {
 	m_sourceLoc = loc;
 }
 
@@ -19,6 +19,6 @@ void Logger::AttachSink(const std::shared_ptr<ISinkBase>& sink) noexcept {
 	m_sinks.emplace(sink->GetName(), sink);
 }
 
-void Crystal::Logger::RemoveSink(const std::string_view name) noexcept {
+void Logger::RemoveSink(const std::string_view name) noexcept {
 	m_sinks.erase(name);
 }
