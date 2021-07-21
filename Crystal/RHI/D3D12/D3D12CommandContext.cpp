@@ -361,8 +361,8 @@ void GraphicsContext::SetVertexBuffers(uint32_t startSlot, const std::vector<con
 
 	for (const auto vertexBuffer : vertexBuffers) {
 		if (vertexBuffer) {
-			TransitionResource(vertexBuffer, { { ResourceState_t::vertex_and_constant_buffer } });
-			TrackResource(vertexBuffer);
+			TransitionResource(vertexBuffer->GetResource(), { { ResourceState_t::vertex_and_constant_buffer } });
+			TrackResource(vertexBuffer->GetResource());
 
 			vbViews.push_back({ vertexBuffer->BufferLocation(), vertexBuffer->Size(), vertexBuffer->Stride() });
 		}
@@ -387,7 +387,7 @@ void GraphicsContext::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, 
 
 void GraphicsContext::SetIndexBuffer(const Buffer* const indexBuffer) noexcept {
 	if (indexBuffer) {
-		TransitionResource(indexBuffer, { { ResourceState_t::index_buffer } });
+		TransitionResource(indexBuffer->GetResource(), { { ResourceState_t::index_buffer } });
 		TrackResource(indexBuffer->GetResource());
 
 		const D3D12_INDEX_BUFFER_VIEW ibv{
@@ -409,7 +409,7 @@ void GraphicsContext::SetDynamicIndexBuffer(size_t numIndicies, IndexFormat_t in
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{
 		.BufferLocation = heapAlloc.GPU,
-		.SizeInBytes    = bufferSize,
+		.SizeInBytes    = static_cast<DWORD>(bufferSize),
 		.Format         = static_cast<DXGI_FORMAT>(indexFormat)
 	};
 

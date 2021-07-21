@@ -20,12 +20,6 @@ namespace Crystal {
         copy
     };
 
-    enum class IndexFormat_t {
-        unknown = 0,
-        uint_16 = 57,
-        uint_32 = 42
-    };
-
     enum class ResourceState_t {
         common                            = 0,
         vertex_and_constant_buffer        = 0x1,
