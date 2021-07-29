@@ -27,7 +27,7 @@ namespace Crystal {
 
 		template<class TranslationTag = LocalTranslationTag>
 		constexpr void Translate(const Math::Vector4& Translation) noexcept {
-			TranslationImpl(TranslationTag(), { Translation, m_rotation })
+			TranslationImpl(TranslationTag(), { Translation, m_rotation });
 		}
 	private:
 		void TranslationImpl(LocalTranslationTag translationTag, TranslationSpecification specification) noexcept;
