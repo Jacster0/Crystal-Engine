@@ -3,9 +3,10 @@
 #include "Common.h"
 #include <vector>
 #include <memory>
+#include "../ECS/Component.h"
 
 namespace Crystal {
-	class Transform {
+	class Transform final : public AComponent{
 		struct TranslationSpecification {
 			Math::Vector4 Translation{};
 			Math::Quaternion Rotation{};
@@ -13,6 +14,8 @@ namespace Crystal {
 	public:
 		struct LocalTranslationTag {};
 		struct WorldTranslationTag {};
+
+		virtual void Update() noexcept override {}
 
 		void SetRotation(const Math::Quaternion& rotation) noexcept;
 		[[nodiscard]] const Math::Quaternion& GetRotation() const noexcept;
