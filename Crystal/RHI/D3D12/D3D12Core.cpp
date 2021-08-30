@@ -5,8 +5,8 @@
 using namespace Crystal;
 using namespace Microsoft::WRL;
 
-namespace impl {
-	struct Data_t {
+namespace impl {	
+	static struct Data_t {
 		Microsoft::WRL::ComPtr<ID3D12Device8> D3d12Device;
 		Microsoft::WRL::ComPtr<IDXGIAdapter4> DxgiAdapter;
 
@@ -16,7 +16,7 @@ namespace impl {
 		std::array<std::unique_ptr<DescriptorAllocator>, D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES> DescriptorAllocators;
 		bool IsInitialized;
 	} data;
-	
+
 	void CreatePhysicalDevice() {
 		ComPtr<IDXGIFactory7> dxgiFactory7;
 		ComPtr<IDXGIAdapter>  dxgiAdapter;
@@ -145,7 +145,7 @@ IDXGIAdapter4& RHICore::GetPhysicalDevice() noexcept { return *data.DxgiAdapter.
 
 const std::wstring& RHICore::GetPhysicalDeviceDescription() noexcept { return data.AdapterDesc.Description; }
 
-const D3D_ROOT_SIGNATURE_VERSION RHICore::GetHighestRootSignatureVersion() noexcept { return data.HighestRootSignatureVersion; }
+D3D_ROOT_SIGNATURE_VERSION RHICore::GetHighestRootSignatureVersion() noexcept { return data.HighestRootSignatureVersion; }
 
 DescriptorAllocation RHICore::AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors) noexcept {
 	return data.DescriptorAllocators[type]->Allocate(numDescriptors);
