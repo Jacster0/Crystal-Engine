@@ -2,9 +2,6 @@
 #include <cstdint>
 
 namespace Crystal {
-	template<class To, class From>
-	concept ExplicitConvertible = requires (From& f) { static_cast<To>(f); };
-
     constexpr uint32_t ALL_SUBRESOURCES = 0xffffffff;
 
     enum class IndexFormat_t {
@@ -63,28 +60,28 @@ namespace Crystal {
     };
 
     struct ClearFlag {
-        template<ExplicitConvertible<ClearFlag_t> T>
+        template<typename T>
         [[nodiscard]] constexpr T As() const noexcept { return static_cast<T>(clearFlag); }
 
         ClearFlag_t clearFlag;
     };
 
     struct PrimitiveTopology {
-        template<ExplicitConvertible<Topology_t> T>
+        template<typename T>
         [[nodiscard]] constexpr T As() const noexcept { return static_cast<T>(Topology); }
 
         Topology_t Topology;
     };
 
     struct CommandListType {
-        template<ExplicitConvertible<CommandListType_t> T>
+        template<typename T>
         [[nodiscard]] constexpr T As() const noexcept { return static_cast<T>(Type); }
 
         CommandListType_t Type;
     };
 
     struct ResourceState {
-        template<ExplicitConvertible<ResourceState_t> T>
+        template<typename T>
         [[nodiscard]] constexpr T As() const noexcept { return static_cast<T>(States); }
 
         ResourceState_t States;
