@@ -2,9 +2,7 @@
 using CrystalEditor.Utils.Extensions;
 using System;
 using System.Collections.Concurrent;
-using System.IO;
 using System.IO.Pipes;
-using System.Threading;
 
 namespace CrystalEditor.Networking
 {
@@ -24,9 +22,9 @@ namespace CrystalEditor.Networking
         private void ProcessClients()
         {
             var pipeStream = new NamedPipeServerStream(
-                PipeName, 
-                PipeDirection.In, 
-                NamedPipeServerStream.MaxAllowedServerInstances, 
+                PipeName,
+                PipeDirection.In,
+                NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Byte,
                 PipeOptions.Asynchronous);
 

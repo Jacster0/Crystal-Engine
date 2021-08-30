@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace CrystalEditor.Utils.Extensions
 {
@@ -15,7 +15,7 @@ namespace CrystalEditor.Utils.Extensions
 
             stream.Read(buffer);
 
-            fixed(byte* ptr = buffer)
+            fixed (byte* ptr = buffer)
             {
                 return Marshal.PtrToStructure<T>((IntPtr)ptr);
             }
@@ -26,7 +26,7 @@ namespace CrystalEditor.Utils.Extensions
             var length = Marshal.SizeOf<T>();
             Span<byte> buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
 
-            fixed(byte* ptr = buffer)
+            fixed (byte* ptr = buffer)
             {
                 Marshal.StructureToPtr(structure, (IntPtr)ptr, true);
             }

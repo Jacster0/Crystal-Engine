@@ -10,9 +10,9 @@ namespace CrystalEditor.Utils
     [Flags]
     public enum LogLevel
     {
-        Info    = 0x01,
+        Info = 0x01,
         Warning = 0x02,
-        Error   = 0x04,
+        Error = 0x04,
     };
 
     class LogMessage
@@ -35,19 +35,19 @@ namespace CrystalEditor.Utils
             Line = line;
         }
     }
-    
+
     static class Logger
     {
         private static LogLevel messageFilter = LogLevel.Info | LogLevel.Warning | LogLevel.Error;
         private static readonly ObservableCollection<LogMessage> messages = new ObservableCollection<LogMessage>();
-        public static ReadOnlyObservableCollection<LogMessage> Messages 
+        public static ReadOnlyObservableCollection<LogMessage> Messages
         {
-            get; 
+            get;
             private set;
         } = new ReadOnlyObservableCollection<LogMessage>(messages);
 
         public static CollectionViewSource FilteredMessages { get; set; } = new CollectionViewSource() { Source = Messages };
-        
+
         static Logger()
         {
             FilteredMessages.Filter += (s, e) =>
@@ -58,7 +58,7 @@ namespace CrystalEditor.Utils
         }
 
         public static async void Log(
-            string message, 
+            string message,
             LogLevel lvl = LogLevel.Info,
             [CallerFilePath] string file = "",
             [CallerMemberName] string method = "",
@@ -66,7 +66,7 @@ namespace CrystalEditor.Utils
         {
             await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                messages.Add(new LogMessage(message, lvl,file,method,line));
+                messages.Add(new LogMessage(message, lvl, file, method, line));
             }));
         }
 

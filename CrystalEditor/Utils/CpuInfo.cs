@@ -29,7 +29,7 @@ namespace CrystalEditor.Utils
         public CpuInfo()
         {
             const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Static;
-            const string methodName         = "get_cpu_information";
+            const string methodName = "get_cpu_information";
 
             //I'm doing this reflection bullshit because I don't want to expose the "get_cpu_information" method as part of the public api
             //and the friend of class concept does not exist in C# AFAIK.

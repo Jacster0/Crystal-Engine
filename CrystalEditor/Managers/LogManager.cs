@@ -1,13 +1,7 @@
 ﻿using CrystalEditor.Networking;
 using CrystalEditor.Utils;
 using CrystalEditor.Utils.Extensions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Pipes;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CrystalEditor.Managers
@@ -17,7 +11,7 @@ namespace CrystalEditor.Managers
         private const int MAX_LOG_SIZE = 512;
         private const int MAX_FILE_NAME_LENGTH = 260;
         private const int MAX_FUNCTION_NAME_LENGTH = 64;
-     
+
         private MessageInfo messageInfo;
         NamedPipeServer<MessageInfo> server;
 
@@ -57,13 +51,13 @@ namespace CrystalEditor.Managers
             {
                 if (!server.data.Empty())
                 {
-                    if(server.data.TryDequeue(out messageInfo))
+                    if (server.data.TryDequeue(out messageInfo))
                     {
                         Logger.Log(
-                            messageInfo.Message, 
-                            messageInfo.Level, 
-                            messageInfo.FileName, 
-                            messageInfo.FunctionName, 
+                            messageInfo.Message,
+                            messageInfo.Level,
+                            messageInfo.FileName,
+                            messageInfo.FunctionName,
                             messageInfo.Line);
                     }
                 }

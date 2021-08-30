@@ -1,6 +1,4 @@
-﻿using CrystalEditor.API;
-using CrystalEditor.Managers;
-using System.Threading;
+﻿using CrystalEditor.Managers;
 using System.Windows;
 
 namespace CrystalEditor
