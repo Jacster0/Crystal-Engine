@@ -1,5 +1,7 @@
 #include "D3D12Core.h"
 #include "Utils/D3D12Exception.h"
+#include "D3D12CommandQueue.h"
+
 #include <dxgidebug.h>
 
 using namespace Crystal;
@@ -14,6 +16,11 @@ namespace impl {
 		D3D_ROOT_SIGNATURE_VERSION HighestRootSignatureVersion;
 
 		std::array<std::unique_ptr<DescriptorAllocator>, D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES> DescriptorAllocators;
+
+		std::unique_ptr<CommandQueue<CommandListType_t::direct>> GraphicsQueue;
+		std::unique_ptr<CommandQueue<CommandListType_t::compute>> ComputeQueue;
+		std::unique_ptr<CommandQueue<CommandListType_t::copy>> CopyQueue;
+
 		bool IsInitialized;
 	} data;
 
@@ -156,3 +163,9 @@ void RHICore::ReleaseStaleDescriptors() noexcept {
 		data.DescriptorAllocators[i]->ReleaseStaleDescriptors();
 	}
 }
+
+CommandQueue<CommandListType_t::direct>& Crystal::RHICore::GetGraphicsQueue() noexcept { return *data.GraphicsQueue.get(); }
+
+CommandQueue<CommandListType_t::compute>& Crystal::RHICore::GetComputeQueue() noexcept { return *data.ComputeQueue.get(); }
+
+CommandQueue<CommandListType_t::copy>& Crystal::RHICore::GetCopyQueue() noexcept { return *data.CopyQueue.get(); }

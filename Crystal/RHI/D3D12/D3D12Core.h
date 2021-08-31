@@ -1,10 +1,12 @@
 #pragma once
 #include "D3D12DescriptorHeap.h"
+#include "D3D12CommandQueue.h"
 #include "Utils/d3dx12.h"
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 #include <memory>
 #include <array>
+#include "../Graphics/Types/Types.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -21,4 +23,8 @@ namespace Crystal::RHICore {
 
 	[[nodiscard]] inline DescriptorAllocation AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1) noexcept;
 	inline void ReleaseStaleDescriptors() noexcept;
+
+	[[nodiscard]] CommandQueue<CommandListType_t::direct>& GetGraphicsQueue() noexcept;
+	[[nodiscard]] CommandQueue<CommandListType_t::compute>& GetComputeQueue() noexcept;
+	[[nodiscard]] CommandQueue<CommandListType_t::copy>& GetCopyQueue()    noexcept;
 }
