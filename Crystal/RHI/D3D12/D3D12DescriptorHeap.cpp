@@ -1,5 +1,5 @@
-#include "D3D12Core.h"
 #include "D3D12DescriptorHeap.h"
+#include "D3D12Core.h"
 #include "Utils/D3D12Exception.h"
 #include <cassert>
 #include <algorithm>

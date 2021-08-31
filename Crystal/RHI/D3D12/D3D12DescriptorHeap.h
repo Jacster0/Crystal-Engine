@@ -6,9 +6,9 @@
 #include <queue>
 #include <vector>
 #include <wrl.h>
+#include <set>
 
 #include "Utils/d3dx12.h"
-#include <set>
 
 namespace Crystal {
     class DescriptorAllocatorPage;
