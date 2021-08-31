@@ -44,6 +44,8 @@ namespace Crystal {
         [[nodiscard]] D3D12_RT_FORMAT_ARRAY GetRenderTargetFormats() const noexcept;
         [[nodiscard]] DXGI_FORMAT GetDepthStencilFormat() const noexcept;
         [[nodiscard]] DXGI_SAMPLE_DESC GetSampleDesc() const noexcept;
+
+        void Reset() { m_textures = std::vector<std::shared_ptr<Texture>>(AttachmentPoint::NumAttachmentPoints); }
     private:
         std::vector<std::shared_ptr<Texture>> m_textures{ AttachmentPoint::NumAttachmentPoints };
         Size m_size{ 0,0 };
