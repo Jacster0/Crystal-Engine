@@ -20,8 +20,8 @@ SwapChain::SwapChain(HWND hWnd)
 {
 	assert(hWnd);
 
-	auto& d3d12CommandQueue = RHICore::GetGraphicsQueue().GetNativeCommandQueue();
-	auto adapter            = RHICore::GetPhysicalDevice();
+	auto d3d12CommandQueue   = RHICore::GetGraphicsQueue().GetNativeCommandQueue();
+	auto& adapter            = RHICore::GetPhysicalDevice();
 
 	ComPtr<IDXGIFactory>  dxgiFactory;
 	ComPtr<IDXGIFactory5> dxgiFactory5;
@@ -42,6 +42,9 @@ SwapChain::SwapChain(HWND hWnd)
 	m_width  = windowRect.right  - windowRect.left;
 	m_height = windowRect.bottom - windowRect.top;
 
+	uint32_t flags = (m_tearingSupported ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0);
+	flags         |= DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
 		.Width       = m_width,
 		.Height      = m_height,
@@ -53,18 +56,19 @@ SwapChain::SwapChain(HWND hWnd)
 		.Scaling     = DXGI_SCALING_STRETCH,
 		.SwapEffect  = DXGI_SWAP_EFFECT_FLIP_DISCARD,
 		.AlphaMode   = DXGI_ALPHA_MODE_UNSPECIFIED,
-		.Flags       = (m_tearingSupported ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0) | DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT
+		.Flags       = flags,
 	};
 
 	ComPtr<IDXGISwapChain1> dxgiSwapChain1;
 
 	ThrowIfFailed(dxgiFactory5->CreateSwapChainForHwnd(
-		&d3d12CommandQueue,
+		d3d12CommandQueue.Get(),
 		m_hWnd,
 		&swapChainDesc,
 		nullptr,
 		nullptr,
 		&dxgiSwapChain1));
+
 	ThrowIfFailed(dxgiSwapChain1.As(&m_dxgiSwapChain));
 	ThrowIfFailed(dxgiFactory5->MakeWindowAssociation(m_hWnd, DXGI_MWA_NO_ALT_ENTER));
 

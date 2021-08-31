@@ -18,13 +18,13 @@ namespace Crystal {
 	public:
 		CommandQueue() {
 			if constexpr (CommandType == CommandListType_t::copy) {
-				m_context = std::make_unique<CommandContext>(Type);
+				m_context = std::make_unique<CommandContext>({ CommandType });
 			}
 			else if constexpr (CommandType == CommandListType_t::compute) {
-				m_context = std::make_unique<ComputeContext>(Type);
+				m_context = std::make_unique<ComputeContext>({ CommandType });
 			}
 			else if constexpr (CommandType == CommandListType_t::direct) {
-				m_context = std::make_unique<GraphicsContext>(Type);
+				m_context = std::make_unique<GraphicsContext>({ CommandType });
 			}
 		}
 
@@ -41,7 +41,7 @@ namespace Crystal {
 
 		[[nodiscard]] uint64_t Signal() noexcept {
 			const auto fenceValue = ++m_fenceValue;
-			m_d3d12CommandQueue->Signal(m_fence, fenceValue);
+			m_d3d12CommandQueue->Signal(m_fence.Get(), fenceValue);
 
 			return fenceValue;
 		}
@@ -52,16 +52,15 @@ namespace Crystal {
 				m_fence->SetEventOnCompletion(fenceValue, event);
 
 				WaitForSingleObject(event, std::numeric_limits<DWORD>::max());
-				CloseHandle();
+				CloseHandle(event);
 			}
 		}
 
 		[[nodiscard]] bool IsFenceComplete(uint64_t fenceValue) noexcept { return m_fence->GetCompletedValue() >= fenceValue; }
 		void Wait(const CommandQueue& rhs) noexcept { m_d3d12CommandQueue->Wait(rhs.m_fence.Get(), rhs.m_fenceValue); }
 
-		[[nodiscard]] ID3D12CommandQueue& GetNativeCommandQueue() noexcept { *return m_d3d12CommandQueue.Get(); }
-		[[nodiscard]] const ID3D12CommandQueue& GetNativeCommandQueue() const noexcept { *return m_d3d12CommandQueue.Get(); }
-
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12CommandQueue> GetNativeCommandQueue() const noexcept { return m_d3d12CommandQueue; }
+		
 		[[nodiscard]] const CommandContext& GetCommandList() const noexcept { return *m_context.get(); }
 		[[nodiscard]] CommandContext& GetCommandList() noexcept { return *m_context.get(); }
 	private:
