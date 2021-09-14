@@ -1,6 +1,8 @@
 #include "D3D12Core.h"
 #include "Utils/D3D12Exception.h"
 #include "D3D12CommandQueue.h"
+#include "D3D12CommandContext.h"
+#include "../Graphics/Types/Types.h"
 
 #include <dxgidebug.h>
 
@@ -17,9 +19,9 @@ namespace impl {
 
 		std::array<std::unique_ptr<DescriptorAllocator>, D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES> DescriptorAllocators;
 
-		std::unique_ptr<CommandQueue<CommandListType_t::direct>> GraphicsQueue;
-		std::unique_ptr<CommandQueue<CommandListType_t::compute>> ComputeQueue;
-		std::unique_ptr<CommandQueue<CommandListType_t::copy>> CopyQueue;
+		std::unique_ptr<CommandQueue> GraphicsQueue;
+		std::unique_ptr<CommandQueue> ComputeQueue;
+		std::unique_ptr<CommandQueue> CopyQueue;
 
 		bool IsInitialized;
 	} data;
@@ -129,6 +131,12 @@ void RHICore::Intialize() {
 	CreatePhysicalDevice();
 	CreateDevice();
 
+	//Create command queues
+	data.GraphicsQueue = std::make_unique<CommandQueue>(CommandListType_t::direct);
+	data.ComputeQueue  = std::make_unique<CommandQueue>(CommandListType_t::compute);
+	data.CopyQueue     = std::make_unique<CommandQueue>(CommandListType_t::copy);
+
+	//Create descriptor allocators
 	for (uint32_t i = 0; i < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; i++) {
 		data.DescriptorAllocators[i] = std::make_unique<DescriptorAllocator>(static_cast<D3D12_DESCRIPTOR_HEAP_TYPE>(i));
 	}
@@ -143,14 +151,15 @@ void RHICore::Intialize() {
 		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
 	}
 	data.HighestRootSignatureVersion = featureData.HighestVersion;
-	data.IsInitialized               = true;
+
+	data.IsInitialized = true;
 }
 
 ID3D12Device8& RHICore::GetDevice() noexcept { return *data.D3d12Device.Get(); }
 
 IDXGIAdapter4& RHICore::GetPhysicalDevice() noexcept { return *data.DxgiAdapter.Get(); }
 
-const std::wstring& RHICore::GetPhysicalDeviceDescription() noexcept { return data.AdapterDesc.Description; }
+std::wstring RHICore::GetPhysicalDeviceDescription() noexcept { return std::wstring(data.AdapterDesc.Description); }
 
 D3D_ROOT_SIGNATURE_VERSION RHICore::GetHighestRootSignatureVersion() noexcept { return data.HighestRootSignatureVersion; }
 
@@ -164,8 +173,6 @@ void RHICore::ReleaseStaleDescriptors() noexcept {
 	}
 }
 
-CommandQueue<CommandListType_t::direct>& Crystal::RHICore::GetGraphicsQueue() noexcept { return *data.GraphicsQueue.get(); }
-
-CommandQueue<CommandListType_t::compute>& Crystal::RHICore::GetComputeQueue() noexcept { return *data.ComputeQueue.get(); }
-
-CommandQueue<CommandListType_t::copy>& Crystal::RHICore::GetCopyQueue() noexcept { return *data.CopyQueue.get(); }
+CommandQueue& RHICore::GetGraphicsQueue() noexcept { return *data.GraphicsQueue.get(); }
+CommandQueue& RHICore::GetComputeQueue()  noexcept { return *data.ComputeQueue.get(); }
+CommandQueue& RHICore::GetCopyQueue()     noexcept { return *data.CopyQueue.get(); }
