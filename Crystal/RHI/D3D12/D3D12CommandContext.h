@@ -4,8 +4,9 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <vector>
+#include <span>
 
-#include "../../Graphics/Types/Types.h"
+#include "../Graphics/Types/Types.h"
 #include "../Core/Math/Rectangle.h"
 
 namespace Crystal {
@@ -80,12 +81,17 @@ namespace Crystal {
 	
 	class ComputeContext : public CommandContext {
 	public:
+		explicit ComputeContext(CommandListType cmdListType);
+
 		void SetComputeRootSignature(const RootSignature* const rootSignature) noexcept;
 		void Dispatch(uint32_t numGroupsX, uint32_t numGroupsY = 1, uint32_t numGroupsZ = 1) noexcept;
 		void SetComputeShaderConstants(uint32_t rootParameterIndex, uint32_t numConstants, const void* const constants) const noexcept;
 	};
 
 	class GraphicsContext : public ComputeContext {
+	public:
+		explicit GraphicsContext(CommandListType cmdListType);
+
 		void ClearRTV(const Texture& texture, const float* const clearColor) noexcept;
 		void ClearDSV(const Texture& texture, ClearFlag clearFlags, float depth = 1.0f, uint8_t stencil = 0) noexcept;
 
@@ -95,9 +101,9 @@ namespace Crystal {
 		void SetShaderResourceView(uint32_t slot, size_t numElements, size_t elementSize, const void* bufferData) const noexcept;
 
 		void SetScissorRect(const Math::Rectangle& scissorRect) const noexcept;
-		void SetScissorRects(const Math::Rectangle* const scissorRects, const uint32_t scissorCount) const noexcept;
+		void SetScissorRects(std::span<const Math::Rectangle> scissorRects) const noexcept;
 		void SetViewport(const Viewport& viewport) const noexcept;
-		void SetViewports(const Viewport* const viewports, const uint32_t viewportCount) const noexcept;
+		void SetViewports(std::span<const Viewport> viewports) const noexcept;
 
 		void SetRenderTarget(const RenderTarget& renderTarget) noexcept;
 		void SetPrimitiveTopology(PrimitiveTopology topology) noexcept;

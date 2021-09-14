@@ -187,6 +187,11 @@ void CommandContext::TransitionResource(
 	}
 }
 
+ComputeContext::ComputeContext(CommandListType cmdListType)
+	:
+	CommandContext(cmdListType)
+{}
+
 void ComputeContext::SetComputeRootSignature(const RootSignature* const rootSignature) noexcept {
 	if (rootSignature) {
 		const auto d3d12RootSignature = rootSignature->GetRootSignature().Get();
@@ -224,6 +229,11 @@ void ComputeContext::SetComputeShaderConstants(
 {
 	m_commandList->SetComputeRoot32BitConstants(rootParameterIndex, numConstants, constants, 0);
 }
+
+GraphicsContext::GraphicsContext(CommandListType cmdListType)
+	:
+	ComputeContext(cmdListType)
+{}
 
 void GraphicsContext::ClearRTV(const Texture& texture, const float* const clearColor) noexcept {
 	TransitionResource(&texture, { { ResourceState_t::render_target }, true });
@@ -292,28 +302,30 @@ void GraphicsContext::SetShaderResourceView(
 }
 
 void GraphicsContext::SetScissorRect(const Math::Rectangle& scissorRect) const noexcept {
-	SetScissorRects(&scissorRect, 1);
+	SetScissorRects(std::array{scissorRect });
 }
 
-void GraphicsContext::SetScissorRects(const Math::Rectangle* const scissorRects, const uint32_t scissorCount) const noexcept {
-	m_commandList->RSSetScissorRects(scissorCount, reinterpret_cast<const D3D12_RECT* const>(scissorRects));
+void GraphicsContext::SetScissorRects(std::span<const Math::Rectangle> scissorRects) const noexcept {
+	m_commandList->RSSetScissorRects(scissorRects.size(), reinterpret_cast<const D3D12_RECT* const>(scissorRects.data()));
 }
 
 void GraphicsContext::SetViewport(const Viewport& viewport) const noexcept {
-	SetViewports(&viewport, 1);
+	SetViewports(std::array{ viewport });
 }
 
-void GraphicsContext::SetViewports(const Viewport* const viewports, const uint32_t viewportCount) const noexcept {
-	m_commandList->RSSetViewports(viewportCount, reinterpret_cast<const D3D12_VIEWPORT* const>(viewports));
+void GraphicsContext::SetViewports(std::span<const Viewport> viewports) const noexcept {
+	m_commandList->RSSetViewports(viewports.size(), reinterpret_cast<const D3D12_VIEWPORT* const>(viewports.data()));
 }
 
 void GraphicsContext::SetRenderTarget(const RenderTarget& renderTarget) noexcept {
-	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> renderTargetDescriptors(AttachmentPoint::NumAttachmentPoints);
+	static constexpr size_t MAX_RENDER_TARGETS{ 8 };
+
+	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> renderTargetDescriptors(MAX_RENDER_TARGETS);
 
 	const auto& textures = renderTarget.GetTextures();
 
-	//Bind color targets (max of 8 render targets can be bound to the rendering pipeline
-	for (size_t i = 0; i < 8; i++) {
+	//Bind render targets
+	for (size_t i = 0; i < MAX_RENDER_TARGETS; i++) {
 		auto texture = textures[i];
 
 		if (texture) {
