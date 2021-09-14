@@ -7,12 +7,12 @@ namespace Crystal {
 	struct Size {
 		union {
 			T Width;
-			T First
+			T First;
 		};
 		
 		union {
 			T Height;
-			T Second
+			T Second;
 		};
 	};
 
