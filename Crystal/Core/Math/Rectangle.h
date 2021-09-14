@@ -1,5 +1,6 @@
 #pragma once
 #include <limits>
+#include <cmath>
 
 //I hate macros, also why did Microsoft decide it was a good
 //idea to name a FUNCTION "Rectangle"??????
@@ -25,6 +26,11 @@ namespace Crystal::Math {
             Right(right),
             Bottom(bottom)
         {}
+
+        auto Width()     const noexcept { return Right - Left; }
+        auto Height()    const noexcept { return Bottom - Top; }
+        auto Area()      const noexcept { return Width() * Height(); }
+        auto Perimeter() const noexcept { return 2 * Width() + 2 * Height(); }
 
         [[nodiscard]] constexpr bool operator==(const Rectangle& rhs) const noexcept {
             return Left == rhs.Left && Top == rhs.Top && Right == rhs.Right && Bottom == rhs.Bottom;
