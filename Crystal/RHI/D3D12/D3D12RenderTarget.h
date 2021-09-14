@@ -30,9 +30,9 @@ namespace Crystal {
         void Resize(Size size) noexcept;
         void Resize(uint32_t width, uint32_t height) noexcept;
 
-        [[nodiscard]] const Size GetSize() const noexcept { return m_size; }
-        [[nodiscard]] const uint32_t GetWidth() const noexcept { return m_size.first; }
-        [[nodiscard]] const uint32_t GetHeight() const noexcept { return m_size.second; }
+        [[nodiscard]] constexpr Size GetSize() const noexcept { return m_size; }
+        [[nodiscard]] constexpr uint32_t GetWidth() const noexcept { return m_size.first; }
+        [[nodiscard]] constexpr uint32_t GetHeight() const noexcept { return m_size.second; }
 
         [[nodiscard]] Viewport GetViewPort(
             Size scale = { 1.0f, 1.0f }, 
