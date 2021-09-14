@@ -1,6 +1,7 @@
 #pragma once
 #include "../Platform/Windows/CrystalWindow.h"
 #include "../RHI/RenderTarget.h"
+#include "../Core/Lib/CrystalTypes.h"
 #include "Viewport.h"
 #include "Camera.h"
 
@@ -18,7 +19,8 @@ namespace Crystal {
         Graphics& operator=(Graphics&& rhs)      = delete;
         ~Graphics()                              = default;
 
-        void Initialize(uint32_t width, uint32_t height);
+        void Initialize(USize size);
+        void Resize(USize size);
         void Resize(uint32_t width, uint32_t height);
         void SetWindowHandle(HWND hWnd) noexcept { m_hWnd = hWnd; }
     private:

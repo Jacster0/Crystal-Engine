@@ -11,8 +11,8 @@ void RenderTarget::AttachTexture(AttachmentPoint attachmentPoint, std::shared_pt
 	if (texture && texture->GetUnderlyingResource()) {
 		const auto desc = texture->GetResourceDesc();
 
-		m_size.first  = static_cast<uint32_t>(desc.Width);
-		m_size.second = static_cast<uint32_t>(desc.Height);
+		m_size.Width  = static_cast<uint32_t>(desc.Width);
+		m_size.Height = static_cast<uint32_t>(desc.Height);
 	}
 }
 
@@ -20,9 +20,9 @@ std::shared_ptr<Texture> RenderTarget::GetTexture(AttachmentPoint attachmentPoin
 	return m_textures.at(attachmentPoint);
 }
 
-void RenderTarget::Resize(Size size) noexcept {
+void RenderTarget::Resize(USize size) noexcept {
 	m_size = size;
-	Resize(m_size.first, m_size.second);
+	Resize(m_size.Width, m_size.Height);
 }
 
 void RenderTarget::Resize(uint32_t width, uint32_t height) noexcept {
@@ -33,7 +33,7 @@ void RenderTarget::Resize(uint32_t width, uint32_t height) noexcept {
 	}
 }
 
-Viewport RenderTarget::GetViewPort(Size scale, Size bias, float minDepth, float maxDepth) const noexcept {
+Viewport RenderTarget::GetViewPort(FSize scale, FSize bias, float minDepth, float maxDepth) const noexcept {
 	uint64_t width  = 0;
 	uint32_t height = 0;
 
@@ -47,10 +47,10 @@ Viewport RenderTarget::GetViewPort(Size scale, Size bias, float minDepth, float 
 	}
 
 	return {
-		static_cast<float>(width  * bias.first),
-		static_cast<float>(height * bias.second),
-		static_cast<float>(width  * scale.first),
-		static_cast<float>(height * scale.second),
+		static_cast<float>(width  * bias.First),
+		static_cast<float>(height * bias.Second),
+		static_cast<float>(width  * scale.First),
+		static_cast<float>(height * scale.Second),
 		minDepth,
 		maxDepth
 	};

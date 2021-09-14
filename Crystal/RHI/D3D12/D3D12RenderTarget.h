@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "../Core/Lib/CrystalTypes.h"
 #include "../Graphics/Viewport.h"
 #include "../Platform/Windows/CrystalWindow.h"
 #include <d3d12.h>
@@ -18,25 +19,23 @@ namespace Crystal {
         DepthStencil,
         NumAttachmentPoints,
     };
-    
-    using Size = std::pair<uint32_t, uint32_t>;
-
+   
     class Texture;
     class RenderTarget {
     public:
         void AttachTexture(AttachmentPoint attachmentPoint, std::shared_ptr<Texture> texture) noexcept;
         std::shared_ptr<Texture> GetTexture(AttachmentPoint attachmentPoint) const noexcept;
 
-        void Resize(Size size) noexcept;
+        void Resize(USize size) noexcept;
         void Resize(uint32_t width, uint32_t height) noexcept;
 
-        [[nodiscard]] constexpr Size GetSize() const noexcept { return m_size; }
-        [[nodiscard]] constexpr uint32_t GetWidth() const noexcept { return m_size.first; }
-        [[nodiscard]] constexpr uint32_t GetHeight() const noexcept { return m_size.second; }
+        [[nodiscard]] constexpr USize GetSize() const noexcept { return m_size; }
+        [[nodiscard]] constexpr uint32_t GetWidth() const noexcept { return m_size.Width; }
+        [[nodiscard]] constexpr uint32_t GetHeight() const noexcept { return m_size.Height; }
 
         [[nodiscard]] Viewport GetViewPort(
-            Size scale = { 1.0f, 1.0f }, 
-            Size bias = { 0.0f, 0.0f }, 
+            FSize scale    = { 1.0f, 1.0f }, 
+            FSize bias     = { 0.0f, 0.0f }, 
             float minDepth = 0.0f, 
             float maxDepth = 1.0f) const noexcept;
 
@@ -48,6 +47,6 @@ namespace Crystal {
         void Reset() { m_textures = std::vector<std::shared_ptr<Texture>>(AttachmentPoint::NumAttachmentPoints); }
     private:
         std::vector<std::shared_ptr<Texture>> m_textures{ AttachmentPoint::NumAttachmentPoints };
-        Size m_size{ 0,0 };
+        USize m_size{ 0,0 };
     };
 }

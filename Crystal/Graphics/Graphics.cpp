@@ -7,20 +7,24 @@
 
 using namespace Crystal;
 
-void Graphics::Initialize(uint32_t width, uint32_t height) {
+void Graphics::Initialize(USize size) {
 	cryfmtlog_info("Physical device: {}\n", ToNarrow(RHICore::GetPhysicalDeviceDescription()));
 
 	m_swapChain = std::make_unique<SwapChain>(m_hWnd);
 
-	m_clientWidth  = width;
-	m_clientHeight = height;
+	m_clientWidth  = size.Width;
+	m_clientHeight = size.Height;
 
 	Resize(m_clientWidth, m_clientHeight);
 
 	m_isIntialized = true;
 }
 
-void Graphics::Resize(uint32_t width, uint32_t height) {
+void Graphics::Resize(USize size) {
+	Resize(size.Width, size.Height);
+}
+
+void Crystal::Graphics::Resize(uint32_t width, uint32_t height) {
 	if (m_clientWidth != width || m_clientHeight != height) [[likely]] {
 		m_clientWidth  = std::max(1u, width);
 		m_clientHeight = std::max(1u, height);
@@ -34,7 +38,7 @@ void Graphics::Resize(uint32_t width, uint32_t height) {
 			.MaxDepth = 0.0f
 		};
 
-		m_camera.SetProjection(45.0f, m_viewPort.AspectRatio(), { .Near = 0.1f, .Far = 1000.0f });
+		m_camera.SetProjection(45.0f, m_viewPort.AspectRatio(), {.Near = 0.1f, .Far = 1000.0f });
 
 		m_renderTarget.Resize(m_clientWidth, m_clientHeight);
 		m_swapChain->Resize(m_clientWidth, m_clientHeight);

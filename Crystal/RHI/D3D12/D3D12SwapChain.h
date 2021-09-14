@@ -1,6 +1,7 @@
 #pragma once
 #include "D3D12RenderTarget.h"
 #include "../Graphics/Types/Types.h"
+#include "../Core/Lib/CrystalTypes.h"
 
 #include <dxgi1_5.h>     
 #include <wrl/client.h>  
@@ -16,6 +17,7 @@ namespace Crystal {
 
 		SwapChain(HWND hWnd, DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R10G10B10A2_UNORM);
 		uint32_t Present(const Texture* const texture = nullptr);
+		void Resize(USize size);
 		void Resize(uint32_t width, uint32_t height);
 		void WaitForSwapChain() noexcept;
 

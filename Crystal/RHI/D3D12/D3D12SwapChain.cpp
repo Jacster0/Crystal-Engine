@@ -111,6 +111,10 @@ uint32_t SwapChain::Present(const Texture* const texture) {
 	}
 }
 
+void Crystal::SwapChain::Resize(USize size) {
+	Resize(size.Width, size.Height);
+}
+
 void SwapChain::Resize(uint32_t width, uint32_t height) {
 	if (m_width != width || m_height != height) [[likely]] {
 		m_width  = std::max(1u, width);
