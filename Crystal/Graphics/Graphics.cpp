@@ -7,13 +7,13 @@
 
 using namespace Crystal;
 
-void Graphics::Initialize(USize size) {
+void Graphics::Initialize(uint32_t width, uint32_t height) {
 	cryfmtlog_info("Physical device: {}\n", ToNarrow(RHICore::GetPhysicalDeviceDescription()));
 
 	m_swapChain = std::make_unique<SwapChain>(m_hWnd);
 
-	m_clientWidth  = size.Width;
-	m_clientHeight = size.Height;
+	m_clientWidth  = width;
+	m_clientHeight = height;
 
 	Resize(m_clientWidth, m_clientHeight);
 
