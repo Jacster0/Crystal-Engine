@@ -5,6 +5,8 @@
 #include "D3D12RenderTarget.h"
 #include "D3D12Texture.h"
 #include "Utils/D3D12Exception.h"
+#include "Utils/ResourceStateTracker.h"
+#include "../Core/Math/Rectangle.h"
 
 #include <cassert>
 #include <algorithm>
@@ -14,14 +16,15 @@ using namespace Crystal;
 using namespace Microsoft::WRL;
 using namespace std::chrono_literals;
 
-SwapChain::SwapChain(HWND hWnd) 
+SwapChain::SwapChain(HWND hWnd, DXGI_FORMAT renderTargetFormat)
 	:
-	m_hWnd(hWnd)
+	m_hWnd(hWnd),
+	m_renderTargetFormat(renderTargetFormat)
 {
 	assert(hWnd);
 
-	auto d3d12CommandQueue   = RHICore::GetGraphicsQueue().GetNativeCommandQueue();
-	auto& adapter            = RHICore::GetPhysicalDevice();
+	auto& d3d12CommandQueue = RHICore::GetGraphicsQueue();
+	auto& adapter           = RHICore::GetPhysicalDevice();
 
 	ComPtr<IDXGIFactory>  dxgiFactory;
 	ComPtr<IDXGIFactory5> dxgiFactory5;
@@ -33,14 +36,14 @@ SwapChain::SwapChain(HWND hWnd)
 	if (SUCCEEDED(
 		dxgiFactory5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(bool))))
 	{
-		m_tearingSupported = (allowTearing == true);
+		m_tearingSupported = allowTearing == true;
 	}
 
-	RECT windowRect;
-	GetClientRect(hWnd, &windowRect);
+	Math::Rectangle windowRect;
+	GetClientRect(hWnd, reinterpret_cast<RECT*>(&windowRect));
 
-	m_width  = windowRect.right  - windowRect.left;
-	m_height = windowRect.bottom - windowRect.top;
+	m_width  = windowRect.Width();
+	m_height = windowRect.Height();
 
 	uint32_t flags = (m_tearingSupported ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0);
 	flags         |= DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
@@ -59,17 +62,16 @@ SwapChain::SwapChain(HWND hWnd)
 		.Flags       = flags,
 	};
 
-	ComPtr<IDXGISwapChain1> dxgiSwapChain1;
-
+	ComPtr<IDXGISwapChain1> swapChain;
 	ThrowIfFailed(dxgiFactory5->CreateSwapChainForHwnd(
-		d3d12CommandQueue.Get(),
+		d3d12CommandQueue.GetNativeCommandQueue().Get(),
 		m_hWnd,
 		&swapChainDesc,
 		nullptr,
 		nullptr,
-		&dxgiSwapChain1));
+		&swapChain));
 
-	ThrowIfFailed(dxgiSwapChain1.As(&m_dxgiSwapChain));
+	ThrowIfFailed(swapChain.As(&m_dxgiSwapChain));
 	ThrowIfFailed(dxgiFactory5->MakeWindowAssociation(m_hWnd, DXGI_MWA_NO_ALT_ENTER));
 
 	m_currentBackbufferIndex = m_dxgiSwapChain->GetCurrentBackBufferIndex();
@@ -79,12 +81,12 @@ SwapChain::SwapChain(HWND hWnd)
 	UpdateRenderTargetViews();
 }
 
-uint32_t SwapChain::Present(const Texture* texture) {
+uint32_t SwapChain::Present(const Texture* const texture) {
 	auto& queue           = RHICore::GetGraphicsQueue();
-	auto& ctx             = queue.GetCommandList();
+	auto& ctx             = queue.GetCommandContext();
 	const auto backBuffer = m_backbufferTextures.at(m_currentBackbufferIndex).get();
 
-	if (texture) {
+	if (texture) [[likely]] {
 		if (texture->GetResourceDesc().SampleDesc.Count > 1) {
 			ctx.ResolveSubResource(backBuffer, texture);
 		}

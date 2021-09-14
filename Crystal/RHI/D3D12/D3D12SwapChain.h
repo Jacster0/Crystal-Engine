@@ -14,8 +14,8 @@ namespace Crystal {
 	public:
 		static constexpr uint32_t BUFFER_COUNT = 3;
 
-		SwapChain(HWND hWnd);
-		uint32_t Present(const Texture* texture = nullptr);
+		SwapChain(HWND hWnd, DXGI_FORMAT renderTargetFormat = DXGI_FORMAT_R10G10B10A2_UNORM);
+		uint32_t Present(const Texture* const texture = nullptr);
 		void Resize(uint32_t width, uint32_t height);
 		void WaitForSwapChain() noexcept;
 
