@@ -6,7 +6,8 @@
 
 using namespace Crystal;
 
-MutexLock ResourceStateTracker::m_lock{};
+MutexLock ResourceStateTracker::m_lock;
+std::unordered_map<ID3D12Resource*, ResourceStateTracker::ResourceState> ResourceStateTracker::m_globalResourceState;
 
 ResourceStateTracker::ResourceStateTracker() noexcept {}
 
