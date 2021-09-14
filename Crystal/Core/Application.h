@@ -6,6 +6,7 @@
 namespace Crystal {
     struct ApplicationCreateInfo;
     class Window;
+    class Graphics;
     class Application {
     public:
         explicit Application(const ApplicationCreateInfo& info);
@@ -17,13 +18,17 @@ namespace Crystal {
 
         [[nodiscard]] Window& GetWindow() const noexcept;
         [[nodiscard]] CpuInfo& GetCpuInfo() noexcept { return m_cpuInfo; };
+
+        void Run();
     private:
         void Initialize() noexcept;
         void HandleInput() noexcept;
         void KeyboardInput() noexcept;
         void MouseInput() noexcept;
 
-        std::unique_ptr<Window> m_window = nullptr;
+        std::unique_ptr<Window> m_window{ nullptr };
+        std::unique_ptr<Graphics> m_gfx{ nullptr };
+
         CpuInfo m_cpuInfo;
         bool m_isInitialized = false;
     };
