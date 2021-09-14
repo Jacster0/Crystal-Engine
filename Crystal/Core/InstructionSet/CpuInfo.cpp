@@ -67,7 +67,7 @@ CpuInfo::CpuInfo() noexcept {
     };
 }
 
-const int Crystal::CpuInfo::GetNumberOfCores() const noexcept {
+const int CpuInfo::GetNumberOfCores() const noexcept {
     DWORD sizeInBytes{ 0 };
     int numCores{ 0 };
 
