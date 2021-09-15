@@ -2,8 +2,6 @@
 #include <chrono>
 
 namespace Crystal {
-	using namespace std::chrono_literals;
-
 	[[nodiscard]] inline std::string GetCurrrentDate() noexcept {
 		const auto local = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() };
 
