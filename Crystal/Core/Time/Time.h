@@ -11,7 +11,12 @@ namespace Crystal {
 			const std::chrono::zoned_time local = { std::chrono::current_zone(), std::chrono::system_clock::now() };
 
 			if constexpr (fmt.find("%R") != std::string::npos) {
-				return std::format(std::format("{}{}", fmt, ":{}"), local, std::stoi(std::format("{:%S}", local)));
+				const auto seconds = std::stoi(std::format("{:%S}", local));
+
+				if (seconds < 10) {
+					return std::format(std::format("{}{}", fmt, ":{}"), local, std::string("0").append(std::to_string(seconds)));
+				}
+				return std::format(std::format("{}{}", fmt, ":{}"), local, seconds);
 			}
 			else {
 				return std::format(fmt, local);
