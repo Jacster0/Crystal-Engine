@@ -18,9 +18,7 @@ namespace Crystal {
                 }
                 return std::format(std::format("{}{}", fmt, ":{}"), local, seconds);
             }
-            else {
-                return std::format(fmt, local);
-            }
+            return std::format(fmt, local);
         }
     }
 
