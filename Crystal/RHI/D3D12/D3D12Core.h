@@ -17,17 +17,17 @@ namespace Crystal { class CommandQueue; }
 namespace Crystal::RHICore {
 	using Crystal::CommandQueue;
 
-	void Intialize();
+	void intialize();
 
-	[[nodiscard]] ID3D12Device8& GetDevice() noexcept;
-	[[nodiscard]] IDXGIAdapter4& GetPhysicalDevice() noexcept;
-	[[nodiscard]] std::wstring GetPhysicalDeviceDescription() noexcept;
-	[[nodiscard]] D3D_ROOT_SIGNATURE_VERSION GetHighestRootSignatureVersion() noexcept;
+	[[nodiscard]] ID3D12Device8& get_device() noexcept;
+	[[nodiscard]] IDXGIAdapter4& get_physical_device() noexcept;
+	[[nodiscard]] std::wstring get_physical_device_description() noexcept;
+	[[nodiscard]] D3D_ROOT_SIGNATURE_VERSION get_highest_root_signature_version() noexcept;
 
-	[[nodiscard]] DescriptorAllocation AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1) noexcept;
-	void ReleaseStaleDescriptors() noexcept;
+	[[nodiscard]] DescriptorAllocation allocate_descriptors(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors = 1) noexcept;
+	void release_stale_descriptors() noexcept;
 
-	[[nodiscard]] CommandQueue& GetGraphicsQueue() noexcept;
-	[[nodiscard]] CommandQueue& GetComputeQueue() noexcept;
-	[[nodiscard]] CommandQueue& GetCopyQueue()    noexcept;
+	[[nodiscard]] CommandQueue& get_graphics_queue() noexcept;
+	[[nodiscard]] CommandQueue& get_compute_queue() noexcept;
+	[[nodiscard]] CommandQueue& get_copy_queue()    noexcept;
 }

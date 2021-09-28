@@ -7,7 +7,7 @@ using namespace Crystal;
 using namespace Microsoft::WRL;
 
 PipelineState::PipelineState(const PipelineStateSpecification& specification) noexcept {
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	ThrowIfFailed(device.CreatePipelineState(
 		reinterpret_cast<const D3D12_PIPELINE_STATE_STREAM_DESC*>(&specification), 

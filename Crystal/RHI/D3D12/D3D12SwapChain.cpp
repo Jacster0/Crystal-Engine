@@ -23,8 +23,8 @@ SwapChain::SwapChain(HWND hWnd, DXGI_FORMAT renderTargetFormat)
 {
 	assert(hWnd);
 
-	auto& d3d12CommandQueue = RHICore::GetGraphicsQueue();
-	auto& adapter           = RHICore::GetPhysicalDevice();
+	auto& d3d12CommandQueue = RHICore::get_graphics_queue();
+	auto& adapter           = RHICore::get_physical_device();
 
 	ComPtr<IDXGIFactory>  dxgiFactory;
 	ComPtr<IDXGIFactory5> dxgiFactory5;
@@ -82,7 +82,7 @@ SwapChain::SwapChain(HWND hWnd, DXGI_FORMAT renderTargetFormat)
 }
 
 uint32_t SwapChain::Present(const Texture* const texture) {
-	auto& queue           = RHICore::GetGraphicsQueue();
+	auto& queue           = RHICore::get_graphics_queue();
 	auto& ctx             = queue.GetCommandContext();
 	const auto backBuffer = m_backbufferTextures.at(m_currentBackbufferIndex).get();
 
@@ -105,7 +105,7 @@ uint32_t SwapChain::Present(const Texture* const texture) {
 		m_fenceValues[m_currentBackbufferIndex] = queue.Signal();
 		m_currentBackbufferIndex                = m_dxgiSwapChain->GetCurrentBackBufferIndex();
 
-		RHICore::ReleaseStaleDescriptors();
+		RHICore::release_stale_descriptors();
 
 		return m_currentBackbufferIndex;
 	}

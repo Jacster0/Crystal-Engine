@@ -12,7 +12,7 @@ LinearAllocatorPage::LinearAllocatorPage(size_t sizeInBytes)
 	:
 	m_pageSize(sizeInBytes)
 {
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	const auto buffer    = CD3DX12_RESOURCE_DESC::Buffer(m_pageSize);

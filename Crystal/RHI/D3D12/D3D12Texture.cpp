@@ -9,7 +9,7 @@
 using namespace Crystal;
 
 Texture::Texture(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_CLEAR_VALUE const* clearValue) {
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	if (clearValue) {
 		m_clearValue = std::make_unique<D3D12_CLEAR_VALUE>(*clearValue);
@@ -50,7 +50,7 @@ void Texture::Resize(uint32_t width, uint32_t height, uint32_t depthOrArraySize)
 		resourceDesc.DepthOrArraySize = depthOrArraySize;
 		resourceDesc.MipLevels        = resourceDesc.SampleDesc.Count > 1 ? 1 : 0;
 
-		auto& device = RHICore::GetDevice();
+		auto& device = RHICore::get_device();
 		const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
 		ThrowIfFailed(device.CreateCommittedResource(
@@ -96,30 +96,30 @@ bool Texture::CheckFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport) const noex
 
 void Texture::CreateViews() noexcept {
 	if (m_resource) {
-		auto& device = RHICore::GetDevice();
+		auto& device = RHICore::get_device();
 		CD3DX12_RESOURCE_DESC resourceDesc(m_resource->GetDesc());
 
 		//RTV
 		if ((resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) != 0 && CheckRTVSupport()) {
-			m_renderTargetView = RHICore::AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+			m_renderTargetView = RHICore::allocate_descriptors(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 			device.CreateRenderTargetView(m_resource.Get(), nullptr, m_renderTargetView.GetDescriptorHandle());
 		}
 
 		//DSV
 		if ((resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) != 0 && CheckDSVSupport()) {
-			m_depthStencilView = RHICore::AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+			m_depthStencilView = RHICore::allocate_descriptors(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 			device.CreateDepthStencilView(m_resource.Get(), nullptr, m_depthStencilView.GetDescriptorHandle());
 		}
 
 		//SRV
 		if ((resourceDesc.Flags & D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) != 0 && CheckSRVSupport()) {
-			m_shaderResourceView = RHICore::AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+			m_shaderResourceView = RHICore::allocate_descriptors(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 			device.CreateShaderResourceView(m_resource.Get(), nullptr, m_shaderResourceView.GetDescriptorHandle());
 		}
 
 		//Create an UAV for each mip (3D textures not supported)
 		if ((resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) != 0 && CheckUAVSupport() && resourceDesc.DepthOrArraySize == 1) {
-			m_unorderedAccessView = RHICore::AllocateDescriptors(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, resourceDesc.MipLevels);
+			m_unorderedAccessView = RHICore::allocate_descriptors(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, resourceDesc.MipLevels);
 
 			for (uint32_t i = 0; i < resourceDesc.MipLevels; i++) {
 				const auto& uavDesc = GetUAVDesc(resourceDesc, i);
@@ -137,7 +137,7 @@ void Texture::CreateViews() noexcept {
 void Texture::CheckFeatureSupport() {
 	m_formatSupport.Format = m_resource->GetDesc().Format;
 
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 	ThrowIfFailed(device.CheckFeatureSupport(
 		D3D12_FEATURE_FORMAT_SUPPORT,
 		&m_formatSupport,

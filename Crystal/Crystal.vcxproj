@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -107,6 +108,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -162,7 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Application.cpp" />
-    <ClCompile Include="Core\ECS\Entity.cpp" />
+    <ClCompile Include="Core\FileSystem\FileSystem.cpp" />
     <ClCompile Include="Core\Input\Keyboard.cpp" />
     <ClCompile Include="Core\Input\Mouse.cpp" />
     <ClCompile Include="Core\InstructionSet\CpuInfo.cpp" />
@@ -172,11 +174,16 @@
     <ClCompile Include="Core\Logging\ManagedLoggerSink.h" />
     <ClCompile Include="Core\Math\MathFunctions.h" />
     <ClCompile Include="Core\Math\Quaternion.cpp" />
+    <ClCompile Include="Core\Math\Transform.cpp" />
     <ClCompile Include="Core\Math\Vector2.cpp" />
     <ClCompile Include="Core\Math\Vector3.cpp" />
     <ClCompile Include="Core\Math\Vector4.cpp" />
+    <ClCompile Include="Core\Time\CrystalTimer.cpp" />
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Core\Exceptions\CrystalException.cpp" />
+    <ClCompile Include="Graphics\Camera.cpp" />
+    <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Networking\NamedPipeClient.cpp" />
     <ClCompile Include="Platform\Windows\Window.cpp" />
     <ClCompile Include="Platform\Windows\Window.h" />
@@ -188,6 +195,7 @@
     <ClCompile Include="RHI\D3D12\D3D12DynamicDescriptorHeap.cpp" />
     <ClCompile Include="RHI\D3D12\D3D12RenderTarget.cpp" />
     <ClCompile Include="RHI\D3D12\D3D12RootSignature.cpp" />
+    <ClCompile Include="RHI\D3D12\D3D12SwapChain.cpp" />
     <ClCompile Include="RHI\D3D12\D3D12Texture.cpp" />
     <ClCompile Include="RHI\D3D12\LinearAllocator.cpp" />
     <ClCompile Include="RHI\D3D12\D3D12DescriptorHeap.cpp" />
@@ -197,30 +205,45 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Application.h" />
+    <ClInclude Include="Core\ECS\Component.h" />
     <ClInclude Include="Core\ECS\Entity.h" />
-    <ClInclude Include="Core\ECS\entt.hpp" />
+    <ClInclude Include="Core\FileSystem\FileSystem.h" />
     <ClInclude Include="Core\Input\Keyboard.h" />
     <ClInclude Include="Core\Input\Mouse.h" />
     <ClInclude Include="Core\Exceptions\CrystalException.h" />
     <ClInclude Include="Core\InstructionSet\CpuInfo.h" />
     <ClInclude Include="Core\InstructionSet\InstructionSet.h" />
+    <ClInclude Include="Core\Lib\CrystalTypes.h" />
+    <ClInclude Include="Core\Lib\FixedString.h" />
     <ClInclude Include="Core\Lib\ThreadSafeQueue.h" />
+    <ClInclude Include="Core\Lib\type_traits.h" />
     <ClInclude Include="Core\Logging\Logger.h" />
     <ClInclude Include="Core\Logging\LogLevels.h" />
     <ClInclude Include="Core\Logging\Sink.h" />
+    <ClInclude Include="Core\Math\Common.h" />
     <ClInclude Include="Core\Math\Matrix.h" />
     <ClInclude Include="Core\Math\Quaternion.h" />
     <ClInclude Include="Core\Math\Rectangle.h" />
     <ClInclude Include="Core\Math\RNG.h" />
+    <ClInclude Include="Core\Math\Transform.h" />
     <ClInclude Include="Core\Math\Vector2.h" />
     <ClInclude Include="Core\Math\Vector3.h" />
     <ClInclude Include="Core\Math\Vector4.h" />
     <ClInclude Include="Core\Memory\MemoryConstants.h" />
+    <ClInclude Include="Core\Time\CrystalTimer.h" />
+    <ClInclude Include="Core\Time\Time.h" />
+    <ClInclude Include="Graphics\Camera.h" />
+    <ClInclude Include="Graphics\Graphics.h" />
+    <ClInclude Include="Graphics\Material.h" />
+    <ClInclude Include="Graphics\Mesh.h" />
     <ClInclude Include="Graphics\Types\Types.h" />
     <ClInclude Include="Graphics\Viewport.h" />
     <ClInclude Include="Networking\NamedPipeClient.h" />
     <ClInclude Include="Platform\Windows\CrystalWindow.h" />
+    <ClInclude Include="Platform\Windows\MessageBox.h" />
     <ClInclude Include="Platform\Windows\Types.h" />
+    <ClInclude Include="RHI\Buffer.h" />
+    <ClInclude Include="RHI\CommandContext.h" />
     <ClInclude Include="RHI\D3D12\D3D12Buffer.h" />
     <ClInclude Include="RHI\D3D12\D3D12CommandContext.h" />
     <ClInclude Include="RHI\D3D12\D3D12CommandQueue.h" />
@@ -228,16 +251,20 @@
     <ClInclude Include="RHI\D3D12\D3D12DynamicDescriptorHeap.h" />
     <ClInclude Include="RHI\D3D12\D3D12RenderTarget.h" />
     <ClInclude Include="RHI\D3D12\D3D12RootSignature.h" />
+    <ClInclude Include="RHI\D3D12\D3D12SwapChain.h" />
     <ClInclude Include="RHI\D3D12\D3D12Texture.h" />
     <ClInclude Include="RHI\D3D12\LinearAllocator.h" />
     <ClInclude Include="RHI\D3D12\D3D12DescriptorHeap.h" />
     <ClInclude Include="RHI\D3D12\D3D12PipelineState.h" />
+    <ClInclude Include="RHI\Texture.h" />
+    <ClInclude Include="RHI\PipelineState.h" />
+    <ClInclude Include="RHI\RenderTarget.h" />
     <ClInclude Include="RHI\D3D12\Utils\D3D12Exception.h" />
     <ClInclude Include="RHI\D3D12\Utils\d3dx12.h" />
     <ClInclude Include="RHI\D3D12\Utils\ResourceStateTracker.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Core\ECS\LICENSE.txt" />
+    <ClInclude Include="RHI\RHICore.h" />
+    <ClInclude Include="RHI\RootSignature.h" />
+    <ClInclude Include="RHI\SwapChain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

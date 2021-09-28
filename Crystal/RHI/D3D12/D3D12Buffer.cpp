@@ -12,7 +12,7 @@ Buffer::Buffer(const BufferDescription& desc)
 	:
 	m_bufferDesc(desc)
 {
-	auto& d3d12Device       = RHICore::GetDevice();
+	auto& d3d12Device       = RHICore::get_device();
 	const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(Size());
 	const auto heapProps    = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 

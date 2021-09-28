@@ -12,7 +12,7 @@ using namespace Crystal;
 CommandQueue::CommandQueue(CommandListType_t cmdListType) {
 	CommandListType type{ .Type = cmdListType };
 
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	D3D12_COMMAND_QUEUE_DESC desc{
 		.Type     = type.As<D3D12_COMMAND_LIST_TYPE>(),

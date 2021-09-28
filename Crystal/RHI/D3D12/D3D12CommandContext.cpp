@@ -20,7 +20,7 @@ using namespace Microsoft::WRL;
 namespace ranges = std::ranges;
 
 CommandContext::CommandContext(CommandListType cmdListType) {
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	ThrowIfFailed(device.CreateCommandAllocator(cmdListType.As<D3D12_COMMAND_LIST_TYPE>(), IID_PPV_ARGS(&m_commandAllocator)));
 	ThrowIfFailed(device.CreateCommandList(
@@ -28,7 +28,7 @@ CommandContext::CommandContext(CommandListType cmdListType) {
 		cmdListType.As<D3D12_COMMAND_LIST_TYPE>(),
 		m_commandAllocator.Get(),
 		nullptr,
-		IID_PPV_ARGS(&m_commandList)));
+		IID_PPV_ARGS(&m_d3d12CommandList)));
 
 	m_linearAllocator      = std::make_unique<LinearAllocator>();
 	m_resourceStateTracker = std::make_unique<ResourceStateTracker>();
@@ -53,7 +53,7 @@ void CommandContext::CopyResource(const Texture& source, const Texture& dest) no
 	TransitionResource(d3d12DestResource, { {ResourceState_t::copy_dest} });
 	TransitionResource(d3d12SourceResource, { { ResourceState_t::copy_source } });
 
-	m_commandList->CopyResource(d3d12DestResource.Get(), d3d12SourceResource.Get());
+	m_d3d12CommandList->CopyResource(d3d12DestResource.Get(), d3d12SourceResource.Get());
 
 	TrackResource(d3d12DestResource);
 	TrackResource(d3d12SourceResource);
@@ -71,7 +71,7 @@ void CommandContext::ResolveSubResource(
 
 		m_resourceStateTracker->FlushResourceBarriers(this);
 
-		m_commandList->ResolveSubresource(
+		m_d3d12CommandList->ResolveSubresource(
 			dest->GetUnderlyingResource().Get(),
 			destSubResource,
 			source->GetUnderlyingResource().Get(),
@@ -96,7 +96,7 @@ void CommandContext::SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, ID3D
 			}
 		);
 
-		m_commandList->SetDescriptorHeaps(descriptorHeapCount, m_descriptorHeaps.data());
+		m_d3d12CommandList->SetDescriptorHeaps(descriptorHeapCount, m_descriptorHeaps.data());
 	}
 }
 
@@ -107,7 +107,7 @@ void CommandContext::SetPipelineState(const PipelineState* const pipelineState) 
 		if (m_pipeLineState != d3d12PipelineState) {
 			m_pipeLineState = d3d12PipelineState;
 
-			m_commandList->SetPipelineState(d3d12PipelineState);
+			m_d3d12CommandList->SetPipelineState(d3d12PipelineState);
 			TrackResource(d3d12PipelineState);
 		}
 	}
@@ -127,7 +127,7 @@ bool CommandContext::Close(const CommandContext* const pendingCmdList) const noe
 
 void CommandContext::Reset() {
 	ThrowIfFailed(m_commandAllocator->Reset());
-	ThrowIfFailed(m_commandList->Reset(m_commandAllocator.Get(), nullptr));
+	ThrowIfFailed(m_d3d12CommandList->Reset(m_commandAllocator.Get(), nullptr));
 
 	m_linearAllocator->Reset();
 
@@ -138,7 +138,7 @@ void CommandContext::Reset() {
 
 void CommandContext::Close() const noexcept {
 	m_resourceStateTracker->FlushResourceBarriers(this);
-	m_commandList->Close();
+	m_d3d12CommandList->Close();
 }
 
 void CommandContext::TrackResource(const ComPtr<ID3D12Object> object) noexcept {
@@ -203,7 +203,7 @@ void ComputeContext::SetComputeRootSignature(const RootSignature* const rootSign
 				m_dynamicDescriptorHeap[i]->ParseRootSignature(rootSignature);
 			}
 
-			m_commandList->SetComputeRootSignature(m_rootSignature);
+			m_d3d12CommandList->SetComputeRootSignature(m_rootSignature);
 
 			TrackResource(m_rootSignature);
 		}
@@ -219,7 +219,7 @@ void ComputeContext::Dispatch(uint32_t numGroupsX, uint32_t numGroupsY, uint32_t
 	for (uint32_t i = 0; i < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; i++) {
 		m_dynamicDescriptorHeap[i]->BindDescriptorsForDispatch(*this);
 	}
-	m_commandList->Dispatch(numGroupsX, numGroupsY, numGroupsZ);
+	m_d3d12CommandList->Dispatch(numGroupsX, numGroupsY, numGroupsZ);
 }
 
 void ComputeContext::SetComputeShaderConstants(
@@ -227,7 +227,7 @@ void ComputeContext::SetComputeShaderConstants(
 	uint32_t numConstants, 
 	const void* const constants) const noexcept 
 {
-	m_commandList->SetComputeRoot32BitConstants(rootParameterIndex, numConstants, constants, 0);
+	m_d3d12CommandList->SetComputeRoot32BitConstants(rootParameterIndex, numConstants, constants, 0);
 }
 
 GraphicsContext::GraphicsContext(CommandListType cmdListType)
@@ -237,13 +237,13 @@ GraphicsContext::GraphicsContext(CommandListType cmdListType)
 
 void GraphicsContext::ClearRTV(const Texture& texture, const float* const clearColor) noexcept {
 	TransitionResource(&texture, { { ResourceState_t::render_target }, true });
-	m_commandList->ClearRenderTargetView(texture.GetRenderTargetView(), clearColor, 0, nullptr);
+	m_d3d12CommandList->ClearRenderTargetView(texture.GetRenderTargetView(), clearColor, 0, nullptr);
 	TrackResource(texture.GetUnderlyingResource());
 }
 
 void GraphicsContext::ClearDSV(const Texture& texture, ClearFlag clearFlags, float depth, uint8_t stencil) noexcept {
 	TransitionResource(&texture, { { ResourceState_t::depth_write }, true });
-	m_commandList->ClearDepthStencilView(texture.GetDepthStencilView(), clearFlags.As<D3D12_CLEAR_FLAGS>(), depth, stencil, 0, nullptr);
+	m_d3d12CommandList->ClearDepthStencilView(texture.GetDepthStencilView(), clearFlags.As<D3D12_CLEAR_FLAGS>(), depth, stencil, 0, nullptr);
 	TrackResource(texture.GetUnderlyingResource());
 }
 
@@ -258,7 +258,7 @@ void GraphicsContext::SetGraphicsRootSignature(const RootSignature const* rootSi
 				m_dynamicDescriptorHeap[i]->ParseRootSignature(rootSignature);
 			}
 
-			m_commandList->SetGraphicsRootSignature(m_rootSignature);
+			m_d3d12CommandList->SetGraphicsRootSignature(m_rootSignature);
 
 			TrackResource(m_rootSignature);
 		}
@@ -273,7 +273,7 @@ void GraphicsContext::SetGraphicsShaderConstants(
 	uint32_t numConstants, 
 	const void* const constants) const noexcept
 {
-	m_commandList->SetGraphicsRoot32BitConstants(rootParameterIndex, numConstants, constants, 0);
+	m_d3d12CommandList->SetGraphicsRoot32BitConstants(rootParameterIndex, numConstants, constants, 0);
 }
 
 void GraphicsContext::SetConstantBuffer(
@@ -284,7 +284,7 @@ void GraphicsContext::SetConstantBuffer(
 	const auto alloc = m_linearAllocator->Allocate(sizeInBytes, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 	std::memcpy(alloc.CPU, bufferData, sizeInBytes);
 
-	m_commandList->SetGraphicsRootConstantBufferView(rootParameterIndex, alloc.GPU);
+	m_d3d12CommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, alloc.GPU);
 }
 
 void GraphicsContext::SetShaderResourceView(
@@ -298,7 +298,7 @@ void GraphicsContext::SetShaderResourceView(
 
 	std::memcpy(heapAlloc.CPU, bufferData, bufferSize);
 
-	m_commandList->SetGraphicsRootShaderResourceView(slot, heapAlloc.GPU);
+	m_d3d12CommandList->SetGraphicsRootShaderResourceView(slot, heapAlloc.GPU);
 }
 
 void GraphicsContext::SetScissorRect(const Math::Rectangle& scissorRect) const noexcept {
@@ -306,7 +306,7 @@ void GraphicsContext::SetScissorRect(const Math::Rectangle& scissorRect) const n
 }
 
 void GraphicsContext::SetScissorRects(std::span<const Math::Rectangle> scissorRects) const noexcept {
-	m_commandList->RSSetScissorRects(scissorRects.size(), reinterpret_cast<const D3D12_RECT* const>(scissorRects.data()));
+	m_d3d12CommandList->RSSetScissorRects(scissorRects.size(), reinterpret_cast<const D3D12_RECT* const>(scissorRects.data()));
 }
 
 void GraphicsContext::SetViewport(const Viewport& viewport) const noexcept {
@@ -314,7 +314,7 @@ void GraphicsContext::SetViewport(const Viewport& viewport) const noexcept {
 }
 
 void GraphicsContext::SetViewports(std::span<const Viewport> viewports) const noexcept {
-	m_commandList->RSSetViewports(viewports.size(), reinterpret_cast<const D3D12_VIEWPORT* const>(viewports.data()));
+	m_d3d12CommandList->RSSetViewports(viewports.size(), reinterpret_cast<const D3D12_VIEWPORT* const>(viewports.data()));
 }
 
 void GraphicsContext::SetRenderTarget(const RenderTarget& renderTarget) noexcept {
@@ -346,7 +346,7 @@ void GraphicsContext::SetRenderTarget(const RenderTarget& renderTarget) noexcept
 		TrackResource(depthTexture->GetUnderlyingResource());
 	}
 
-	m_commandList->OMSetRenderTargets(
+	m_d3d12CommandList->OMSetRenderTargets(
 		static_cast<uint32_t>(renderTargetDescriptors.size()),
 		renderTargetDescriptors.data(),
 		false,
@@ -356,7 +356,7 @@ void GraphicsContext::SetRenderTarget(const RenderTarget& renderTarget) noexcept
 void GraphicsContext::SetPrimitiveTopology(PrimitiveTopology topology) noexcept {
 	if (m_primitiveTopology.Topology != topology.Topology) {
 		m_primitiveTopology.Topology = topology.Topology;
-		m_commandList->IASetPrimitiveTopology(topology.As<D3D_PRIMITIVE_TOPOLOGY>());
+		m_d3d12CommandList->IASetPrimitiveTopology(topology.As<D3D_PRIMITIVE_TOPOLOGY>());
 	}
 }
 
@@ -379,7 +379,7 @@ void GraphicsContext::SetVertexBuffers(uint32_t startSlot, const std::vector<con
 			vbViews.push_back({ vertexBuffer->BufferLocation(), vertexBuffer->Size(), vertexBuffer->Stride() });
 		}
 	}
-	m_commandList->IASetVertexBuffers(startSlot, vbViews.size(), vbViews.data());
+	m_d3d12CommandList->IASetVertexBuffers(startSlot, vbViews.size(), vbViews.data());
 }
 
 void GraphicsContext::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, size_t vertexSize, const void* vertexBufferData) {
@@ -394,7 +394,7 @@ void GraphicsContext::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, 
 		.StrideInBytes  = static_cast<uint32_t>(vertexSize)
 	};
 
-	m_commandList->IASetVertexBuffers(slot, 1, &vertexBufferView);
+	m_d3d12CommandList->IASetVertexBuffers(slot, 1, &vertexBufferView);
 }
 
 void GraphicsContext::SetIndexBuffer(const Buffer* const indexBuffer) noexcept {
@@ -408,7 +408,7 @@ void GraphicsContext::SetIndexBuffer(const Buffer* const indexBuffer) noexcept {
 			.Format         = static_cast<DXGI_FORMAT>(indexBuffer->GetDesc().Format)
 		};
 
-		m_commandList->IASetIndexBuffer(&ibv);
+		m_d3d12CommandList->IASetIndexBuffer(&ibv);
 	}
 }
 
@@ -425,7 +425,7 @@ void GraphicsContext::SetDynamicIndexBuffer(size_t numIndicies, IndexFormat_t in
 		.Format         = static_cast<DXGI_FORMAT>(indexFormat)
 	};
 
-	m_commandList->IASetIndexBuffer(&indexBufferView);
+	m_d3d12CommandList->IASetIndexBuffer(&indexBufferView);
 }
 
 void GraphicsContext::Draw(
@@ -439,7 +439,7 @@ void GraphicsContext::Draw(
 	for (uint32_t i = 0; i < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; i++) {
 		m_dynamicDescriptorHeap[i]->BindDescriptorsForDraw(*this);
 	}
-	m_commandList->DrawInstanced(vertexCount, instanceCount, startVertex, startInstance);
+	m_d3d12CommandList->DrawInstanced(vertexCount, instanceCount, startVertex, startInstance);
 }
 
 void GraphicsContext::DrawIndexed(
@@ -454,5 +454,5 @@ void GraphicsContext::DrawIndexed(
 	for (uint32_t i = 0; i < D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES; i++) {
 		m_dynamicDescriptorHeap[i]->BindDescriptorsForDraw(*this);
 	}
-	m_commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex,baseVertex,startInstance);
+	m_d3d12CommandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex,baseVertex,startInstance);
 }

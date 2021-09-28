@@ -117,13 +117,13 @@ void RootSignature::SetRootSignatureDesc(const D3D12_ROOT_SIGNATURE_DESC1& rootS
 	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC versionedRootSignatureDesc;
 	versionedRootSignatureDesc.Init_1_1(numParams, params, numStaticSamplers, staticSamplers, rootSignatureDesc.Flags);
 
-	D3D_ROOT_SIGNATURE_VERSION highestVersion = RHICore::GetHighestRootSignatureVersion();
+	D3D_ROOT_SIGNATURE_VERSION highestVersion = RHICore::get_highest_root_signature_version();
 
 	// Serialize the root signature.
 	ComPtr<ID3DBlob> rootSignatureBlob;
 	ComPtr<ID3DBlob> errorBlob;
 	
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	
 	ThrowIfFailed(device.CreateRootSignature(

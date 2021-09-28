@@ -40,7 +40,7 @@ namespace Crystal {
 			uint32_t sourceSubResource = 0,
 			uint32_t destSubResource = 0);
 		
-		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> GetNativeCommandList() const noexcept { return m_commandList; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> GetNativeCommandList() const noexcept { return m_d3d12CommandList; }
 
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, ID3D12DescriptorHeap* heap) noexcept;
 		void SetPipelineState(const PipelineState* const pipelineState) noexcept;
@@ -64,7 +64,7 @@ namespace Crystal {
 			const TransitionBarrierSpecification& specification) const noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> m_commandList;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> m_d3d12CommandList;
 
 		std::unique_ptr<LinearAllocator> m_linearAllocator;
 		std::unique_ptr<ResourceStateTracker> m_resourceStateTracker;

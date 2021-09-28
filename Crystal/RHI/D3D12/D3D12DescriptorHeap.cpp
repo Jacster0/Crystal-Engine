@@ -22,7 +22,7 @@ DescriptorAllocatorPage::DescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type
 	m_heapType(type),
 	m_numDescriptorsInHeap(numDescriptors)
 {
-	auto& device = RHICore::GetDevice();
+	auto& device = RHICore::get_device();
 
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc {
 		.Type           = m_heapType,

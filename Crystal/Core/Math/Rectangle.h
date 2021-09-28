@@ -11,7 +11,7 @@
 namespace Crystal::Math {
     class Rectangle {
     public:
-        Rectangle() noexcept
+        constexpr Rectangle() noexcept
             :
             Left(0),
             Top(0),
@@ -19,7 +19,7 @@ namespace Crystal::Math {
             Bottom(std::numeric_limits<long>::max())
         {}
 
-        Rectangle(long left, long top, long right, long bottom) noexcept
+        constexpr Rectangle(long left, long top, long right, long bottom) noexcept
             :
             Left(left),
             Top(top),
@@ -27,10 +27,10 @@ namespace Crystal::Math {
             Bottom(bottom)
         {}
 
-        auto Width()     const noexcept { return Right - Left; }
-        auto Height()    const noexcept { return Bottom - Top; }
-        auto Area()      const noexcept { return Width() * Height(); }
-        auto Perimeter() const noexcept { return 2 * Width() + 2 * Height(); }
+        constexpr auto Width()          const noexcept { return Right - Left; }
+        constexpr auto Height()         const noexcept { return Bottom - Top; }
+        constexpr long long Area()      const noexcept { return static_cast<long long>(Width()) * static_cast<long long>(Height()); }
+        constexpr long long Perimeter() const noexcept { return 2 * static_cast<long long>(Width()) + 2 * static_cast<long long>(Height()); }
 
         [[nodiscard]] constexpr bool operator==(const Rectangle& rhs) const noexcept {
             return Left == rhs.Left && Top == rhs.Top && Right == rhs.Right && Bottom == rhs.Bottom;
