@@ -4,7 +4,7 @@
 #include "../Networking/NamedPipeClient.h"
 
 namespace Crystal {
-	class ManagedLoggerSink final : public ISink<ManagedLoggerSink> {
+	class ManagedLoggerSink final : public ISink {
 	public:
 		ManagedLoggerSink() noexcept;
 		void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc = std::source_location::current()) noexcept;
