@@ -5,6 +5,16 @@
 #include <limits>
 #include <bit>
 
+
+//Macros is such a pain in the ass
+#ifdef  max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
 namespace Crystal::Math {
     template<typename T>
     concept Divisble = requires (T x) { x / x; };
