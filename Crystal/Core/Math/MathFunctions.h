@@ -35,28 +35,28 @@ namespace Crystal::Math {
     }
 
     template<typename T>
-    [[nodiscard]] inline T AlignUpWithMask(T value, size_t mask) noexcept {
+    [[nodiscard]] inline constexpr T AlignUpWithMask(T value, size_t mask) noexcept {
         return static_cast<T>((static_cast<size_t>(value + mask) & ~mask));
     }
 
     template <typename T>
-    [[nodiscard]] inline auto AlignDownWithMask(T value, size_t mask) noexcept {
+    [[nodiscard]] inline constexpr auto AlignDownWithMask(T value, size_t mask) noexcept {
         return static_cast<T>((static_cast<size_t>(value) & ~mask));
     }
 
-    [[nodiscard]] inline auto AlignUp(auto value, size_t alignment) noexcept {
+    [[nodiscard]] inline constexpr auto AlignUp(auto value, size_t alignment) noexcept {
         return AlignUpWithMask(value, alignment - 1);
     }
 
-    [[nodiscard]] inline auto AlignDown(auto value, size_t alignment) noexcept {
+    [[nodiscard]] inline constexpr auto AlignDown(auto value, size_t alignment) noexcept {
         return AlignDownWithMask(value, alignment - 1);
     }
 
-    [[nodiscard]] inline bool IsAligned(auto value, size_t alignment) noexcept {
+    [[nodiscard]] inline constexpr bool IsAligned(auto value, size_t alignment) noexcept {
         return 0 == (static_cast<size_t>(value) & (alignment - 1));
     }
 
-    [[nodiscard]] auto DivideByMultiple(Divisble auto value, Divisble auto alignment) {
+    [[nodiscard]] constexpr auto DivideByMultiple(Divisble auto value, Divisble auto alignment) {
         return (value + alignment - 1) / alignment;
     }
 
@@ -92,5 +92,32 @@ namespace Crystal::Math {
         const auto m = val - prev;
 
         return (roundUp) ? ((n <= m) ? next : prev) : ((n < m) ? next : prev);
+    }
+
+    namespace detail {
+        [[nodiscard]] constexpr double sqrtHelper(double val, double curr, double prev) {
+            if (curr == prev) {
+                return curr;
+            }
+
+            prev = curr;
+            curr = 0.5 * (curr + val / curr);
+
+            return sqrtHelper(val, curr, prev);
+        }
+    }
+
+    [[nodiscard]] constexpr auto sqrt(std::floating_point auto val) {
+        if (val >= 0 && val < std::numeric_limits<decltype(val)>::max()) {
+            return static_cast<decltype(val)>(detail::sqrtHelper(val, val, 0));
+        }
+        return std::numeric_limits<decltype(val)>::quiet_NaN();
+    }
+
+    [[nodiscard]] constexpr double sqrt(std::unsigned_integral auto val) {
+        if (val >= 0 && val < std::numeric_limits<decltype(val)>::max()) {
+            return detail::sqrtHelper(val, val, 0);
+        }
+        return std::numeric_limits<double>::quiet_NaN();
     }
 }
