@@ -108,7 +108,7 @@ namespace Crystal::Math {
     }
 
     [[nodiscard]] constexpr auto sqrt(std::floating_point auto val) {
-        if (val >= 0 && val < std::numeric_limits<decltype(val)>::max()) {
+        if (val >= 0 && val < std::numeric_limits<decltype(val)>::infinity()) {
             return static_cast<decltype(val)>(detail::sqrtHelper(val, val, 0));
         }
         return std::numeric_limits<decltype(val)>::quiet_NaN();
