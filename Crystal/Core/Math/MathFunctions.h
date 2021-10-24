@@ -80,7 +80,7 @@ namespace Crystal::Math {
 
     [[nodiscard]] inline const float Cot(float v) noexcept { return cos(v) / sin(v); }
 
-    [[nodiscard]] inline constexpr auto GetNearestPow2(std::integral auto val, bool roundUp = true) noexcept {
+    [[nodiscard]] inline auto GetNearestPow2(std::unsigned_integral auto val, bool roundUp = true) noexcept {
         if (std::has_single_bit(val)) {
             return val;
         }
