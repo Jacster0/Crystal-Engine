@@ -46,7 +46,7 @@ namespace Crystal {
 
 		template<
 			class Duration = std::chrono::milliseconds,
-			typename = std::enable_if_t<detail::is_duration_v<Duration>>
+			typename       = std::enable_if_t<detail::is_duration_v<Duration>>
 		>
 		Duration end_measure() const noexcept {
 			const auto end = Clock::now().time_since_epoch();
@@ -56,10 +56,10 @@ namespace Crystal {
 		}
 
 		void tick() noexcept {
-			const auto now = std::chrono::high_resolution_clock::now();
-			m_delta = now - m_last;
+			const auto now = Clock::now();
+			m_delta        = now - m_last;
+			m_last         = now;
 			m_elapsed += m_delta;
-			m_last = now;
 		}
 
 		void reset() noexcept {
