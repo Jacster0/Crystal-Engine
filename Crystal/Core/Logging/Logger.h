@@ -70,12 +70,12 @@ namespace Crystal {
 			}
 		}
 	private:
-		Logger() = default;
-		Logger(const Logger& rhs) = delete;
+		Logger()                             = default;
+		Logger(const Logger& rhs)            = delete;
 		Logger& operator=(const Logger& rhs) = delete;
-		Logger(Logger&& rhs) = delete;
-		Logger& operator=(Logger&& rhs) = delete;
-		~Logger() = default;
+		Logger(Logger&& rhs)                 = delete;
+		Logger& operator=(Logger&& rhs)      = delete;
+		~Logger()                            = default;
 
 		mutable std::mutex m_loggingMutex;
 		std::mutex m_sinkMutex;
