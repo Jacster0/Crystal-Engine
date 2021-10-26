@@ -2,22 +2,17 @@
 #include <chrono>
 #include <type_traits>
 #include <cstdint>
+#include "../Core/Lib/type_traits.h"
 
 namespace Crystal {
 	namespace detail {
-		template<class, template<class...> class>
-		constexpr bool is_specialization_v = false;
-
-		template<template<class...> class Template, class... Args>
-		constexpr bool is_specialization_v<Template<Args...>, Template> = true;
-
 		template<class T>
-		constexpr bool is_duration_v = is_specialization_v<T, std::chrono::duration>;
+		constexpr bool is_duration_v = crylib::is_specialization_v<T, std::chrono::duration>;
 
 		template<class T>
 		constexpr bool is_ratio_v = false;
 
-		template <intmax_t nx, intmax_t dx>
+		template<std::intmax_t nx, std::intmax_t dx>
 		constexpr bool is_ratio_v<std::ratio<nx, dx>> = true;
 
 		template<class, class = void>
@@ -72,19 +67,23 @@ namespace Crystal {
 		}
 
 		template<
-			typename T = std::ratio<1>,
-			typename   = std::enable_if_t<detail::is_ratio_v<T>>
+			typename T = float,
+			typename U = std::ratio<1>,
+			typename   = std::enable_if_t<std::is_floating_point_v<T>>
+			typename   = std::enable_if_t<detail::is_ratio_v<U>>
 		>
-		float get_delta() const noexcept {
-			return std::chrono::duration<float, T>(m_delta).count();
+		T get_delta() const noexcept {
+			return std::chrono::duration<T, U>(m_delta).count();
 		}
 
 		template<
-			typename T = std::ratio<1>,
-			typename   = std::enable_if_t<detail::is_ratio_v<T>>
+			typename T = float,
+			typename U = std::ratio<1>,
+			typename   = std::enable_if_t<std::is_floating_point_v<T>>,
+			typename   = std::enable_if_t<detail::is_ratio_v<U>>
 		>
-		float get_elapsed() const noexcept {
-			return std::chrono::duration<float, T>(m_elapsed).count();
+		T get_elapsed() const noexcept {
+			return std::chrono::duration<T, U>(m_elapsed).count();
 		}
 	private:
 		Clock::time_point m_begin;
