@@ -4,7 +4,7 @@
 namespace Crystal::Math {
     const Quaternion Quaternion::Identity(0.0f, 0.0f, 0.0f, 1.0f);
 
-    void Quaternion::FromAxes(
+    constexpr void Quaternion::FromAxes(
         const Vector3& xAxis,
         const Vector3& yAxis,
         const Vector3& zAxis) noexcept

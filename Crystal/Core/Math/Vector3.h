@@ -10,47 +10,48 @@ namespace Crystal::Math {
     class Matrix;
     class Vector3 {
     public:
-        Vector3() noexcept : x(0), y(0), z(0) {}
-        Vector3(float x, float y, float z) : x(x), y(y), z(0) {}
-        Vector3(float v) noexcept : x(v), y(v), z(v) {}
-        Vector3(const Vector3& rhs) noexcept {
+        constexpr Vector3() noexcept : x(0), y(0), z(0) {}
+        constexpr Vector3(float x, float y, float z) : x(x), y(y), z(0) {}
+        constexpr Vector3(float v) noexcept : x(v), y(v), z(v) {}
+        constexpr Vector3(const Vector3& rhs) noexcept {
             x = rhs.x;
             y = rhs.y;
             z = rhs.z;
         }
-        Vector3(const Vector2& rhs) noexcept;
-        Vector3(const Vector4& rhs) noexcept;
-        Vector3(float vec[3]) noexcept {
+        constexpr Vector3(const Vector2& rhs) noexcept;
+        constexpr Vector3(const Vector4& rhs) noexcept;
+        constexpr Vector3(float vec[3]) noexcept {
             x = vec[0];
             y = vec[1];
             z = vec[2];
         }
-        ~Vector3() = default;
 
-        [[nodiscard]] const Vector3 operator+(const Vector3& rhs) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator+(const Vector3& rhs) const noexcept {
             return Vector3(
                 x + rhs.x,
                 y + rhs.y,
                 z + rhs.z
             );
         }
-        [[nodiscard]] const Vector3 operator+(const float v) const noexcept {
+
+        [[nodiscard]] constexpr Vector3 operator+(const float v) const noexcept {
             return Vector3(x + v, y + v, z + v);
         }
-        void operator+=(const Vector3& rhs) noexcept {
+
+        constexpr void operator+=(Vector3& rhs) noexcept {
             x += rhs.x;
             y += rhs.y;
             z += rhs.z;
         }
 
-        [[nodiscard]] const Vector3 operator*(const Vector3& rhs) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator*(const Vector3& rhs) const noexcept {
             return Vector3(
                 x * rhs.x,
                 y * rhs.y,
                 z * rhs.z
             );
         }
-        [[nodiscard]] const Vector3 operator*(const float value) const  noexcept {
+        [[nodiscard]] constexpr Vector3 operator*(const float value) const  noexcept {
             return Vector3(
                 x * value,
                 y * value,
@@ -58,52 +59,53 @@ namespace Crystal::Math {
             );
         }
 
-        void operator*=(const Vector3& other) noexcept {
+        constexpr void operator*=(const Vector3& other) noexcept {
             x *= other.x;
             y *= other.y;
             z *= other.z;
         }
 
-        void operator*=(const float value) noexcept {
+        constexpr void operator*=(const float value) noexcept {
             x *= value;
             y *= value;
             z *= value;
         }
 
-        [[nodiscard]] const Vector3 operator-(const Vector3& rhs) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator-(const Vector3& rhs) const noexcept {
             return Vector3(
                 x - rhs.x,
                 y - rhs.y,
                 z - rhs.z
             );
         }
-        [[nodiscard]] const Vector3 operator-(const float value) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator-(const float value) const noexcept {
             return Vector3(
                 x - value,
                 y - value,
                 z - value
             );
         }
-        void operator-=(const Vector3& other) {
+
+        constexpr void operator-=(const Vector3& other) {
             x -= other.x;
             y -= other.y;
             z -= other.z;
         }
 
-        [[nodiscard]] const Vector3 operator/(const Vector3& rhs) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator/(const Vector3& rhs) const noexcept {
             return Vector3(
                 x / rhs.x,
                 y / rhs.y,
                 z / rhs.z);
         }
-        [[nodiscard]] const Vector3 operator/(const float value) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator/(const float value) const noexcept {
             return Vector3(
                 x / value,
                 y / value,
                 z / value);
         }
 
-        void operator/=(const Vector3& other) noexcept {
+        constexpr void operator/=(const Vector3& other) noexcept {
             x /= other.x;
             y /= other.y;
             z /= other.y;
@@ -112,22 +114,22 @@ namespace Crystal::Math {
         constexpr bool operator==(const Vector3& rhs) const noexcept { return x == rhs.x && y == rhs.y && z == rhs.z; }
         constexpr bool operator!=(const Vector3& rhs) const noexcept { return !(*this == rhs); }
 
-        void Normalize() noexcept {
+        constexpr void Normalize() noexcept {
             const auto squaredLength = SquaredLength();
 
-            if (!Math::Equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
-                const auto invertedLength = 1.0f / std::sqrt(squaredLength);
+            if (!Math::equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
+                const auto invertedLength = 1.0f / Math::sqrt(squaredLength);
 
                 x *= invertedLength;
                 y *= invertedLength;
                 z *= invertedLength;
             }
         }
-        [[nodiscard]] const Vector3 Normalized() const noexcept {
+        [[nodiscard]] constexpr Vector3 Normalized() const noexcept {
             const auto squaredLength = SquaredLength();
 
-            if (!Math::Equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
-                const auto invertedLength = 1.0f / std::sqrt(squaredLength);
+            if (!Math::equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
+                const auto invertedLength = 1.0f / Math::sqrt(squaredLength);
 
                 return (*this) * invertedLength;
             }
@@ -135,16 +137,16 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] constexpr float Dot(const Vector3& rhs) const noexcept { return Dot(*this, rhs); }
-        [[nodiscard]] const Vector3 Cross(const Vector3& rhs) const noexcept { return Cross(*this, rhs); }
+        [[nodiscard]] constexpr Vector3 Cross(const Vector3& rhs) const noexcept { return Cross(*this, rhs); }
 
-        [[nodiscard]] const float Length()       const noexcept { return std::sqrt(x * x + y * y + z * z); }
-        [[nodiscard]] const float SquaredLength() const noexcept { return x * x + y * y + z * z; }
+        [[nodiscard]] constexpr float Length()       const noexcept { return Math::hypot(x,y,z); }
+        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::squared_hypot(x, y, z); }
 
-        inline void ClampMagnitude(float maxLength) noexcept {
+        inline constexpr void ClampMagnitude(float maxLength) noexcept {
             const auto squaredMagnitude = SquaredLength();
 
             if (squaredMagnitude > maxLength * maxLength) {
-                const auto magnitude = std::sqrt(squaredMagnitude);
+                const auto magnitude = Math::sqrt(squaredMagnitude);
 
                 const auto normalizedX = x / magnitude;
                 const auto normalizedY = y / magnitude;
@@ -156,35 +158,35 @@ namespace Crystal::Math {
             }
         }
 
-        void Floor() noexcept {
-            x = std::floor(x);
-            y = std::floor(y);
-            z = std::floor(z);
+        constexpr void Floor() noexcept {
+            x = Math::floor(x);
+            y = Math::floor(y);
+            z = Math::floor(z);
         }
 
-        [[nodiscard]] Vector3 Abs() const noexcept { return Vector3(std::abs(x), std::abs(y), std::abs(z)); }
+        [[nodiscard]] constexpr Vector3 Abs() const noexcept { return Vector3(Math::abs(x), Math::abs(y), Math::abs(z)); }
 
-        [[nodiscard]] const inline float Distance(const Vector3& rhs)        const noexcept { return (*this - rhs).Length(); }
-        [[nodiscard]] const inline float SquaredDistance(const Vector3& rhs) const noexcept { return (*this - rhs).SquaredLength(); }
+        [[nodiscard]] constexpr const inline float Distance(const Vector3& rhs)        const noexcept { return (*this - rhs).Length(); }
+        [[nodiscard]] constexpr const inline float SquaredDistance(const Vector3& rhs) const noexcept { return (*this - rhs).SquaredLength(); }
 
         [[nodiscard]] static constexpr inline float Dot(const Vector3& v1, const Vector3& v2) noexcept {
             return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
         }
-        [[nodiscard]] static const inline Vector3 Cross(const Vector3& v1, const Vector3& v2) noexcept {
+        [[nodiscard]] static constexpr inline Vector3 Cross(const Vector3& v1, const Vector3& v2) noexcept {
             return Vector3(
                 v1.y * v2.z - v2.y * v1.z,
                 -(v1.x * v2.z - v2.x * v1.z),
                 v1.x * v2.y - v2.x * v2.y
             );
         }
-        [[nodiscard]] static const inline Vector3 Normalize(const Vector3& rhs)                     noexcept { return rhs.Normalized(); }
-        [[nodiscard]] static const inline float Distance(const Vector3& a, const Vector3& b)        noexcept { return (b - a).Length(); }
-        [[nodiscard]] static const inline float SquaredDistance(const Vector3& a, const Vector3& b) noexcept { return (b - a).SquaredLength(); }
+        [[nodiscard]] static constexpr inline Vector3 Normalize(const Vector3& rhs)                     noexcept { return rhs.Normalized(); }
+        [[nodiscard]] static constexpr inline float Distance(const Vector3& a, const Vector3& b)        noexcept { return (b - a).Length(); }
+        [[nodiscard]] static constexpr inline float SquaredDistance(const Vector3& a, const Vector3& b) noexcept { return (b - a).SquaredLength(); }
 
-        [[nodiscard]] static Vector3 Rotate(const Vector3& vec3, const Quaternion& rotation) noexcept;
-        [[nodiscard]] static Vector3 TransformNormal(const Vector3& vec3, const Matrix& mat) noexcept;
-        [[nodiscard]] static Vector3 TransformCoord(const Vector3& vec3, const Matrix& mat) noexcept;
-        [[nodiscard]] static Vector3 MultiplyAdd(const Vector3& first, const Vector3& second, const Vector3& third) noexcept;
+        [[nodiscard]] static constexpr Vector3 Rotate(const Vector3& vec3, const Quaternion& rotation) noexcept;
+        [[nodiscard]] static constexpr Vector3 TransformNormal(const Vector3& vec3, const Matrix& mat) noexcept;
+        [[nodiscard]] static constexpr Vector3 TransformCoord(const Vector3& vec3, const Matrix& mat) noexcept;
+        [[nodiscard]] static constexpr Vector3 MultiplyAdd(const Vector3& first, const Vector3& second, const Vector3& third) noexcept;
 
         float x;
         float y;

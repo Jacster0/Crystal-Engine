@@ -3,25 +3,26 @@
 #include "Vector4.h"
 #include "Quaternion.h"
 #include "Matrix.h"
+#include "MathFunctions.h"
 
 namespace Crystal::Math {
 	constexpr auto infinity = std::numeric_limits<float>::infinity();
 
-    Vector3::Vector3(const Vector4& rhs) noexcept
+    constexpr Vector3::Vector3(const Vector4& rhs) noexcept
         :
         x(rhs.x),
         y(rhs.y),
         z(rhs.z)
     {}
 
-    Vector3::Vector3(const Vector2& rhs) noexcept
+    constexpr Vector3::Vector3(const Vector2& rhs) noexcept
         :
         x(rhs.x),
         y(rhs.y),
         z(0)
     {}
 
-    Vector3 Vector3::Rotate(const Vector3& vec3, const Quaternion& rotation) noexcept {
+    constexpr Vector3 Vector3::Rotate(const Vector3& vec3, const Quaternion& rotation) noexcept {
         const Quaternion p{ vec3.x, vec3.y, vec3.z, 0 };
         const Quaternion q = rotation.Conjugate();
 
@@ -30,7 +31,7 @@ namespace Crystal::Math {
         return Vector3(res.x, res.y, res.z);
     }
 
-    Vector3 Vector3::TransformNormal(const Vector3& vec3, const Matrix& mat) noexcept {
+    constexpr Vector3 Vector3::TransformNormal(const Vector3& vec3, const Matrix& mat) noexcept {
         Vector3 row0{ mat.m00,mat.m01, mat.m02 };
         Vector3 row1{ mat.m10,mat.m11, mat.m12 };
         Vector3 row2{ mat.m20,mat.m21, mat.m22 };
@@ -46,7 +47,7 @@ namespace Crystal::Math {
         return Result;
     }
 
-    Vector3 Vector3::TransformCoord(const Vector3& vec3, const Matrix& mat) noexcept {
+    constexpr Vector3 Vector3::TransformCoord(const Vector3& vec3, const Matrix& mat) noexcept {
         Vector3 row0{ mat.m00,mat.m01, mat.m02 };
         Vector3 row1{ mat.m10,mat.m11, mat.m12 };
         Vector3 row2{ mat.m20,mat.m21, mat.m22 };
@@ -64,10 +65,10 @@ namespace Crystal::Math {
         return Result / W;
     }
 
-    Vector3 Vector3::MultiplyAdd(const Vector3& first, const Vector3& second, const Vector3& third) noexcept {
-        return Vector3(first.x * second.x + third.x,
-            first.y * second.y + third.y,
-            first.z * second.z + third.z);
+    constexpr Vector3 Vector3::MultiplyAdd(const Vector3& first, const Vector3& second, const Vector3& third) noexcept {
+        return Vector3(Math::fma(first.x, second.x ,third.x),
+                       Math::fma(first.y, second.y, third.y),
+                       Math::fma(first.z, second.z, third.z));
     }
 
     const Vector3 Vector3::Zero(0.0f, 0.0f, 0.0f);

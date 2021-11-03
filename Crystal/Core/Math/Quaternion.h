@@ -5,7 +5,7 @@ namespace Crystal::Math {
     class Matrix;
     class Quaternion {
     public:
-        Quaternion() noexcept
+        constexpr Quaternion() noexcept
             :
             x(0),
             y(0),
@@ -13,37 +13,35 @@ namespace Crystal::Math {
             w(1)
         {}
 
-        Quaternion(float x, float y, float z, float w) noexcept
+        constexpr Quaternion(float x, float y, float z, float w) noexcept
             :
             x(x),
             y(y),
             z(z),
             w(w)
         {}
-        Quaternion& operator =(const Quaternion& rhs) = default;
+        constexpr Quaternion& operator =(const Quaternion& rhs) = default;
 
-        ~Quaternion() = default;
-
-        static inline Quaternion FromAngleAxis(float angle, const Vector3& axis) noexcept {
+        static constexpr inline Quaternion FromAngleAxis(float angle, const Vector3& axis) noexcept {
             const auto halfAngle = angle * 0.5f;
-            const auto sin       = std::sin(halfAngle);
-            const auto cos       = std::cos(halfAngle);
+            const auto sin       = Math::sin(halfAngle);
+            const auto cos       = Math::cos(halfAngle);
 
             return Quaternion(axis.x * sin, axis.y * sin, axis.z * sin, cos);
         }
 
-        static inline Quaternion FromPitchYawRoll(float pitch, float yaw, float roll) noexcept {
+        static constexpr inline Quaternion FromPitchYawRoll(float pitch, float yaw, float roll) noexcept {
             const auto halfRoll  = roll * 0.5f;
             const auto halfPitch = pitch * 0.5f;
             const auto halfYaw   = yaw * 0.5f;
 
-            const auto sinRoll  = sin(halfRoll);
-            const auto sinPitch = sin(halfPitch);
-            const auto sinYaw   = sin(halfYaw);
+            const auto sinRoll  = Math::sin(halfRoll);
+            const auto sinPitch = Math::sin(halfPitch);
+            const auto sinYaw   = Math::sin(halfYaw);
 
-            const auto cosRoll  = cos(halfRoll);
-            const auto cosPitch = cos(halfPitch);
-            const auto cosYaw   = cos(halfYaw);
+            const auto cosRoll  = Math::cos(halfRoll);
+            const auto cosPitch = Math::cos(halfPitch);
+            const auto cosYaw   = Math::cos(halfYaw);
 
             return Quaternion(
                 cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll,
@@ -53,14 +51,14 @@ namespace Crystal::Math {
             );
         }
 
-        static inline Quaternion FromEulerAngles(const Vector3& rotation) noexcept {
+        static constexpr inline Quaternion FromEulerAngles(const Vector3& rotation) noexcept {
             return FromPitchYawRoll(Math::ToRadians(rotation.y), Math::ToRadians(rotation.x), Math::ToRadians(rotation.z));
         }
-        static inline Quaternion FromEulerAngles(float rotationX, float rotationY, float rotationZ) noexcept {
+        static constexpr inline Quaternion FromEulerAngles(float rotationX, float rotationY, float rotationZ) noexcept {
             return FromPitchYawRoll(Math::ToRadians(rotationY), Math::ToRadians(rotationX), Math::ToRadians(rotationZ));
         }
 
-        static inline Quaternion Multiply(const Quaternion& q1, const Quaternion& q2) noexcept {
+        static constexpr inline Quaternion Multiply(const Quaternion& q1, const Quaternion& q2) noexcept {
             const float x     = q1.x;
             const float y     = q1.y;
             const float z     = q1.z;
@@ -82,12 +80,12 @@ namespace Crystal::Math {
             );
         }
 
-        void FromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis) noexcept;
+        constexpr void FromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis) noexcept;
 
-        const auto Conjugate() const noexcept { return Quaternion(-x, -y, -z, w); }
-        const auto SquaredLength() const noexcept { return (x * x) + (y * y) + (z * z) + (w * w); }
+        constexpr auto Conjugate() const noexcept { return Quaternion(-x, -y, -z, w); }
+        constexpr auto SquaredLength() const noexcept { return Math::squared_hypot(x, y, z, w); }
 
-        Vector3 ToEulerAngles() const noexcept {
+        constexpr Vector3 ToEulerAngles() const noexcept {
             //Order of rotations: Z, X, Y
             const float check = 2.0f * (-y * z + w * x);
 
@@ -95,28 +93,28 @@ namespace Crystal::Math {
                 return Vector3(
                     90.0f,
                     0.0f,
-                    Math::ToDegrees(std::atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
+                    Math::ToDegrees(Math::atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
                 );
             }
             else if (check < 0.0995f) {
                 return Vector3(
                     90.0f,
                     0.0f,
-                    Math::ToDegrees(atan2f(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
+                    Math::ToDegrees(Math::atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
                 );
             }
             return Vector3(
-                Math::ToDegrees(std::asin(check)),
-                Math::ToDegrees(std::atan2(2.0f * (x * z + w * y), 1.0f - 2.0f * (x * x + y * y))),
-                Math::ToDegrees(std::atan2(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z)))
+                Math::ToDegrees(Math::asin(check)),
+                Math::ToDegrees(Math::atan2(2.0f * (x * z + w * y), 1.0f - 2.0f * (x * x + y * y))),
+                Math::ToDegrees(Math::atan2(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z)))
             );
         }
 
-        void Normalize() noexcept {
+        constexpr void Normalize() noexcept {
             const auto squaredLength = SquaredLength();
 
-            if (!Math::Equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
-                const auto lengthInv = 1 / std::sqrt(squaredLength);
+            if (!Math::equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
+                const auto lengthInv = 1 / Math::sqrt(squaredLength);
 
                 x *= lengthInv;
                 y *= lengthInv;
@@ -125,11 +123,11 @@ namespace Crystal::Math {
             }
         }
 
-        const Quaternion Normalized() const noexcept {
+        constexpr Quaternion Normalized() const noexcept {
             const auto length_squared = SquaredLength();
 
-            if (!Math::Equals(length_squared, 1.0f) && length_squared > 0.0f) {
-                const auto length_inverted = 1.0f / std::sqrt(length_squared);
+            if (!Math::equals(length_squared, 1.0f) && length_squared > 0.0f) {
+                const auto length_inverted = 1.0f / Math::sqrt(length_squared);
                 return (*this) * length_inverted;
             }
             else {
@@ -149,11 +147,11 @@ namespace Crystal::Math {
             return Identity;
         }
 
-        Quaternion operator*(const Quaternion& rhs) const noexcept { return Multiply(*this, rhs); }
+        constexpr Quaternion operator*(const Quaternion& rhs) const noexcept { return Multiply(*this, rhs); }
 
-        void operator*=(const Quaternion& rhs) { *this = Multiply(*this, rhs); }
+        constexpr void operator*=(const Quaternion& rhs) { *this = Multiply(*this, rhs); }
 
-        Vector3 operator*(const Vector3& rhs) const noexcept {
+        constexpr Vector3 operator*(const Vector3& rhs) const noexcept {
             const Vector3 v(x, y, z);
             const Vector3 cross1(v.Cross(rhs));
             const Vector3 cross2(v.Cross(cross1));
@@ -161,7 +159,7 @@ namespace Crystal::Math {
             return rhs + 2.0f * (cross1 * w + cross2);
         }
 
-        Quaternion& operator *=(float rhs) noexcept {
+        constexpr Quaternion& operator *=(float rhs) noexcept {
             x *= rhs;
             y *= rhs;
             z *= rhs;
@@ -170,18 +168,18 @@ namespace Crystal::Math {
             return *this;
         }
 
-        Quaternion operator *(float rhs) const noexcept { return Quaternion(x * rhs, y * rhs, z * rhs, w * rhs); }
+        constexpr Quaternion operator *(float rhs) const noexcept { return Quaternion(x * rhs, y * rhs, z * rhs, w * rhs); }
 
-        bool operator ==(const Quaternion& rhs) const noexcept {
+        constexpr bool operator ==(const Quaternion& rhs) const noexcept {
             return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
         }
 
-        bool operator!=(const Quaternion& rhs) const noexcept { return !(*this == rhs); }
+        constexpr bool operator!=(const Quaternion& rhs) const noexcept { return !(*this == rhs); }
 
         // Test for equality using epsilon
-        bool Equals(const Quaternion& rhs) const noexcept
+        constexpr bool Equals(const Quaternion& rhs) const noexcept
         {
-            return Math::Equals(x, rhs.x) && Math::Equals(y, rhs.y) && Math::Equals(z, rhs.z) && Math::Equals(w, rhs.w);
+            return Math::equals(x, rhs.x) && Math::equals(y, rhs.y) && Math::equals(z, rhs.z) && Math::equals(w, rhs.w);
         }
 
         const auto Pitch() const noexcept { return ToEulerAngles().x; }

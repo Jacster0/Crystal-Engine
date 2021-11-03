@@ -7,10 +7,10 @@
 namespace Crystal::Math {
     class Matrix {
     public:
-        Matrix() noexcept {
+        constexpr Matrix() noexcept {
             SetIdentity();
         }
-        Matrix(const Matrix& rhs) noexcept
+        constexpr Matrix(const Matrix& rhs) noexcept
             :
             m00(rhs.m00), m01(rhs.m01), m02(rhs.m02), m03(rhs.m03),
             m10(rhs.m10), m11(rhs.m11), m12(rhs.m12), m13(rhs.m13),
@@ -18,7 +18,7 @@ namespace Crystal::Math {
             m30(rhs.m30), m31(rhs.m31), m32(rhs.m32), m33(rhs.m33)
         {}
 
-        Matrix(
+        constexpr Matrix(
             float m00, float m01, float m02, float m03,
             float m10, float m11, float m12, float m13,
             float m20, float m21, float m22, float m23,
@@ -30,7 +30,7 @@ namespace Crystal::Math {
             m30(m30), m31(m31), m32(m32), m33(m33)
         {}
 
-        Matrix(const Vector3& translation, const Quaternion& rotation, const Vector3& scale) noexcept {
+        constexpr Matrix(const Vector3& translation, const Quaternion& rotation, const Vector3& scale) noexcept {
             const Matrix mRotation = CreateRotation(rotation);
 
             m00 = scale.x * mRotation.m00;  m01 = scale.x * mRotation.m01;  m02 = scale.x * mRotation.m02;  m03 = 0.0f;
@@ -41,7 +41,7 @@ namespace Crystal::Math {
 
         ~Matrix() = default;
 
-        [[nodiscard]] static inline Matrix CreateTranslation(const Vector3& translation) noexcept {
+        [[nodiscard]] static constexpr inline Matrix CreateTranslation(const Vector3& translation) noexcept {
             return Matrix(
                 1, 0, 0, 0,
                 0, 1, 0, 0,
@@ -50,7 +50,7 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] static inline Matrix CreateRotation(const Quaternion& rotation) noexcept {
+        [[nodiscard]] static constexpr inline Matrix CreateRotation(const Quaternion& rotation) noexcept {
             const float num9 = rotation.x * rotation.x;
             const float num8 = rotation.y * rotation.y;
             const float num7 = rotation.z * rotation.z;
@@ -79,9 +79,9 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] static inline Matrix RotationX(const float angle) {
-            const float sinAngle = std::sin(angle);
-            const float cosAngle = std::cos(angle);
+        [[nodiscard]] static constexpr inline Matrix RotationX(const float angle) {
+            const float sinAngle = Math::sin(angle);
+            const float cosAngle = Math::cos(angle);
 
             return Matrix(
                 1, 0, 0, 0,
@@ -91,9 +91,9 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] static inline Matrix RotationY(const float angle) {
-            const float sinAngle = std::sin(angle);
-            const float cosAngle = std::cos(angle);
+        [[nodiscard]] static constexpr inline Matrix RotationY(const float angle) {
+            const float sinAngle = Math::sin(angle);
+            const float cosAngle = Math::cos(angle);
 
             return Matrix(
                 cosAngle, 0, -sinAngle, 0,
@@ -103,9 +103,9 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] static inline Matrix RotationZ(const float angle) {
-            const float sinAngle = std::sin(angle);
-            const float cosAngle = std::cos(angle);
+        [[nodiscard]] static constexpr inline Matrix RotationZ(const float angle) {
+            const float sinAngle = Math::sin(angle);
+            const float cosAngle = Math::cos(angle);
 
             return Matrix(
                 cosAngle,  sinAngle, 0, 0,
@@ -115,9 +115,9 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] Vector3 GetTranslation() const noexcept { return Vector3(m30, m31, m32); }
+        [[nodiscard]] constexpr Vector3 GetTranslation() const noexcept { return Vector3(m30, m31, m32); }
 
-        [[nodiscard]] Quaternion GetRotation() const noexcept {
+        [[nodiscard]] constexpr Quaternion GetRotation() const noexcept {
             const Vector3 scale = GetScale();
 
             // Avoid division by zero
@@ -133,14 +133,14 @@ namespace Crystal::Math {
             return RotationMatrixToQuaternion(normalized);
         }
 
-        [[nodiscard]] static inline Quaternion RotationMatrixToQuaternion(const Matrix& mRot) noexcept {
+        [[nodiscard]] static constexpr inline Quaternion RotationMatrixToQuaternion(const Matrix& mRot) noexcept {
             Quaternion quaternion;
             float sqrt;
             float half;
             const float scale = mRot.m00 + mRot.m11 + mRot.m22;
 
             if (scale > 0.0f) {
-                sqrt = std::sqrt(scale + 1.0f);
+                sqrt = Math::sqrt(scale + 1.0f);
                 quaternion.w = sqrt * 0.5f;
                 sqrt = 0.5f / sqrt;
 
@@ -152,7 +152,7 @@ namespace Crystal::Math {
             }
 
             else if ((mRot.m00 >= mRot.m11) && (mRot.m00 >= mRot.m22)) {
-                sqrt = std::sqrt(1.0f + mRot.m00 - mRot.m11 - mRot.m22);
+                sqrt = Math::sqrt(1.0f + mRot.m00 - mRot.m11 - mRot.m22);
                 half = 0.5f / sqrt;
 
                 quaternion.x = 0.5f * sqrt;
@@ -164,7 +164,7 @@ namespace Crystal::Math {
             }
 
             else if (mRot.m11 > mRot.m22) {
-                sqrt = std::sqrt(1.0f + mRot.m11 - mRot.m00 - mRot.m22);
+                sqrt = Math::sqrt(1.0f + mRot.m11 - mRot.m00 - mRot.m22);
                 half = 0.5f / sqrt;
 
                 quaternion.x = (mRot.m10 + mRot.m01) * half;
@@ -175,7 +175,7 @@ namespace Crystal::Math {
                 return quaternion;
             }
 
-            sqrt = std::sqrt(1.0f + mRot.m22 - mRot.m00 - mRot.m11);
+            sqrt = Math::sqrt(1.0f + mRot.m22 - mRot.m00 - mRot.m11);
             half = 0.5f / sqrt;
 
             quaternion.x = (mRot.m20 + mRot.m02) * half;
@@ -186,21 +186,21 @@ namespace Crystal::Math {
             return quaternion;
         }
 
-        [[nodiscard]] Vector3 GetScale() const noexcept {
-            const int xs = (Math::Signum(m00 * m01 * m02 * m03) < 0) ? -1 : 1;
-            const int ys = (Math::Signum(m10 * m11 * m12 * m13) < 0) ? -1 : 1;
-            const int zs = (Math::Signum(m20 * m21 * m22 * m23) < 0) ? -1 : 1;
+        [[nodiscard]] constexpr Vector3 GetScale() const noexcept {
+            const int xs = (Math::sgn(m00 * m01 * m02 * m03) < 0) ? -1 : 1;
+            const int ys = (Math::sgn(m10 * m11 * m12 * m13) < 0) ? -1 : 1;
+            const int zs = (Math::sgn(m20 * m21 * m22 * m23) < 0) ? -1 : 1;
 
             return Vector3(
-                static_cast<float>(xs) * std::sqrt(m00 * m00 + m01 * m01 + m02 * m02),
-                static_cast<float>(ys) * std::sqrt(m10 * m10 + m11 * m11 + m12 * m12),
-                static_cast<float>(zs) * std::sqrt(m20 * m20 + m21 * m21 + m22 * m22)
+                static_cast<float>(xs) * Math::sqrt(m00 * m00 + m01 * m01 + m02 * m02),
+                static_cast<float>(ys) * Math::sqrt(m10 * m10 + m11 * m11 + m12 * m12),
+                static_cast<float>(zs) * Math::sqrt(m20 * m20 + m21 * m21 + m22 * m22)
             );
         }
 
-        [[nodiscard]] static inline Matrix CreateScale(float scale)          noexcept { return CreateScale(scale, scale, scale); }
-        [[nodiscard]] static inline Matrix CreateScale(const Vector3& scale) noexcept { return CreateScale(scale.x, scale.y, scale.z); }
-        [[nodiscard]] static inline Matrix CreateScale(float scaleX, float scaleY, float ScaleZ) noexcept {
+        [[nodiscard]] static constexpr inline Matrix CreateScale(float scale)          noexcept { return CreateScale(scale, scale, scale); }
+        [[nodiscard]] static constexpr inline Matrix CreateScale(const Vector3& scale) noexcept { return CreateScale(scale.x, scale.y, scale.z); }
+        [[nodiscard]] static constexpr inline Matrix CreateScale(float scaleX, float scaleY, float ScaleZ) noexcept {
             return Matrix(
                 scaleX, 0,      0,      0,
                 0,      scaleY, 0,      0,
@@ -209,7 +209,7 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] static inline Matrix CreateLookAtLH(
+        [[nodiscard]] static constexpr inline Matrix CreateLookAtLH(
             const Vector3& cameraPosition,
             const Vector3& target,
             const Vector3& up) noexcept
@@ -226,7 +226,7 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] static inline Matrix CreatePerspectiveFieldOfViewLH(
+        [[nodiscard]] static constexpr inline Matrix CreatePerspectiveFieldOfViewLH(
             float fov,
             float aspectRatio,
             float nearPlaneDistance,
@@ -246,10 +246,10 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] Matrix Transposed() const noexcept { return Transpose(*this); }
-        void Transpose() { *this = Transpose(*this); }
+        [[nodiscard]] constexpr Matrix Transposed() const noexcept { return Transpose(*this); }
+        constexpr void Transpose() { *this = Transpose(*this); }
 
-        [[nodiscard]] static inline Matrix Transpose(const Matrix& matrix) noexcept {
+        [[nodiscard]] static constexpr inline Matrix Transpose(const Matrix& matrix) noexcept {
             return Matrix(
                 matrix.m00, matrix.m10, matrix.m20, matrix.m30,
                 matrix.m01, matrix.m11, matrix.m21, matrix.m31,
@@ -258,9 +258,9 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] Matrix Inversed() const noexcept { return Inverse(*this); }
+        [[nodiscard]] constexpr Matrix Inversed() const noexcept { return Inverse(*this); }
 
-        [[nodiscard]] static inline Matrix Inverse(const Matrix& matrix) noexcept {
+        [[nodiscard]] static constexpr inline Matrix Inverse(const Matrix& matrix) noexcept {
             float v0 = matrix.m20 * matrix.m31 - matrix.m21 * matrix.m30;
             float v1 = matrix.m20 * matrix.m32 - matrix.m22 * matrix.m30;
             float v2 = matrix.m20 * matrix.m33 - matrix.m23 * matrix.m30;
@@ -316,14 +316,14 @@ namespace Crystal::Math {
                 i30, i31, i32, i33);
         }
 
-        void Decompose(Vector3& scale, Quaternion& rotation, Vector3& translation) const noexcept
+        void constexpr Decompose(Vector3& scale, Quaternion& rotation, Vector3& translation) const noexcept
         {
             translation = GetTranslation();
             scale       = GetScale();
             rotation    = GetRotation();
         }
 
-        void SetIdentity() noexcept
+        void constexpr SetIdentity() noexcept
         {
             m00 = 1; m01 = 0; m02 = 0; m03 = 0;
             m10 = 0; m11 = 1; m12 = 0; m13 = 0;
@@ -331,7 +331,7 @@ namespace Crystal::Math {
             m30 = 0; m31 = 0; m32 = 0; m33 = 1;
         }
 
-        [[nodiscard]] Matrix operator*(const Matrix& rhs) const noexcept
+        [[nodiscard]] constexpr Matrix operator*(const Matrix& rhs) const noexcept
         {
             return Matrix(
                 m00 * rhs.m00 + m01 * rhs.m10 + m02 * rhs.m20 + m03 * rhs.m30,
@@ -353,9 +353,9 @@ namespace Crystal::Math {
             );
         }
 
-        void operator*=(const Matrix& rhs) { (*this) = (*this) * rhs; }
+        constexpr void operator*=(const Matrix& rhs) { (*this) = (*this) * rhs; }
 
-        [[nodiscard]] Vector3 operator*(const Vector3& rhs) const noexcept {
+        [[nodiscard]] constexpr Vector3 operator*(const Vector3& rhs) const noexcept {
             Vector4 vec4;
 
             vec4.x = (rhs.x * m00) + (rhs.y * m10) + (rhs.z * m20) + m30;
@@ -366,7 +366,7 @@ namespace Crystal::Math {
             return Vector3(vec4.x * vec4.w, vec4.y * vec4.w, vec4.z * vec4.w);
         }
 
-        [[nodiscard]] Vector4 operator*(const Vector4& rhs) const noexcept {
+        [[nodiscard]] constexpr Vector4 operator*(const Vector4& rhs) const noexcept {
             return Vector4
             (
                 (rhs.x * m00) + (rhs.y * m10) + (rhs.z * m20) + (rhs.w * m30),
@@ -376,7 +376,7 @@ namespace Crystal::Math {
             );
         }
 
-        [[nodiscard]] bool operator==(const Matrix& rhs) const noexcept {
+        [[nodiscard]] constexpr bool operator==(const Matrix& rhs) const noexcept {
             const float* data_left = Data();
             const float* data_right = rhs.Data();
 
@@ -389,22 +389,22 @@ namespace Crystal::Math {
             return true;
         }
 
-        [[nodiscard]] bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
+        [[nodiscard]] constexpr bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
 
         // Test for equality with another matrix with epsilon.
-        [[nodiscard]] bool Equals(const Matrix& rhs) {
+        [[nodiscard]] constexpr bool Equals(const Matrix& rhs) {
             const float* data_left = Data();
             const float* data_right = rhs.Data();
 
             for (unsigned i = 0; i < 16; ++i)
             {
-                if (!Math::Equals(data_left[i], data_right[i]))
+                if (!Math::equals(data_left[i], data_right[i]))
                     return false;
             }
 
             return true;
         }
-        [[nodiscard]] const float* Data() const noexcept { return &m00; }
+        [[nodiscard]] constexpr const float* Data() const noexcept { return &m00; }
 
         float m00 = 0.0f, m01 = 0.0f, m02 = 0.0f, m03 = 0.0f;
         float m10 = 0.0f, m11 = 0.0f, m12 = 0.0f, m13 = 0.0f;

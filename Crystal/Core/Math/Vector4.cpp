@@ -2,9 +2,10 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 #include "Matrix.h"
+#include "MathFunctions.h"
 
 namespace Crystal::Math {
-    Vector4::Vector4(const Vector3& vec3, float w)
+    constexpr Vector4::Vector4(const Vector3& vec3, float w)
         :
         x(vec3.x),
         y(vec3.y),
@@ -12,7 +13,7 @@ namespace Crystal::Math {
         w(w)
     {}
 
-    Vector4::Vector4(const Vector3& vec3)
+    constexpr Vector4::Vector4(const Vector3& vec3)
         :
         x(vec3.x),
         y(vec3.y),
@@ -20,7 +21,7 @@ namespace Crystal::Math {
         w(0.0f)
     {}
 
-    Vector4::Vector4(const Quaternion& quat)
+    constexpr Vector4::Vector4(const Quaternion& quat)
         :
         x(quat.x),
         y(quat.y),
@@ -28,7 +29,7 @@ namespace Crystal::Math {
         w(quat.w)
     {}
 
-    Vector4 Vector4::Rotate(const Vector4& vec4, const Quaternion& rotation) noexcept {
+    constexpr Vector4 Vector4::Rotate(const Vector4& vec4, const Quaternion& rotation) noexcept {
         const Quaternion p{ vec4.x, vec4.y, vec4.z, 0 };
         const Quaternion q = rotation.Conjugate();
 
@@ -37,7 +38,7 @@ namespace Crystal::Math {
         return Vector4(res);
     }
 
-    Vector4 Vector4::TransformNormal(const Vector4& vec4, const Matrix& mat) noexcept {
+    constexpr Vector4 Vector4::TransformNormal(const Vector4& vec4, const Matrix& mat) noexcept {
         Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
         Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
         Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
@@ -54,7 +55,7 @@ namespace Crystal::Math {
         return Result;
     }
 
-    Vector4 Vector4::Transform(const Vector4& vec4, const Matrix& mat) noexcept {
+    constexpr Vector4 Vector4::Transform(const Vector4& vec4, const Matrix& mat) noexcept {
         Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
         Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
         Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
@@ -73,7 +74,7 @@ namespace Crystal::Math {
     }
 
 
-    Vector4 Vector4::TransformCoord(const Vector4& vec3, const Matrix& mat) noexcept {
+    constexpr Vector4 Vector4::TransformCoord(const Vector4& vec3, const Matrix& mat) noexcept {
         Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
         Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
         Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
@@ -91,11 +92,11 @@ namespace Crystal::Math {
         return Result / W;
     }
 
-    Vector4 Vector4::MultiplyAdd(const Vector4& first, const Vector4& second, const Vector4& third) noexcept {
-        return Vector4(first.x * second.x + third.x,
-            first.y * second.y + third.y,
-            first.z * second.z + third.z,
-            first.w * second.w + third.w);
+    constexpr Vector4 Vector4::MultiplyAdd(const Vector4& first, const Vector4& second, const Vector4& third) noexcept {
+        return Vector4(Math::fma(first.x, second.x, third.x),
+                       Math::fma(first.y, second.y, third.y),
+                       Math::fma(first.z, second.z, third.z),
+                       Math::fma(first.w, second.w, third.w));
     }
     constexpr auto inf = std::numeric_limits<float>::infinity();
 
