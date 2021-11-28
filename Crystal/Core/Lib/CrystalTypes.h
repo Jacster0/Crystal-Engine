@@ -4,6 +4,7 @@
 
 namespace Crystal {
 	template<typename T>
+	requires std::integral<T> || std::floating_point<T>
 	struct Size {
 		union {
 			T Width;

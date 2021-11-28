@@ -21,7 +21,7 @@ namespace Crystal::Math {
 
 		template<typename T>
 		requires std::floating_point<T>
-		[[nodiscard]] static constexpr inline auto Random(T low, T auto high) noexcept {
+		[[nodiscard]] static constexpr inline auto Random(T low, T high) noexcept {
 			std::default_random_engine engine{ std::random_device{}() };
 
 			//This should never happen but we will support it anyway

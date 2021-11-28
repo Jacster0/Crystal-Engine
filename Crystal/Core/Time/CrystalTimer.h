@@ -39,11 +39,13 @@ namespace Crystal {
 			m_begin = Clock::now().time_since_epoch();
 		}
 
-		template<
-			class Duration = std::chrono::milliseconds,
-			typename       = std::enable_if_t<detail::is_duration_v<Duration>>
-		>
-		Duration end_measure() const noexcept {
+		template<class Duration = std::chrono::milliseconds>
+		auto end_measure() const noexcept ->
+			std::enable_if_t<
+				detail::is_duration_v<Duration>,
+				Duration
+			>
+		{
 			const auto end = Clock::now().time_since_epoch();
 			const auto dt  = end - m_begin;
 
@@ -69,20 +71,26 @@ namespace Crystal {
 		template<
 			typename T = float,
 			typename U = std::ratio<1>,
-			typename   = std::enable_if_t<std::is_floating_point_v<T>>
-			typename   = std::enable_if_t<detail::is_ratio_v<U>>
 		>
-		T get_delta() const noexcept {
+		auto get_delta() const noexcept ->
+			std::enable_if_t<
+			    std::is_floating_point_v<T> && detail::is_ratio_v<U>,
+				T
+			>
+		{
 			return std::chrono::duration<T, U>(m_delta).count();
 		}
 
 		template<
 			typename T = float,
 			typename U = std::ratio<1>,
-			typename   = std::enable_if_t<std::is_floating_point_v<T>>,
-			typename   = std::enable_if_t<detail::is_ratio_v<U>>
 		>
-		T get_elapsed() const noexcept {
+		auto get_elapsed() const noexcept ->
+			std::enable_if_t<
+			    std::is_floating_point_v<T>&& detail::is_ratio_v<U>,
+			    T
+		    > 
+		{
 			return std::chrono::duration<T, U>(m_elapsed).count();
 		}
 	private:
