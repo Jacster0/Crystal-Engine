@@ -20,7 +20,7 @@ namespace Crystal::Math {
     concept Divisble = requires (T x) { x / x; };
 
     template<typename T>
-    concept Number = (std::signed_integral<T> || std::floating_point<T>) && std::_Boolean_testable<T>;
+    concept Number = (std::signed_integral<T> || std::floating_point<T>);
 
     template<typename T>
     concept Unsigned_Number = std::unsigned_integral<T> && std::_Boolean_testable<T>;
@@ -78,7 +78,7 @@ namespace Crystal::Math {
         return degrees * MathConstants::TO_RADIANS;
     }
 
-    template<Number T>
+    template<class T>
     [[nodiscard]] constexpr T FusedMultiplyAdd(T x, T y, T z) noexcept {
         return (x * y) + z;
     }
@@ -111,7 +111,7 @@ namespace Crystal::Math {
             }
         }
 
-        if (std::numeric_limits<T>::has_infinity()) {
+        if constexpr (std::numeric_limits<T>::has_infinity) {
             if (mag == std::numeric_limits<T>::infinity()) {
                 if (sgn <= -0) {
                     return -1 * mag;
@@ -253,17 +253,14 @@ namespace Crystal::Math {
         return Math::Sin(degrees) / Math::Cos(degrees);
     }
 
-    [[nodiscard]] inline constexpr Number auto Cot(Number auto v) noexcept {
-        if (std::is_constant_evaluated()) {
+    [[nodiscard]] constexpr auto Cot(Number auto v) noexcept {
             return Math::Cos(v) / Math::Sin(v);
-        }
-        return std::cos(v) / std::sin(v);
     }
 
     //Evil atan approx
     template<std::floating_point T>
     [[nodiscard]] constexpr T Atan(T val) noexcept {
-        double result{ 0.0 };
+        T result{ 0.0 };
 
         const T x      = Math::Abs(val);
         const T y      = (x > 1.0) ? 1.0 / x : x;
@@ -271,28 +268,28 @@ namespace Crystal::Math {
         const T yPow4  = yPow2 * yPow2;
         const T yPow16 = yPow4 * yPow4;
 
-        const T a = Math::FusedMultiplyAdd(-0x1.a7256feb6fc5cp-6 , yPow2 , 0x1.171560ce4a483p-5  );
-        const T b = Math::FusedMultiplyAdd(-0x1.2cf5aabc7cef3p-7 , yPow2 , 0x1.162b0b2a3bfcep-6  );
-        const T c = Math::FusedMultiplyAdd(b                     , yPow4 , a                     );
-        const T d = Math::FusedMultiplyAdd(-0x1.312788dde0801p-10, yPow2 , 0x1.f9690c82492dbp-9  );
-        const T e = Math::FusedMultiplyAdd(-0x1.53e1d2a25ff34p-16, yPow2 , 0x1.d3b63dbb65af4p-13 );
-        const T f = Math::FusedMultiplyAdd(e                     , yPow4 , d                     );
-        const T g = Math::FusedMultiplyAdd(f                     , yPow16, c                     );
-        const T h = Math::FusedMultiplyAdd(g                     , yPow2 , -0x1.4f44d841450e1p-5 );
-        const T i = Math::FusedMultiplyAdd(h                     , yPow2 , 0x1.7ee3d3f36bb94p-5  );
-        const T j = Math::FusedMultiplyAdd(i                     , yPow2 , -0x1.ad32ae04a9fd1p-5 );
-        const T k = Math::FusedMultiplyAdd(j                     , yPow2 , 0x1.e17813d66954fp-5  );
-        const T l = Math::FusedMultiplyAdd(k                     , yPow2 , -0x1.11089ca9a5bcdp-4 );
-        const T m = Math::FusedMultiplyAdd(l                     , yPow2 , 0x1.3b12b2db51738p-4  );
-        const T n = Math::FusedMultiplyAdd(l                     , yPow2 , 0x1.3b12b2db51738p-4  );
-        const T o = Math::FusedMultiplyAdd(n                     , yPow2 , 0x1.c71c709dfe927p-4  );
-        const T p = Math::FusedMultiplyAdd(o                     , yPow2 , -0x1.2492491fa1744p-3 );
-        const T q = Math::FusedMultiplyAdd(p                     , yPow2 , 0x1.99999999840d2p-3  );
-        const T r = Math::FusedMultiplyAdd(q                     , yPow2 , -0x1.555555555544cp-2 );
-        const T s = Math::FusedMultiplyAdd(r * yPow2             , y     , y                     );
+        const T a = Math::FusedMultiplyAdd(static_cast<T>(-0x1.a7256feb6fc5cp-6) , yPow2 , static_cast<T>(0x1.171560ce4a483p-5)  );
+        const T b = Math::FusedMultiplyAdd(static_cast<T>(-0x1.2cf5aabc7cef3p-7) , yPow2 , static_cast<T>(0x1.162b0b2a3bfcep-6)  );
+        const T c = Math::FusedMultiplyAdd(b                                     , yPow4 , a                                     );
+        const T d = Math::FusedMultiplyAdd(static_cast<T>(-0x1.312788dde0801p-10), yPow2 , static_cast<T>(0x1.f9690c82492dbp-9)  );
+        const T e = Math::FusedMultiplyAdd(static_cast<T>(-0x1.53e1d2a25ff34p-16), yPow2 , static_cast<T>(0x1.d3b63dbb65af4p-13) );
+        const T f = Math::FusedMultiplyAdd(e                                     , yPow4 , d                                     );
+        const T g = Math::FusedMultiplyAdd(f                                     , yPow16, c                                     );
+        const T h = Math::FusedMultiplyAdd(g                                     , yPow2 , static_cast<T>(-0x1.4f44d841450e1p-5) );
+        const T i = Math::FusedMultiplyAdd(h                                     , yPow2 , static_cast<T>(0x1.7ee3d3f36bb94p-5)  );
+        const T j = Math::FusedMultiplyAdd(i                                     , yPow2 , static_cast<T>(-0x1.ad32ae04a9fd1p-5) );
+        const T k = Math::FusedMultiplyAdd(j                                     , yPow2 , static_cast<T>(0x1.e17813d66954fp-5)  );
+        const T l = Math::FusedMultiplyAdd(k                                     , yPow2 , static_cast<T>(-0x1.11089ca9a5bcdp-4) );
+        const T m = Math::FusedMultiplyAdd(l                                     , yPow2 , static_cast<T>(0x1.3b12b2db51738p-4)  );
+        const T n = Math::FusedMultiplyAdd(l                                     , yPow2 , static_cast<T>(0x1.3b12b2db51738p-4)  );
+        const T o = Math::FusedMultiplyAdd(n                                     , yPow2 , static_cast<T>(0x1.c71c709dfe927p-4)  );
+        const T p = Math::FusedMultiplyAdd(o                                     , yPow2 , static_cast<T>(-0x1.2492491fa1744p-3) );
+        const T q = Math::FusedMultiplyAdd(p                                     , yPow2 , static_cast<T>(0x1.99999999840d2p-3)  );
+        const T r = Math::FusedMultiplyAdd(q                                     , yPow2 , static_cast<T>(-0x1.555555555544cp-2) );
+        const T s = Math::FusedMultiplyAdd(r * yPow2                             , y     , y                                     );
 
         if (x > 1.0) {
-            result = 0x1.921fb54442d18p+0 - s;
+            result = static_cast<T>(0x1.921fb54442d18p+0) - s;
         }
         else {
             result = s;
@@ -311,8 +308,8 @@ namespace Crystal::Math {
     [[nodiscard]] constexpr double Atan2(T y, T x) {
         if (std::is_constant_evaluated()) {
             constexpr auto pi = std::numbers::pi_v<T>;
-            const auto sgn_x  = Math::sgn(x);
-            const auto sgn_y  = Math::sgn(y);
+            const auto sgn_x  = Math::Signum(x);
+            const auto sgn_y  = Math::Signum(y);
 
             const auto sgn_x_pow2 = sgn_x * sgn_x;
             const auto sgn_y_pow2 = sgn_y * sgn_y;

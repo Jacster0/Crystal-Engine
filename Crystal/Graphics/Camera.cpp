@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "../Core/Math/Vector3.cpp"
 
 using namespace Crystal;
 using namespace Crystal::Math;

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Core/Math/Transform.h"
+#include "../Core/Math/Common.h"
 #include <type_traits>
 
 namespace Crystal {
@@ -10,6 +11,7 @@ namespace Crystal {
 
 	class Camera {
 	public:
+		Camera() = default;
 		Camera(float fov, float aspectRatio, Frustum viewFrustum) noexcept;
 		void SetProjection(float fov, float aspectRatio, Frustum viewFrustum) noexcept;
 

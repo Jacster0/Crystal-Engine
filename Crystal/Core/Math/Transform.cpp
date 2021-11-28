@@ -1,10 +1,8 @@
 #include "Transform.h"
-#include <algorithm>
+#include "Vector4.cpp"
 
 using namespace Crystal;
 using namespace Crystal::Math;
-
-namespace ranges = std::ranges;
 
 void Transform::SetRotation(const Quaternion& rotation) noexcept {
 	m_rotation = rotation;
@@ -35,7 +33,7 @@ void Transform::Rotate(const Quaternion& quaternion) noexcept {
 }
 
 void Transform::TranslationImpl(LocalTranslationTag translationTag, TranslationSpecification specification) noexcept {
-	m_position += Math::Vector4::Rotate(specification.Translation, specification.Rotation);
+	m_position += Vector4::Rotate(specification.Translation, specification.Rotation);
 }
 
 void Transform::TranslationImpl(WorldTranslationTag translationTag, TranslationSpecification specification) noexcept {
