@@ -43,12 +43,16 @@ namespace Crystal {
 		template<class To, class From>
 		constexpr auto ConvertTo(From&& from) noexcept -> 
 			std::enable_if_t<
-				detail::is_string_v<From> && detail::is_string_v<To>, 
+				(detail::is_string_v<From> || detail::can_construct_string_v<From> || detail::can_construct_wstring_v<From>) && 
+			    (detail::is_string_v<To>   || detail::can_construct_string_v<To>   || detail::can_construct_wstring_v<To>),
 				To
 			>  
 		{
 			if constexpr (std::is_same_v<std::string, std::decay_t<To>>) {
-				if constexpr (detail::can_construct_string_v<From>) {
+				if constexpr (std::is_same_v<std::string, std::decay_t<From>>) {
+					return from;
+				}
+				else if constexpr (detail::can_construct_string_v<From>) {
 					return std::string(std::forward<From>(from));
 				}
 				else {
@@ -57,7 +61,10 @@ namespace Crystal {
 			}
 
 			else if constexpr (std::is_same_v<std::wstring, std::decay_t<To>>) {
-				if constexpr (detail::can_construct_wstring_v<From>) {
+				if constexpr (std::is_same_v<std::wstring, std::decay_t<From>>) {
+					return from;
+				}
+				else if constexpr (detail::can_construct_wstring_v<From>) {
 					return std::wstring(std::forward<From>(from));
 				}
 				else {
