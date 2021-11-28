@@ -24,8 +24,8 @@ namespace Crystal::Math {
 
         static constexpr inline Quaternion FromAngleAxis(float angle, const Vector3& axis) noexcept {
             const auto halfAngle = angle * 0.5f;
-            const auto sin       = Math::sin(halfAngle);
-            const auto cos       = Math::cos(halfAngle);
+            const auto sin       = Math::Sin(halfAngle);
+            const auto cos       = Math::Cos(halfAngle);
 
             return Quaternion(axis.x * sin, axis.y * sin, axis.z * sin, cos);
         }
@@ -35,13 +35,13 @@ namespace Crystal::Math {
             const auto halfPitch = pitch * 0.5f;
             const auto halfYaw   = yaw * 0.5f;
 
-            const auto sinRoll  = Math::sin(halfRoll);
-            const auto sinPitch = Math::sin(halfPitch);
-            const auto sinYaw   = Math::sin(halfYaw);
+            const auto sinRoll  = Math::Sin(halfRoll);
+            const auto sinPitch = Math::Sin(halfPitch);
+            const auto sinYaw   = Math::Sin(halfYaw);
 
-            const auto cosRoll  = Math::cos(halfRoll);
-            const auto cosPitch = Math::cos(halfPitch);
-            const auto cosYaw   = Math::cos(halfYaw);
+            const auto cosRoll  = Math::Cos(halfRoll);
+            const auto cosPitch = Math::Cos(halfPitch);
+            const auto cosYaw   = Math::Cos(halfYaw);
 
             return Quaternion(
                 cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll,
@@ -83,7 +83,7 @@ namespace Crystal::Math {
         constexpr void FromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis) noexcept;
 
         constexpr auto Conjugate() const noexcept { return Quaternion(-x, -y, -z, w); }
-        constexpr auto SquaredLength() const noexcept { return Math::squared_hypot(x, y, z, w); }
+        constexpr auto SquaredLength() const noexcept { return Math::SquaredHypot(x, y, z, w); }
 
         constexpr Vector3 ToEulerAngles() const noexcept {
             //Order of rotations: Z, X, Y
@@ -93,20 +93,20 @@ namespace Crystal::Math {
                 return Vector3(
                     90.0f,
                     0.0f,
-                    Math::ToDegrees(Math::atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
+                    Math::ToDegrees(Math::Atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
                 );
             }
             else if (check < 0.0995f) {
                 return Vector3(
                     90.0f,
                     0.0f,
-                    Math::ToDegrees(Math::atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
+                    Math::ToDegrees(Math::Atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
                 );
             }
             return Vector3(
-                Math::ToDegrees(Math::asin(check)),
-                Math::ToDegrees(Math::atan2(2.0f * (x * z + w * y), 1.0f - 2.0f * (x * x + y * y))),
-                Math::ToDegrees(Math::atan2(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z)))
+                Math::ToDegrees(Math::Asin(check)),
+                Math::ToDegrees(Math::Atan2(2.0f * (x * z + w * y), 1.0f - 2.0f * (x * x + y * y))),
+                Math::ToDegrees(Math::Atan2(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z)))
             );
         }
 
@@ -114,7 +114,7 @@ namespace Crystal::Math {
             const auto squaredLength = SquaredLength();
 
             if (!Math::equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
-                const auto lengthInv = 1 / Math::sqrt(squaredLength);
+                const auto lengthInv = 1 / Math::Sqrt(squaredLength);
 
                 x *= lengthInv;
                 y *= lengthInv;
@@ -127,7 +127,7 @@ namespace Crystal::Math {
             const auto length_squared = SquaredLength();
 
             if (!Math::equals(length_squared, 1.0f) && length_squared > 0.0f) {
-                const auto length_inverted = 1.0f / Math::sqrt(length_squared);
+                const auto length_inverted = 1.0f / Math::Sqrt(length_squared);
                 return (*this) * length_inverted;
             }
             else {

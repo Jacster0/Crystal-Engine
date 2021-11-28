@@ -93,10 +93,10 @@ namespace Crystal::Math {
     }
 
     constexpr Vector4 Vector4::MultiplyAdd(const Vector4& first, const Vector4& second, const Vector4& third) noexcept {
-        return Vector4(Math::fma(first.x, second.x, third.x),
-                       Math::fma(first.y, second.y, third.y),
-                       Math::fma(first.z, second.z, third.z),
-                       Math::fma(first.w, second.w, third.w));
+        return Vector4(Math::FusedMultiplyAdd(first.x, second.x, third.x),
+                       Math::FusedMultiplyAdd(first.y, second.y, third.y),
+                       Math::FusedMultiplyAdd(first.z, second.z, third.z),
+                       Math::FusedMultiplyAdd(first.w, second.w, third.w));
     }
     constexpr auto inf = std::numeric_limits<float>::infinity();
 

@@ -118,7 +118,7 @@ namespace Crystal::Math {
             const auto squaredLength = SquaredLength();
 
             if (!Math::equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
-                const auto invertedLength = 1.0f / Math::sqrt(squaredLength);
+                const auto invertedLength = 1.0f / Math::Sqrt(squaredLength);
 
                 x *= invertedLength;
                 y *= invertedLength;
@@ -129,7 +129,7 @@ namespace Crystal::Math {
             const auto squaredLength = SquaredLength();
 
             if (!Math::equals(squaredLength, 1.0f) && squaredLength > 0.0f) {
-                const auto invertedLength = 1.0f / Math::sqrt(squaredLength);
+                const auto invertedLength = 1.0f / Math::Sqrt(squaredLength);
 
                 return (*this) * invertedLength;
             }
@@ -139,14 +139,14 @@ namespace Crystal::Math {
         [[nodiscard]] constexpr float Dot(const Vector3& rhs) const noexcept { return Dot(*this, rhs); }
         [[nodiscard]] constexpr Vector3 Cross(const Vector3& rhs) const noexcept { return Cross(*this, rhs); }
 
-        [[nodiscard]] constexpr float Length()       const noexcept { return Math::hypot(x,y,z); }
-        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::squared_hypot(x, y, z); }
+        [[nodiscard]] constexpr float Length()       const noexcept { return Math::Hypot(x,y,z); }
+        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::SquaredHypot(x, y, z); }
 
         inline constexpr void ClampMagnitude(float maxLength) noexcept {
             const auto squaredMagnitude = SquaredLength();
 
             if (squaredMagnitude > maxLength * maxLength) {
-                const auto magnitude = Math::sqrt(squaredMagnitude);
+                const auto magnitude = Math::Sqrt(squaredMagnitude);
 
                 const auto normalizedX = x / magnitude;
                 const auto normalizedY = y / magnitude;
@@ -159,12 +159,12 @@ namespace Crystal::Math {
         }
 
         constexpr void Floor() noexcept {
-            x = Math::floor(x);
-            y = Math::floor(y);
-            z = Math::floor(z);
+            x = Math::Floor(x);
+            y = Math::Floor(y);
+            z = Math::Floor(z);
         }
 
-        [[nodiscard]] constexpr Vector3 Abs() const noexcept { return Vector3(Math::abs(x), Math::abs(y), Math::abs(z)); }
+        [[nodiscard]] constexpr Vector3 Abs() const noexcept { return Vector3(Math::Abs(x), Math::Abs(y), Math::Abs(z)); }
 
         [[nodiscard]] constexpr const inline float Distance(const Vector3& rhs)        const noexcept { return (*this - rhs).Length(); }
         [[nodiscard]] constexpr const inline float SquaredDistance(const Vector3& rhs) const noexcept { return (*this - rhs).SquaredLength(); }

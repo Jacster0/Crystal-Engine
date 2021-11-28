@@ -6,15 +6,23 @@
 #include "../ECS/Component.h"
 
 namespace Crystal {
-	class Transform final : public AComponent{
+
+	namespace details {
+		struct LocalTranslationTag {};
+		struct WorldTranslationTag {};
+
 		struct TranslationSpecification {
 			Math::Vector4 Translation{};
 			Math::Quaternion Rotation{};
 		};
-	public:
-		struct LocalTranslationTag {};
-		struct WorldTranslationTag {};
+	}
 
+	using details::LocalTranslationTag;
+	using details::WorldTranslationTag;
+	using details::TranslationSpecification;
+
+	class Transform final : public AComponent{
+	public:
 		virtual void Update() noexcept override {}
 
 		void SetRotation(const Math::Quaternion& rotation) noexcept;

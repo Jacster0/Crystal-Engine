@@ -52,8 +52,8 @@ namespace Crystal::Math {
         constexpr bool operator==(const Vector2& other) const noexcept { return x == other.x && y == other.y; }
         constexpr bool operator!=(const Vector2& other) const noexcept { return !(*this == other); }
 
-        [[nodiscard]] constexpr float Length()        const noexcept { return Math::hypot(x, y); }
-        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::squared_hypot(x, y); }
+        [[nodiscard]] constexpr float Length()        const noexcept { return Math::Hypot(x, y); }
+        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::SquaredHypot(x, y); }
 
         [[nodiscard]] static constexpr inline float Distance(const Vector2& a, const Vector2& b)        noexcept { return (b - a).Length(); }
         [[nodiscard]] static constexpr inline float SquaredDistance(const Vector2& a, const Vector2& b) noexcept { return (b - a).SquaredLength(); }

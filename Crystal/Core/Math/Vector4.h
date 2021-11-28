@@ -92,14 +92,14 @@ namespace Crystal::Math {
             return Vector4(x / val, y / val, z / val, w / val);
         }
 
-        [[nodiscard]] constexpr float Length()        const noexcept { return Math::hypot(x, y, z, w); }
-        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::squared_hypot(x, y, z, w); }
+        [[nodiscard]] constexpr float Length()        const noexcept { return Math::Hypot(x, y, z, w); }
+        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::SquaredHypot(x, y, z, w); }
 
         constexpr void Normalize() noexcept {
             const auto length_squared = SquaredLength();
 
             if (!Math::equals(length_squared, 1.0f) && length_squared > 0.0f) {
-                const auto length_inverted = 1.0f / Math::sqrt(length_squared);
+                const auto length_inverted = 1.0f / Math::Sqrt(length_squared);
                 x *= length_inverted;
                 y *= length_inverted;
                 z *= length_inverted;
@@ -110,7 +110,7 @@ namespace Crystal::Math {
             const auto length_squared = SquaredLength();
 
             if (!Math::equals(length_squared, 1.0f) && length_squared > 0.0f) {
-                const auto length_inverted = 1.0f / Math::sqrt(length_squared);
+                const auto length_inverted = 1.0f / Math::Sqrt(length_squared);
 
                 return (*this) * length_inverted;
             }

@@ -80,8 +80,8 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] static constexpr inline Matrix RotationX(const float angle) {
-            const float sinAngle = Math::sin(angle);
-            const float cosAngle = Math::cos(angle);
+            const float sinAngle = Math::Sin(angle);
+            const float cosAngle = Math::Cos(angle);
 
             return Matrix(
                 1, 0, 0, 0,
@@ -92,8 +92,8 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] static constexpr inline Matrix RotationY(const float angle) {
-            const float sinAngle = Math::sin(angle);
-            const float cosAngle = Math::cos(angle);
+            const float sinAngle = Math::Sin(angle);
+            const float cosAngle = Math::Cos(angle);
 
             return Matrix(
                 cosAngle, 0, -sinAngle, 0,
@@ -104,8 +104,8 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] static constexpr inline Matrix RotationZ(const float angle) {
-            const float sinAngle = Math::sin(angle);
-            const float cosAngle = Math::cos(angle);
+            const float sinAngle = Math::Sin(angle);
+            const float cosAngle = Math::Cos(angle);
 
             return Matrix(
                 cosAngle,  sinAngle, 0, 0,
@@ -140,7 +140,7 @@ namespace Crystal::Math {
             const float scale = mRot.m00 + mRot.m11 + mRot.m22;
 
             if (scale > 0.0f) {
-                sqrt = Math::sqrt(scale + 1.0f);
+                sqrt = Math::Sqrt(scale + 1.0f);
                 quaternion.w = sqrt * 0.5f;
                 sqrt = 0.5f / sqrt;
 
@@ -152,7 +152,7 @@ namespace Crystal::Math {
             }
 
             else if ((mRot.m00 >= mRot.m11) && (mRot.m00 >= mRot.m22)) {
-                sqrt = Math::sqrt(1.0f + mRot.m00 - mRot.m11 - mRot.m22);
+                sqrt = Math::Sqrt(1.0f + mRot.m00 - mRot.m11 - mRot.m22);
                 half = 0.5f / sqrt;
 
                 quaternion.x = 0.5f * sqrt;
@@ -164,7 +164,7 @@ namespace Crystal::Math {
             }
 
             else if (mRot.m11 > mRot.m22) {
-                sqrt = Math::sqrt(1.0f + mRot.m11 - mRot.m00 - mRot.m22);
+                sqrt = Math::Sqrt(1.0f + mRot.m11 - mRot.m00 - mRot.m22);
                 half = 0.5f / sqrt;
 
                 quaternion.x = (mRot.m10 + mRot.m01) * half;
@@ -175,7 +175,7 @@ namespace Crystal::Math {
                 return quaternion;
             }
 
-            sqrt = Math::sqrt(1.0f + mRot.m22 - mRot.m00 - mRot.m11);
+            sqrt = Math::Sqrt(1.0f + mRot.m22 - mRot.m00 - mRot.m11);
             half = 0.5f / sqrt;
 
             quaternion.x = (mRot.m20 + mRot.m02) * half;
@@ -187,14 +187,14 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] constexpr Vector3 GetScale() const noexcept {
-            const int xs = (Math::sgn(m00 * m01 * m02 * m03) < 0) ? -1 : 1;
-            const int ys = (Math::sgn(m10 * m11 * m12 * m13) < 0) ? -1 : 1;
-            const int zs = (Math::sgn(m20 * m21 * m22 * m23) < 0) ? -1 : 1;
+            const int xs = (Math::Signum(m00 * m01 * m02 * m03) < 0) ? -1 : 1;
+            const int ys = (Math::Signum(m10 * m11 * m12 * m13) < 0) ? -1 : 1;
+            const int zs = (Math::Signum(m20 * m21 * m22 * m23) < 0) ? -1 : 1;
 
             return Vector3(
-                static_cast<float>(xs) * Math::sqrt(m00 * m00 + m01 * m01 + m02 * m02),
-                static_cast<float>(ys) * Math::sqrt(m10 * m10 + m11 * m11 + m12 * m12),
-                static_cast<float>(zs) * Math::sqrt(m20 * m20 + m21 * m21 + m22 * m22)
+                static_cast<float>(xs) * Math::Sqrt(m00 * m00 + m01 * m01 + m02 * m02),
+                static_cast<float>(ys) * Math::Sqrt(m10 * m10 + m11 * m11 + m12 * m12),
+                static_cast<float>(zs) * Math::Sqrt(m20 * m20 + m21 * m21 + m22 * m22)
             );
         }
 

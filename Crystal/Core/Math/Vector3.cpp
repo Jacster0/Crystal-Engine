@@ -66,9 +66,9 @@ namespace Crystal::Math {
     }
 
     constexpr Vector3 Vector3::MultiplyAdd(const Vector3& first, const Vector3& second, const Vector3& third) noexcept {
-        return Vector3(Math::fma(first.x, second.x ,third.x),
-                       Math::fma(first.y, second.y, third.y),
-                       Math::fma(first.z, second.z, third.z));
+        return Vector3(Math::FusedMultiplyAdd(first.x, second.x ,third.x),
+                       Math::FusedMultiplyAdd(first.y, second.y, third.y),
+                       Math::FusedMultiplyAdd(first.z, second.z, third.z));
     }
 
     const Vector3 Vector3::Zero(0.0f, 0.0f, 0.0f);

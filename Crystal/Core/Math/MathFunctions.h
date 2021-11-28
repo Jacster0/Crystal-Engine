@@ -79,12 +79,12 @@ namespace Crystal::Math {
     }
 
     template<Number T>
-    [[nodiscard]] constexpr T fma(T x, T y, T z) noexcept {
+    [[nodiscard]] constexpr T FusedMultiplyAdd(T x, T y, T z) noexcept {
         return (x * y) + z;
     }
 
     template<Number T>
-    [[nodiscard]] constexpr T copysign(T mag, T sgn) {
+    [[nodiscard]] constexpr T CopySign(T mag, T sgn) {
         if constexpr (!std::is_signed_v<T>) {
             return mag;
         }
@@ -124,12 +124,12 @@ namespace Crystal::Math {
     }
 
     template<Unsigned_Number T>
-    [[nodiscard]] inline constexpr T sgn(T x) {
+    [[nodiscard]] inline constexpr T Signum(T x) {
         return 0 < x;
     }
 
     template<Number T>
-    [[nodiscard]] inline constexpr T sgn(T val) {
+    [[nodiscard]] inline constexpr T Signum(T val) {
         return (0 < val) - (val < 0);
     }
 
@@ -148,7 +148,7 @@ namespace Crystal::Math {
     }
 
     namespace detail {
-        [[nodiscard]] constexpr double sqrtHelper(double val, double curr, double prev) noexcept {
+        [[nodiscard]] constexpr double sqrt_helper(double val, double curr, double prev) noexcept {
             if (curr == prev) {
                 return curr;
             }
@@ -156,43 +156,25 @@ namespace Crystal::Math {
             prev = curr;
             curr = 0.5 * (curr + val / curr);
 
-            return sqrtHelper(val, curr, prev);
+            return sqrt_helper(val, curr, prev);
         }
     }
 
-    [[nodiscard]] constexpr auto sqrt(std::floating_point auto val) noexcept {
+    [[nodiscard]] constexpr auto Sqrt(std::floating_point auto val) noexcept {
         if (val >= 0 && val < std::numeric_limits<decltype(val)>::infinity()) {
-            return static_cast<decltype(val)>(detail::sqrtHelper(val, val, 0));
+            return static_cast<decltype(val)>(detail::sqrt_helper(val, val, 0));
         }
         return std::numeric_limits<decltype(val)>::quiet_NaN();
     }
 
-    [[nodiscard]] constexpr double sqrt(std::unsigned_integral auto val) noexcept {
+    [[nodiscard]] constexpr double Sqrt(std::unsigned_integral auto val) noexcept {
         if (val >= 0 && val < std::numeric_limits<decltype(val)>::max()) {
-            return detail::sqrtHelper(val, val, 0);
+            return detail::sqrt_helper(val, val, 0);
         }
         return std::numeric_limits<double>::quiet_NaN();
     }
 
-    template<class T>
-    [[nodiscard]] constexpr T pow(T val, T exp) noexcept {
-        if (exp == 0) {
-            return static_cast<T>(1);
-        }
-        T temp = pow(val, exp / static_cast<T>(2));
-
-        if (temp % 2 == 0) {
-            return temp * temp;
-        }
-        else {
-            if (exp > 0) {
-                return val * temp * temp;
-            }
-            return (temp * temp) / val;
-        }
-    }
-
-    [[nodiscard]] constexpr int floor(std::floating_point auto val) noexcept {
+    [[nodiscard]] constexpr int Floor(std::floating_point auto val) noexcept {
         const int converted = static_cast<int>(val);
 
         if (val < converted) {
@@ -201,7 +183,7 @@ namespace Crystal::Math {
         return converted;
     }
 
-    [[nodiscard]] constexpr int ceil(std::floating_point auto val) noexcept {
+    [[nodiscard]] constexpr int Ceil(std::floating_point auto val) noexcept {
         const int converted = static_cast<int>(val);
 
         if (val > converted) {
@@ -210,28 +192,24 @@ namespace Crystal::Math {
         return converted;
     }
 
-    [[nodiscard]] constexpr auto abs(Number auto val) noexcept {
+    [[nodiscard]] constexpr auto Abs(Number auto val) noexcept {
         if (val < 0) {
             return -val;
         }
         return val;
     }
 
-    template<Number... Ts>
-    [[nodiscard]] constexpr Number auto squared_hypot(Ts... vals) noexcept {
-        double sum{ 0 };
-
-        ([&sum](auto val) { sum += val * val; } (vals), ...);
-
-        return sum;
+    template<class... Ts>
+    [[nodiscard]] constexpr auto SquaredHypot(Ts... vals) noexcept {
+        return ((vals * vals) + ...);
     }
 
     template<Number... Ts>
-    [[nodiscard]] constexpr Number auto hypot(Ts... vals) noexcept {
-        return Math::sqrt(squared_hypot(vals...));
+    [[nodiscard]] constexpr Number auto Hypot(Ts... vals) noexcept {
+        return Math::Sqrt(SquaredHypot(vals...));
     }
 
-    [[nodiscard]] constexpr inline auto cos(std::floating_point auto degrees) noexcept {
+    [[nodiscard]] constexpr inline auto Cos(std::floating_point auto degrees) noexcept {
         if (std::is_constant_evaluated()) {
             using Type = decltype(degrees);
 
@@ -243,9 +221,9 @@ namespace Crystal::Math {
             constexpr Type e      = 1.0;
 
             const Type x = degrees * inv2pi;
-            const Type y = b + Math::floor(x + b);
+            const Type y = b + Math::Floor(x + b);
             const Type z = x - y;
-            const Type u = z * c * (Math::abs(z) - a);
+            const Type u = z * c * (Math::Abs(z) - a);
             const Type v = d * u * (u - e);
 
             return u + v;
@@ -253,65 +231,65 @@ namespace Crystal::Math {
         return std::cos(degrees);
     }
 
-    [[nodiscard]] constexpr inline double cos(int degrees) noexcept {
-        return Math::cos(static_cast<double>(degrees));
+    [[nodiscard]] constexpr inline double Cos(int degrees) noexcept {
+        return Math::Cos(static_cast<double>(degrees));
     }
 
-    [[nodiscard]] constexpr auto sin(std::floating_point auto degrees) {
+    [[nodiscard]] constexpr auto Sin(std::floating_point auto degrees) {
         constexpr auto halfPi = std::numbers::pi / 2;
 
-        return Math::cos(halfPi - degrees);
+        return Math::Cos(halfPi - degrees);
     }
 
-    [[nodiscard]] constexpr double sin(int degrees) {
-        return Math::sin(static_cast<double>(degrees));
+    [[nodiscard]] constexpr double Sin(int degrees) {
+        return Math::Sin(static_cast<double>(degrees));
     }
 
-    [[nodiscard]] constexpr auto tan(std::floating_point auto degrees) {
-        return Math::sin(degrees) / Math::cos(degrees);
+    [[nodiscard]] constexpr auto Tan(std::floating_point auto degrees) {
+        return Math::Sin(degrees) / Math::Cos(degrees);
     }
 
-    [[nodiscard]] constexpr double tan(int degrees) {
-        return Math::sin(degrees) / Math::cos(degrees);
+    [[nodiscard]] constexpr double Tan(int degrees) {
+        return Math::Sin(degrees) / Math::Cos(degrees);
     }
 
     [[nodiscard]] inline constexpr Number auto Cot(Number auto v) noexcept {
         if (std::is_constant_evaluated()) {
-            return Math::cos(v) / Math::sin(v);
+            return Math::Cos(v) / Math::Sin(v);
         }
         return std::cos(v) / std::sin(v);
     }
 
     //Evil atan approx
     template<std::floating_point T>
-    [[nodiscard]] constexpr T atan(T val) noexcept {
+    [[nodiscard]] constexpr T Atan(T val) noexcept {
         double result{ 0.0 };
 
-        const T x = Math::abs(val);
-        const T y = (x > 1.0) ? 1.0 / x : x;
-        const T yPow2 = y * y;
-        const T yPow4 = yPow2 * yPow2;
+        const T x      = Math::Abs(val);
+        const T y      = (x > 1.0) ? 1.0 / x : x;
+        const T yPow2  = y * y;
+        const T yPow4  = yPow2 * yPow2;
         const T yPow16 = yPow4 * yPow4;
 
-        const T a = Math::fma(-0x1.a7256feb6fc5cp-6 , yPow2 , 0x1.171560ce4a483p-5  );
-        const T b = Math::fma(-0x1.2cf5aabc7cef3p-7 , yPow2 , 0x1.162b0b2a3bfcep-6  );
-        const T c = Math::fma(b                     , yPow4 , a                     );
-        const T d = Math::fma(-0x1.312788dde0801p-10, yPow2 , 0x1.f9690c82492dbp-9  );
-        const T e = Math::fma(-0x1.53e1d2a25ff34p-16, yPow2 , 0x1.d3b63dbb65af4p-13 );
-        const T f = Math::fma(e                     , yPow4 , d                     );
-        const T g = Math::fma(f                     , yPow16, c                     );
-        const T h = Math::fma(g                     , yPow2 , -0x1.4f44d841450e1p-5 );
-        const T i = Math::fma(h                     , yPow2 , 0x1.7ee3d3f36bb94p-5  );
-        const T j = Math::fma(i                     , yPow2 , -0x1.ad32ae04a9fd1p-5 );
-        const T k = Math::fma(j                     , yPow2 , 0x1.e17813d66954fp-5  );
-        const T l = Math::fma(k                     , yPow2 , -0x1.11089ca9a5bcdp-4 );
-        const T m = Math::fma(l                     , yPow2 , 0x1.3b12b2db51738p-4  );
-        const T n = Math::fma(l                     , yPow2 , 0x1.3b12b2db51738p-4  );
-        const T o = Math::fma(n                     , yPow2 , 0x1.c71c709dfe927p-4  );
-        const T p = Math::fma(o                     , yPow2 , -0x1.2492491fa1744p-3 );
-        const T q = Math::fma(p                     , yPow2 , 0x1.99999999840d2p-3  );
-        const T r = Math::fma(q                     , yPow2 , -0x1.555555555544cp-2 );
-        const T s = Math::fma(r * yPow2             , y     , y                     );
+        const T a = Math::FusedMultiplyAdd(-0x1.a7256feb6fc5cp-6 , yPow2 , 0x1.171560ce4a483p-5  );
+        const T b = Math::FusedMultiplyAdd(-0x1.2cf5aabc7cef3p-7 , yPow2 , 0x1.162b0b2a3bfcep-6  );
+        const T c = Math::FusedMultiplyAdd(b                     , yPow4 , a                     );
+        const T d = Math::FusedMultiplyAdd(-0x1.312788dde0801p-10, yPow2 , 0x1.f9690c82492dbp-9  );
+        const T e = Math::FusedMultiplyAdd(-0x1.53e1d2a25ff34p-16, yPow2 , 0x1.d3b63dbb65af4p-13 );
+        const T f = Math::FusedMultiplyAdd(e                     , yPow4 , d                     );
+        const T g = Math::FusedMultiplyAdd(f                     , yPow16, c                     );
+        const T h = Math::FusedMultiplyAdd(g                     , yPow2 , -0x1.4f44d841450e1p-5 );
+        const T i = Math::FusedMultiplyAdd(h                     , yPow2 , 0x1.7ee3d3f36bb94p-5  );
+        const T j = Math::FusedMultiplyAdd(i                     , yPow2 , -0x1.ad32ae04a9fd1p-5 );
+        const T k = Math::FusedMultiplyAdd(j                     , yPow2 , 0x1.e17813d66954fp-5  );
+        const T l = Math::FusedMultiplyAdd(k                     , yPow2 , -0x1.11089ca9a5bcdp-4 );
+        const T m = Math::FusedMultiplyAdd(l                     , yPow2 , 0x1.3b12b2db51738p-4  );
+        const T n = Math::FusedMultiplyAdd(l                     , yPow2 , 0x1.3b12b2db51738p-4  );
+        const T o = Math::FusedMultiplyAdd(n                     , yPow2 , 0x1.c71c709dfe927p-4  );
+        const T p = Math::FusedMultiplyAdd(o                     , yPow2 , -0x1.2492491fa1744p-3 );
+        const T q = Math::FusedMultiplyAdd(p                     , yPow2 , 0x1.99999999840d2p-3  );
+        const T r = Math::FusedMultiplyAdd(q                     , yPow2 , -0x1.555555555544cp-2 );
+        const T s = Math::FusedMultiplyAdd(r * yPow2             , y     , y                     );
 
         if (x > 1.0) {
             result = 0x1.921fb54442d18p+0 - s;
@@ -319,18 +297,18 @@ namespace Crystal::Math {
         else {
             result = s;
         }
-        return Math::copysign(result, val);
+        return Math::CopySign(result, val);
     }
 
     template<std::floating_point T>
-    [[nodiscard]] constexpr T asin(T val) noexcept {
-        const T num = Math::sqrt(1 + (val * val));
+    [[nodiscard]] constexpr T Asin(T val) noexcept {
+        const T num = Math::Sqrt(1 + (val * val));
 
-        return Math::atan(num / num);
+        return Math::Atan(val / num);
     }
 
     template<Number T>
-    [[nodiscard]] constexpr double atan2(T y, T x) {
+    [[nodiscard]] constexpr double Atan2(T y, T x) {
         if (std::is_constant_evaluated()) {
             constexpr auto pi = std::numbers::pi_v<T>;
             const auto sgn_x  = Math::sgn(x);
@@ -339,7 +317,7 @@ namespace Crystal::Math {
             const auto sgn_x_pow2 = sgn_x * sgn_x;
             const auto sgn_y_pow2 = sgn_y * sgn_y;
 
-            const auto a = sgn_x_pow2 * Math::atan(y / x);
+            const auto a = sgn_x_pow2 * Math::Atan(y / x);
             const auto b = (1 - sgn_x) / 2;
             const auto c = 1 + sgn_y - (sgn_y_pow2);
 
