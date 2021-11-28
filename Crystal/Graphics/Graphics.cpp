@@ -8,13 +8,12 @@
 using namespace Crystal;
 
 void Graphics::Initialize(uint32_t width, uint32_t height) {
-	cryfmtlog_info("Physical device: {}\n", ToNarrow(RHICore::GetPhysicalDeviceDescription()));
-
+	cryfmtlog_info("Graphics device: {}\n", StringConverter::ConvertTo<std::string>(RHICore::get_physical_device_description()));
 	m_swapChain = std::make_unique<SwapChain>(m_hWnd);
 
 	m_clientWidth  = width;
 	m_clientHeight = height;
-
+		
 	Resize(m_clientWidth, m_clientHeight);
 
 	m_isIntialized = true;

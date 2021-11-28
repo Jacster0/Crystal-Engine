@@ -30,5 +30,5 @@ const std::string Crystal::D3D12Exception::GetOriginString() const noexcept {
 		GetFile(),
 		m_functionName,
 		GetLine(),
-		Crystal::ToNarrow(error.ErrorMessage()));
+		Crystal::StringConverter::ConvertTo<std::string>(std::wstring(error.ErrorMessage())));
 }
