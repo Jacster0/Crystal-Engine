@@ -1,7 +1,6 @@
 #pragma once
-
-#include "../Platform/Windows/CrystalWindow.h"
 #include <string_view>
+#include <cstdlib>
 
 namespace Crystal {
 
@@ -19,21 +18,15 @@ namespace Crystal {
 		constexpr bool can_construct_wstring_v = std::is_constructible_v<std::wstring, T>;
 
 		std::string inline ToNarrow(std::wstring_view wide) noexcept {
-			const int inLength  = static_cast<int>(wide.length());
-			const int outLength = WideCharToMultiByte(CP_UTF8, 0, wide.data(), inLength, nullptr, 0, nullptr, nullptr);
+			std::string narrow(wide.size(), ' ');
+			wcstombs_s(nullptr, narrow.data(), narrow.size(), wide.data(), static_cast<size_t>(-1));
 
-			std::string narrow(outLength, '\0');
-			WideCharToMultiByte(CP_UTF8, 0, wide.data(), inLength, narrow.data(), outLength, nullptr, nullptr);
-
-			return narrow; 
+			return narrow;
 		}
 
 		std::wstring inline ToWide(std::string_view narrow) noexcept {
-			const int inLength  = static_cast<int>(narrow.length());
-			const int outLength = MultiByteToWideChar(CP_UTF8, 0, narrow.data(), inLength, nullptr, 0);
-
-			std::wstring wide(outLength, L'\0');
-			MultiByteToWideChar(CP_UTF8, 0, narrow.data(), inLength, wide.data(), outLength);
+			std::wstring wide(narrow.size(), ' ');
+			mbstowcs_s(nullptr, wide.data(), wide.size(), narrow.data(), static_cast<size_t>(-1));
 
 			return wide;
 		}
