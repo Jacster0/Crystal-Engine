@@ -36,20 +36,20 @@ namespace Crystal {
 	};
 
     using Register32 = int32_t;
-    using Register8 = char;
+    using Register8  = char;
 
     struct Registers32_t {
-        Register32 EAX;
-        Register32 EBX;
-        Register32 ECX;
-        Register32 EDX;
+        Register32 EAX{};
+        Register32 EBX{};
+        Register32 ECX{};
+        Register32 EDX{};
     };
 
     struct Registers8_t {
-        std::array<Register8, 4> EAX;
-        std::array<Register8, 4> EBX;
-        std::array<Register8, 4> ECX;
-        std::array<Register8, 4> EDX;
+        std::array<Register8, 4> EAX{};
+        std::array<Register8, 4> EBX{};
+        std::array<Register8, 4> ECX{};
+        std::array<Register8, 4> EDX{};
     };
 
     class CpuData {
@@ -139,8 +139,8 @@ namespace Crystal {
         [[nodiscard]] const std::string& Vendor()      const noexcept { return m_vendor; }
         [[nodiscard]] const std::string& Brandstring() const noexcept { return m_brandstring; }
     private:
-        const [[nodiscard]] std::string CaptureVendor()      const noexcept;
-        const [[nodiscard]] std::string CaptureBrandString() const noexcept;
+    	[[nodiscard]] std::string CaptureVendor()      const noexcept;
+    	[[nodiscard]] std::string CaptureBrandString() const noexcept;
 
         int m_ids{};
         int m_exIds{};

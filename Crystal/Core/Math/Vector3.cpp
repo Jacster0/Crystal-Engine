@@ -10,9 +10,9 @@ namespace Crystal::Math {
 
     constexpr Vector3::Vector3(const Vector4& rhs) noexcept
         :
-        x(rhs.x),
-        y(rhs.y),
-        z(rhs.z)
+        x(rhs.X),
+        y(rhs.Y),
+        z(rhs.Z)
     {}
 
     constexpr Vector3::Vector3(const Vector2& rhs) noexcept

@@ -119,7 +119,7 @@ void CommandContext::SetPipelineState(const PipelineState* const pipelineState) 
 bool CommandContext::Close(const CommandContext* const pendingCmdList) const noexcept {
 	Close();
 
-	auto numPendingBarriers = m_resourceStateTracker->FlushPendingResourceBarriers(pendingCmdList);
+	const auto numPendingBarriers = m_resourceStateTracker->FlushPendingResourceBarriers(pendingCmdList);
 	m_resourceStateTracker->CommitFinalResourceStates();
 
 	return numPendingBarriers > 0;
@@ -247,7 +247,7 @@ void GraphicsContext::ClearDSV(const Texture& texture, ClearFlag clearFlags, flo
 	TrackResource(texture.GetUnderlyingResource());
 }
 
-void GraphicsContext::SetGraphicsRootSignature(const RootSignature const* rootSignature) noexcept {
+void GraphicsContext::SetGraphicsRootSignature(const RootSignature* const rootSignature) noexcept {
 	if (rootSignature) {
 		const auto d3d12RootSignature = rootSignature->GetRootSignature().Get();
 
@@ -294,11 +294,11 @@ void GraphicsContext::SetShaderResourceView(
 	const void* bufferData) const noexcept
 {
 	const size_t bufferSize = numElements * elementSize;
-	const auto heapAlloc    = m_linearAllocator->Allocate(bufferSize, elementSize);
+	const auto [CPU, GPU] = m_linearAllocator->Allocate(bufferSize, elementSize);
 
-	std::memcpy(heapAlloc.CPU, bufferData, bufferSize);
+	std::memcpy(CPU, bufferData, bufferSize);
 
-	m_d3d12CommandList->SetGraphicsRootShaderResourceView(slot, heapAlloc.GPU);
+	m_d3d12CommandList->SetGraphicsRootShaderResourceView(slot, GPU);
 }
 
 void GraphicsContext::SetScissorRect(const Math::Rectangle& scissorRect) const noexcept {
@@ -382,14 +382,14 @@ void GraphicsContext::SetVertexBuffers(uint32_t startSlot, const std::vector<con
 	m_d3d12CommandList->IASetVertexBuffers(startSlot, vbViews.size(), vbViews.data());
 }
 
-void GraphicsContext::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, size_t vertexSize, const void* vertexBufferData) {
+void GraphicsContext::SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, size_t vertexSize, const void* vertexBufferData) const {
 	const size_t bufferSize = numVertices * vertexSize;
-	const auto heapAlloc    = m_linearAllocator->Allocate(bufferSize, vertexSize);
+	const auto [CPU, GPU] = m_linearAllocator->Allocate(bufferSize, vertexSize);
 
-	std::memcpy(heapAlloc.CPU, vertexBufferData, bufferSize);
+	std::memcpy(CPU, vertexBufferData, bufferSize);
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{
-		.BufferLocation = heapAlloc.GPU,
+	const D3D12_VERTEX_BUFFER_VIEW vertexBufferView{
+		.BufferLocation = GPU,
 		.SizeInBytes    = static_cast<uint32_t>(bufferSize),
 		.StrideInBytes  = static_cast<uint32_t>(vertexSize)
 	};
@@ -412,15 +412,15 @@ void GraphicsContext::SetIndexBuffer(const Buffer* const indexBuffer) noexcept {
 	}
 }
 
-void GraphicsContext::SetDynamicIndexBuffer(size_t numIndicies, IndexFormat_t indexFormat, const void* indexBufferData) {
+void GraphicsContext::SetDynamicIndexBuffer(size_t numIndicies, IndexFormat_t indexFormat, const void* indexBufferData) const {
 	const size_t indexSizeInBytes = indexFormat == IndexFormat_t::uint_16 ? 2 : 4;
-	size_t bufferSize             = numIndicies * indexSizeInBytes;
-	const auto heapAlloc          = m_linearAllocator->Allocate(bufferSize, indexSizeInBytes);
+	const size_t bufferSize       = numIndicies * indexSizeInBytes;
+	const auto [CPU, GPU]         = m_linearAllocator->Allocate(bufferSize, indexSizeInBytes);
 
-	std::memcpy(heapAlloc.CPU, indexBufferData, bufferSize);
+	std::memcpy(CPU, indexBufferData, bufferSize);
 
-	D3D12_INDEX_BUFFER_VIEW indexBufferView{
-		.BufferLocation = heapAlloc.GPU,
+	const D3D12_INDEX_BUFFER_VIEW indexBufferView{
+		.BufferLocation = GPU,
 		.SizeInBytes    = static_cast<DWORD>(bufferSize),
 		.Format         = static_cast<DXGI_FORMAT>(indexFormat)
 	};

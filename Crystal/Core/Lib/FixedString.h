@@ -7,7 +7,7 @@ namespace Crystal::crylib {
 			std::copy_n(str, Length, Value);
 		}
 
-		[[nodiscard]] constexpr operator const char* () const noexcept { return Value; }
+		[[nodiscard]] constexpr explicit operator const char* () const noexcept { return Value; }
 
 		[[nodiscard]] constexpr char* begin() const noexcept { return Value; }
 		[[nodiscard]] constexpr char* end() const noexcept   { return &Value[Length]; }

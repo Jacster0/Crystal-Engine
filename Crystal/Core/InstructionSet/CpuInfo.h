@@ -6,12 +6,12 @@
 
 namespace Crystal {
     struct CpuInfo_t {
-        std::string BrandString;
-        std::string Vendor;
-        std::string Architecture;
-        int NumLogicalProcessors;
-        int NumCores;
-        std::unordered_map<std::string, bool> InstructionSetFeatures;
+        std::string BrandString{};
+        std::string Vendor{};
+        std::string Architecture{};
+        int NumLogicalProcessors{};
+        int NumCores{};
+        std::unordered_map<std::string, bool> InstructionSetFeatures{};
     };
 
     class CpuInfo {
@@ -20,12 +20,12 @@ namespace Crystal {
 
         CpuInfo_t Info;
     private:
-        [[nodiscard]] const std::string GetBrandString()  const noexcept { return m_instructionSet.Brandstring(); }
-        [[nodiscard]] const std::string GetVendor()       const noexcept { return m_instructionSet.Vendor(); }
-        [[nodiscard]] const std::string GetArchitecture() const noexcept { return m_architectures.at(m_sysInfo.wProcessorArchitecture); }
+        [[nodiscard]] std::string GetBrandString()  const noexcept { return m_instructionSet.Brandstring(); }
+        [[nodiscard]] std::string GetVendor()       const noexcept { return m_instructionSet.Vendor(); }
+        [[nodiscard]] std::string GetArchitecture() const noexcept { return m_architectures.at(m_sysInfo.wProcessorArchitecture); }
 
-        [[nodiscard]] const int GetNumberOfLogicalProcessors() const noexcept { return std::thread::hardware_concurrency(); }
-        [[nodiscard]] const int GetNumberOfCores() const noexcept;
+        [[nodiscard]] static uint32_t GetNumberOfLogicalProcessors() noexcept { return std::thread::hardware_concurrency(); }
+        [[nodiscard]] static uint32_t GetNumberOfCores() noexcept;
 
         SYSTEM_INFO m_sysInfo{};
         InstructionSet m_instructionSet;

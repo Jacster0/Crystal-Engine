@@ -1,36 +1,36 @@
-#include "Vector4.h"
-#include "Vector3.h"
-#include "Quaternion.h"
-#include "Matrix.h"
 #include "MathFunctions.h"
+#include "Matrix.h"
+#include "Quaternion.h"
+#include "Vector3.h"
+#include "Vector4.h"
 
 namespace Crystal::Math {
     constexpr Vector4::Vector4(const Vector3& vec3, float w)
         :
-        x(vec3.x),
-        y(vec3.y),
-        z(vec3.z),
-        w(w)
+        X(vec3.x),
+        Y(vec3.y),
+        Z(vec3.z),
+        W(w)
     {}
 
     constexpr Vector4::Vector4(const Vector3& vec3)
         :
-        x(vec3.x),
-        y(vec3.y),
-        z(vec3.z),
-        w(0.0f)
+        X(vec3.x),
+        Y(vec3.y),
+        Z(vec3.z),
+        W(0.0f)
     {}
 
     constexpr Vector4::Vector4(const Quaternion& quat)
         :
-        x(quat.x),
-        y(quat.y),
-        z(quat.z),
-        w(quat.w)
+        X(quat.x),
+        Y(quat.y),
+        Z(quat.z),
+        W(quat.w)
     {}
 
     constexpr Vector4 Vector4::Rotate(const Vector4& vec4, const Quaternion& rotation) noexcept {
-        const Quaternion p{ vec4.x, vec4.y, vec4.z, 0 };
+        const Quaternion p{ vec4.X, vec4.Y, vec4.Z, 0 };
         const Quaternion q = rotation.Conjugate();
 
         const Quaternion& res = Quaternion::Multiply(Quaternion::Multiply(rotation, p), q);
@@ -39,69 +39,63 @@ namespace Crystal::Math {
     }
 
     constexpr Vector4 Vector4::TransformNormal(const Vector4& vec4, const Matrix& mat) noexcept {
-        Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
-        Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
-        Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
+        const Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
+        const Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
+        const Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
 
-        Vector4 X = Vector4(vec4.x);
-        Vector4 Y = Vector4(vec4.y);
-        Vector4 Z = Vector4(vec4.z);
+        const auto X = Vector4(vec4.X);
+        const auto Y = Vector4(vec4.Y);
+        const auto Z = Vector4(vec4.Z);
 
-        Vector4 Result = Z * row2;
-        Result         = MultiplyAdd(Y, row1, Result);
-        Result         = MultiplyAdd(X, row0, Result);
-        Result.w       = 0;
+    	auto result = Z * row2;
+        result         = MultiplyAdd(Y, row1, result);
+        result         = MultiplyAdd(X, row0, result);
+        result.W       = 0;
 
-        return Result;
+        return result;
     }
 
     constexpr Vector4 Vector4::Transform(const Vector4& vec4, const Matrix& mat) noexcept {
-        Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
-        Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
-        Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
-        Vector4 row3{ mat.m30,mat.m31, mat.m32 ,mat.m33 };
+        const Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
+        const Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
+        const Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
+        const Vector4 row3{ mat.m30,mat.m31, mat.m32 ,mat.m33 };
 
-        Vector4 X = Vector4(vec4.x);
-        Vector4 Y = Vector4(vec4.y);
-        Vector4 Z = Vector4(vec4.z);
+        const auto X = Vector4(vec4.X);
+        const auto Y = Vector4(vec4.Y);
+        const auto Z = Vector4(vec4.Z);
 
-        Vector4 Result = MultiplyAdd(Z, row2, row3);
-        Result         = MultiplyAdd(Y, row1, Result);
-        Result         = MultiplyAdd(X, row0, Result);
-        Result.w       = 0;
+        Vector4 result = MultiplyAdd(Z, row2, row3);
+        result         = MultiplyAdd(Y, row1, result);
+        result         = MultiplyAdd(X, row0, result);
+        result.W       = 0;
 
-        return Result;
+        return result;
     }
 
 
-    constexpr Vector4 Vector4::TransformCoord(const Vector4& vec3, const Matrix& mat) noexcept {
-        Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
-        Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
-        Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
-        Vector4 row3{ mat.m30,mat.m31, mat.m32 ,mat.m33 };
+    constexpr Vector4 Vector4::TransformCoord(const Vector4& vec4, const Matrix& mat) noexcept {
+        const Vector4 row0{ mat.m00,mat.m01, mat.m02, mat.m03 };
+        const Vector4 row1{ mat.m10,mat.m11, mat.m12, mat.m13 };
+        const Vector4 row2{ mat.m20,mat.m21, mat.m22, mat.m23 };
+        const Vector4 row3{ mat.m30,mat.m31, mat.m32 ,mat.m33 };
 
-        Vector4 X = Vector4(vec3.x);
-        Vector4 Y = Vector4(vec3.y);
-        Vector4 Z = Vector4(vec3.z);
+        const auto x = Vector4(vec4.X);
+        const auto y = Vector4(vec4.Y);
+        const auto z = Vector4(vec4.Z);
 
-        Vector4 Result = MultiplyAdd(Z, row2, row3);
-        Result         = MultiplyAdd(Y, row1, Result);
-        Result         = MultiplyAdd(X, row0, Result);
+        auto result = MultiplyAdd(z, row2, row3);
+        result         = MultiplyAdd(y, row1, result);
+        result         = MultiplyAdd(x, row0, result);
 
-        Vector4 W = Vector4(Result.w);
-        return Result / W;
+        const auto w = Vector4(result.W);
+        return result / w;
     }
 
     constexpr Vector4 Vector4::MultiplyAdd(const Vector4& first, const Vector4& second, const Vector4& third) noexcept {
-        return Vector4(Math::FusedMultiplyAdd(first.x, second.x, third.x),
-                       Math::FusedMultiplyAdd(first.y, second.y, third.y),
-                       Math::FusedMultiplyAdd(first.z, second.z, third.z),
-                       Math::FusedMultiplyAdd(first.w, second.w, third.w));
+        return Vector4(Math::FusedMultiplyAdd(first.X, second.X, third.X),
+                       Math::FusedMultiplyAdd(first.Y, second.Y, third.Y),
+                       Math::FusedMultiplyAdd(first.Z, second.Z, third.Z),
+                       Math::FusedMultiplyAdd(first.W, second.W, third.W));
     }
-    constexpr auto inf = std::numeric_limits<float>::infinity();
-
-    const Vector4 Vector4::One(1.0f, 1.0f, 1.0f, 1.0f);
-    const Vector4 Vector4::Zero(0.0f, 0.0f, 0.0f, 0.0f);
-    const Vector4 Vector4::Infinity(inf, inf, inf, inf);
-    const Vector4 Vector4::InfinityNeg(-inf, -inf, -inf, -inf);
 }

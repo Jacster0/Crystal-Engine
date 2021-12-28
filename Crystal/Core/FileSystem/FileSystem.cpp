@@ -32,8 +32,8 @@ constexpr bool FileSystem::IsEmpty(std::string_view str) noexcept {
 	return false;
 }
 
-const std::string FileSystem::RemoveIllegalCharacters(std::string_view str) noexcept {
-	std::string legal = std::string(str);
+std::string FileSystem::RemoveIllegalCharacters(std::string_view str) noexcept {
+	auto legal = std::string(str);
 
 	//Remove characters that are illegal for both names and paths
 	std::string illegal = ":?\"<>|";
@@ -41,7 +41,7 @@ const std::string FileSystem::RemoveIllegalCharacters(std::string_view str) noex
 	//Define our predicate
 	auto lambda = [&illegal](char c) { return (illegal.find(c) != std::string::npos); };
 
-	legal.erase(std::remove_if(legal.begin(), legal.end(), lambda), legal.end());
+	std::erase_if(legal, lambda);
 
 	if (IsDirectory(legal)) {
 		return legal;
@@ -49,13 +49,14 @@ const std::string FileSystem::RemoveIllegalCharacters(std::string_view str) noex
 
 	//Remove slashes which are illegal characters for file names
 	illegal = "\\/";
-	legal.erase(std::remove_if(legal.begin(), legal.end(), lambda), legal.end());
+
+	std::erase_if(legal, lambda);
 
 	return legal;
 }
 
-const std::string FileSystem::ReplaceIllegalCharacters(std::string_view str, char c) noexcept {
-	std::string legal = std::string(str);
+std::string FileSystem::ReplaceIllegalCharacters(std::string_view str, char c) noexcept {
+	auto legal = std::string(str);
 
 	//Replace characters that are illegal for both names and paths
 	std::string illegal = ":?\"<>|";
@@ -78,7 +79,7 @@ const std::string FileSystem::ReplaceIllegalCharacters(std::string_view str, cha
 	return legal;
 }
 
-const bool FileSystem::CreateDirectory(std::string_view path) noexcept {
+bool FileSystem::CreateDirectory(std::string_view path) noexcept {
 	try {
 		return fs::create_directories(path);
 	}
@@ -88,7 +89,7 @@ const bool FileSystem::CreateDirectory(std::string_view path) noexcept {
 	return false;
 }
 
-const bool FileSystem::Delete(std::string_view path) noexcept {
+bool FileSystem::Delete(std::string_view path) noexcept {
 	try {
 		if (Exists(path) && fs::remove_all(path)) {
 			return true;
@@ -100,7 +101,7 @@ const bool FileSystem::Delete(std::string_view path) noexcept {
 	return false;
 }
 
-const bool FileSystem::Exists(std::string_view path) noexcept {
+bool FileSystem::Exists(std::string_view path) noexcept {
 	try {
 		return fs::exists(path);
 	}
@@ -110,7 +111,7 @@ const bool FileSystem::Exists(std::string_view path) noexcept {
 	return false;
 }
 
-const bool FileSystem::IsDirectory(std::string_view path) noexcept {
+bool FileSystem::IsDirectory(std::string_view path) noexcept {
 	try {
 		if (Exists(path) && fs::is_directory(path)) {
 			return true;
@@ -143,7 +144,7 @@ constexpr bool FileSystem::CopyFile(std::string_view src, std::string_view dst) 
 	}
 
 	if (!Exists(GetDirectoryFromFilePath(dst))) {
-		CreateDirectory(GetDirectoryFromFilePath(dst));
+		return CreateDirectory(GetDirectoryFromFilePath(dst));
 	}
 
 	try {
@@ -155,11 +156,11 @@ constexpr bool FileSystem::CopyFile(std::string_view src, std::string_view dst) 
 	}
 }
 
-const bool FileSystem::HasParentPath(std::string_view path) noexcept {
+bool FileSystem::HasParentPath(std::string_view path) noexcept {
 	return fs::path(path).has_parent_path();
 }
 
-const std::string FileSystem::ReplaceExtension(std::string_view path, std::string_view ext) noexcept {
+std::string FileSystem::ReplaceExtension(std::string_view path, std::string_view ext) noexcept {
 	return fs::path(path).replace_extension(ext).string();
 }
 
@@ -169,10 +170,10 @@ constexpr std::string FileSystem::GetDirectoryFromFilePath(std::string_view path
 	if (lastIndex != std::string::npos) {
 		return std::string(path.substr(0, lastIndex + 1));
 	}
-	return std::string();
+	return {};
 }
 
-const std::string FileSystem::GetFileNameFromFilePath(std::string_view path) noexcept {
+std::string FileSystem::GetFileNameFromFilePath(std::string_view path) noexcept {
 	return fs::path(path).filename().string();
 }
 
@@ -188,25 +189,25 @@ constexpr std::string FileSystem::GetExtensionFromFilePath(std::string_view path
 	return ext;
 }
 
-const std::string FileSystem::GetWorkingDirectory() noexcept {
+std::string FileSystem::GetWorkingDirectory() noexcept {
 	return fs::current_path().string();
 }
 
-const std::string FileSystem::GetRootDirectory(std::string_view path) noexcept {
+std::string FileSystem::GetRootDirectory(std::string_view path) noexcept {
 	return fs::path(path).root_directory().string();
 }
 
-const std::string FileSystem::GetParentDirectory(std::string_view path) noexcept {
+std::string FileSystem::GetParentDirectory(std::string_view path) noexcept {
 	return fs::path(path).parent_path().string();
 }
 
-const std::string FileSystem::Append(std::string_view first, std::string_view second) noexcept {
+std::string FileSystem::Append(std::string_view first, std::string_view second) noexcept {
 	using namespace std::filesystem;
 
 	const auto firstPath  = path(first);
-	const auto SecondPath = path(second);
+	const auto secondPath = path(second);
 
-	return (firstPath / SecondPath).string();
+	return (firstPath / secondPath).string();
 }
 
 void FileSystem::ConvertToUnixFriendlyPath(std::string_view path) noexcept {
@@ -221,7 +222,7 @@ void FileSystem::ConvertToNativeEnginePath(std::string_view path) noexcept {
 	ranges::replace(std::string(path), '\\', '/');
 }
 
-const FileSystem::DirectoryList FileSystem::GetDirectoriesInDirectory(std::string_view path) noexcept {
+FileSystem::DirectoryList FileSystem::GetDirectoriesInDirectory(std::string_view path) noexcept {
 	DirectoryList directories;
 
 	const fs::directory_iterator end;
@@ -247,7 +248,7 @@ const FileSystem::DirectoryList FileSystem::GetDirectoriesInDirectory(std::strin
 	return directories;
 }
 
-const FileSystem::FileList FileSystem::GetFilesInDirectory(std::string_view path) noexcept {
+FileSystem::FileList FileSystem::GetFilesInDirectory(std::string_view path) noexcept {
 	FileList files;
 
 	const fs::directory_iterator end;

@@ -358,21 +358,21 @@ namespace Crystal::Math {
         [[nodiscard]] constexpr Vector3 operator*(const Vector3& rhs) const noexcept {
             Vector4 vec4;
 
-            vec4.x = (rhs.x * m00) + (rhs.y * m10) + (rhs.z * m20) + m30;
-            vec4.y = (rhs.x * m01) + (rhs.y * m11) + (rhs.z * m21) + m31;
-            vec4.z = (rhs.x * m02) + (rhs.y * m12) + (rhs.z * m22) + m32;
-            vec4.w = 1 / ((rhs.x * m03) + (rhs.y * m13) + (rhs.z * m23) + m33);
+            vec4.X = (rhs.x * m00) + (rhs.y * m10) + (rhs.z * m20) + m30;
+            vec4.Y = (rhs.x * m01) + (rhs.y * m11) + (rhs.z * m21) + m31;
+            vec4.Z = (rhs.x * m02) + (rhs.y * m12) + (rhs.z * m22) + m32;
+            vec4.W = 1 / ((rhs.x * m03) + (rhs.y * m13) + (rhs.z * m23) + m33);
 
-            return Vector3(vec4.x * vec4.w, vec4.y * vec4.w, vec4.z * vec4.w);
+            return Vector3(vec4.X * vec4.W, vec4.Y * vec4.W, vec4.Z * vec4.W);
         }
 
         [[nodiscard]] constexpr Vector4 operator*(const Vector4& rhs) const noexcept {
             return Vector4
             (
-                (rhs.x * m00) + (rhs.y * m10) + (rhs.z * m20) + (rhs.w * m30),
-                (rhs.x * m01) + (rhs.y * m11) + (rhs.z * m21) + (rhs.w * m31),
-                (rhs.x * m02) + (rhs.y * m12) + (rhs.z * m22) + (rhs.w * m32),
-                (rhs.x * m03) + (rhs.y * m13) + (rhs.z * m23) + (rhs.w * m33)
+                (rhs.X * m00) + (rhs.Y * m10) + (rhs.Z * m20) + (rhs.W * m30),
+                (rhs.X * m01) + (rhs.Y * m11) + (rhs.Z * m21) + (rhs.W * m31),
+                (rhs.X * m02) + (rhs.Y * m12) + (rhs.Z * m22) + (rhs.W * m32),
+                (rhs.X * m03) + (rhs.Y * m13) + (rhs.Z * m23) + (rhs.W * m33)
             );
         }
 

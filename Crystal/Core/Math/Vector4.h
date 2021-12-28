@@ -9,15 +9,15 @@ namespace Crystal::Math {
     class Matrix;
     class Vector4 {
     public:
-        constexpr Vector4() noexcept : x(0), y(0), z(0), w(0) {}
-        constexpr Vector4(float x, float y, float z, float w) noexcept : x(x), y(y), z(z), w(w) {}
-        constexpr Vector4(float v) noexcept : x(v), y(v), z(v), w(v) {}
+        constexpr Vector4() noexcept : X(0), Y(0), Z(0), W(0) {}
+        constexpr explicit Vector4(float x, float y, float z, float w) noexcept : X(x), Y(y), Z(z), W(w) {}
+        constexpr explicit Vector4(float v) noexcept : X(v), Y(v), Z(v), W(v) {}
         constexpr Vector4(const Vector3& vec3, float w);
-        constexpr Vector4(const Vector3& vec3);
-        constexpr Vector4(const Quaternion& quat);
+        constexpr explicit Vector4(const Vector3& vec3);
+        constexpr explicit Vector4(const Quaternion& quat);
 
         [[nodiscard]] constexpr bool operator ==(const Vector4& rhs) const noexcept {
-            return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
+            return X == rhs.X && Y == rhs.Y && Z == rhs.Z && W == rhs.W;
         }
         [[nodiscard]] constexpr bool operator !=(const Vector4& rhs) const noexcept {
             return !(*this == rhs);
@@ -25,85 +25,85 @@ namespace Crystal::Math {
 
         [[nodiscard]] constexpr Vector4 operator*(const float value) const noexcept {
             return Vector4(
-                x * value,
-                y * value,
-                z * value,
-                w * value
+                X * value,
+                Y * value,
+                Z * value,
+                W * value
             );
         }
 
         constexpr void operator*=(const float value) noexcept {
-            x *= value;
-            y *= value;
-            z *= value;
-            w *= value;
+            X *= value;
+            Y *= value;
+            Z *= value;
+            W *= value;
         }
         constexpr Vector4 operator*(const float val) noexcept {
             return Vector4(
-                x * val,
-                y * val,
-                z * val,
-                w * val
+                X * val,
+                Y * val,
+                Z * val,
+                W * val
             );
         }
 
         [[nodiscard]] constexpr Vector4 operator*(const Vector4& rhs) const noexcept {
             return Vector4(
-                x * rhs.x,
-                y * rhs.y,
-                z * rhs.z,
-                w * rhs.w
+                X * rhs.X,
+                Y * rhs.Y,
+                Z * rhs.Z,
+                W * rhs.W
             );
         }
         constexpr void operator*=(const Vector4& rhs) noexcept {
-            x *= rhs.x;
-            y *= rhs.y;
-            z *= rhs.z;
-            w *= rhs.w;
+            X *= rhs.X;
+            Y *= rhs.Y;
+            Z *= rhs.Z;
+            W *= rhs.W;
         }
 
         [[nodiscard]] constexpr Vector4 operator+(const float v) const noexcept {
-            return Vector4(x + v, y + v, z + v, w);
+            return Vector4(X + v, Y + v, Z + v, W);
         }
 
         [[nodiscard]] constexpr Vector4 operator+(const Vector4& rhs) const noexcept {
-            return Vector4(x + rhs.x, y + rhs.y, z + rhs.z, w);
+            return Vector4(X + rhs.X, Y + rhs.Y, Z + rhs.Z, W);
         }
         constexpr void operator+=(const Vector4& rhs) noexcept {
-            x += rhs.x;
-            y += rhs.y;
-            z += rhs.z;
+            X += rhs.X;
+            Y += rhs.Y;
+            Z += rhs.Z;
         }
 
         [[nodiscard]] constexpr Vector4 operator/(const Vector4& rhs) const noexcept {
             return Vector4(
-                x / rhs.x,
-                y / rhs.y,
-                z / rhs.z,
-                w / rhs.w);
+                X / rhs.X,
+                Y / rhs.Y,
+                Z / rhs.Z,
+                W / rhs.W);
         }
         constexpr void operator/=(const Vector4& rhs) noexcept {
-            x /= rhs.x;
-            y /= rhs.y;
-            z /= rhs.y;
-            w /= rhs.w;
+            X /= rhs.X;
+            Y /= rhs.Y;
+            Z /= rhs.Y;
+            W /= rhs.W;
         }
         [[nodiscard]] constexpr Vector4 operator /(const float val) const noexcept {
-            return Vector4(x / val, y / val, z / val, w / val);
+            return Vector4(X / val, Y / val, Z / val, W / val);
         }
 
-        [[nodiscard]] constexpr float Length()        const noexcept { return Math::Hypot(x, y, z, w); }
-        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::SquaredHypot(x, y, z, w); }
+        [[nodiscard]] constexpr float Length()        const noexcept { return Math::Hypot(X, Y, Z, W); }
+        [[nodiscard]] constexpr float SquaredLength() const noexcept { return Math::SquaredHypot(X, Y, Z, W); }
 
         constexpr void Normalize() noexcept {
             const auto length_squared = SquaredLength();
 
             if (!Math::equals(length_squared, 1.0f) && length_squared > 0.0f) {
                 const auto length_inverted = 1.0f / Math::Sqrt(length_squared);
-                x *= length_inverted;
-                y *= length_inverted;
-                z *= length_inverted;
-                w *= length_inverted;
+                X *= length_inverted;
+                Y *= length_inverted;
+                Z *= length_inverted;
+                W *= length_inverted;
             }
         };
         [[nodiscard]] constexpr Vector4 Normalized() const noexcept {
@@ -118,7 +118,7 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] static constexpr Vector4 Normalize(const Vector4& rhs) noexcept { return rhs.Normalized(); };
-        [[nodiscard]] static constexpr Vector4 Negate(const Vector4& vec4)   noexcept { return Vector4(-vec4.x, -vec4.y, -vec4.z, vec4.w); }
+        [[nodiscard]] static constexpr Vector4 Negate(const Vector4& vec4)   noexcept { return Vector4(-vec4.X, -vec4.Y, -vec4.Z, vec4.W); }
 
         [[nodiscard]] static constexpr Vector4 Rotate(const Vector4& vec4, const Quaternion& rotation) noexcept;
         [[nodiscard]] static constexpr Vector4 TransformNormal(const Vector4& vec4, const Matrix& mat) noexcept;
@@ -126,14 +126,16 @@ namespace Crystal::Math {
         [[nodiscard]] static constexpr Vector4 Transform(const Vector4& vec4, const Matrix& mat) noexcept;
         [[nodiscard]] static constexpr Vector4 MultiplyAdd(const Vector4& first, const Vector4& second, const Vector4& third) noexcept;
 
-        float x;
-        float y;
-        float z;
-        float w;
-
-        static const Vector4 One;
-        static const Vector4 Zero;
-        static const Vector4 Infinity;
-        static const Vector4 InfinityNeg;
+        float X;
+        float Y;
+        float Z;
+        float W;
     };
+
+    static constexpr auto inf = std::numeric_limits<float>::infinity();
+
+    static constexpr Vector4 One = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+    static constexpr Vector4 Zero(0.0f, 0.0f, 0.0f, 0.0f);
+    static constexpr Vector4 Infinity(inf, inf, inf, inf);
+    static constexpr Vector4 InfinityNeg(-inf, -inf, -inf, -inf);
 }

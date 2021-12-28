@@ -23,7 +23,7 @@ namespace Crystal::Math {
     concept Number = (std::signed_integral<T> || std::floating_point<T>);
 
     template<typename T>
-    concept Unsigned_Number = std::unsigned_integral<T> && std::_Boolean_testable<T>;
+    concept UnsignedNumber = std::unsigned_integral<T> && std::_Boolean_testable<T>;
 
     struct MathConstants {
         static constexpr auto EPSILON    = std::numeric_limits<float>::epsilon();
@@ -34,8 +34,8 @@ namespace Crystal::Math {
         static constexpr auto PI_DOUBLE  = std::numbers::pi_v<double>;
         static constexpr auto PI_MUL2_D  = PI_DOUBLE * 2.0f;
         static constexpr auto PI_DIV2_D  = PI_DOUBLE / 2.0f;
-        static constexpr auto TO_DEGREES = 180.0f / MathConstants::PI;
-        static constexpr auto TO_RADIANS = MathConstants::PI / 180.0f;
+        static constexpr auto TO_DEGREES = 180.0f / PI;
+        static constexpr auto TO_RADIANS = PI / 180.0f;
         static constexpr auto MAX_LONG   = std::numeric_limits<long>::max;
     };
 
@@ -45,24 +45,24 @@ namespace Crystal::Math {
     }
 
     template<typename T>
-    [[nodiscard]] inline constexpr T AlignUpWithMask(T value, size_t mask) noexcept {
+    [[nodiscard]] constexpr T AlignUpWithMask(T value, size_t mask) noexcept {
         return static_cast<T>((static_cast<size_t>(value + mask) & ~mask));
     }
 
     template <typename T>
-    [[nodiscard]] inline constexpr auto AlignDownWithMask(T value, size_t mask) noexcept {
+    [[nodiscard]] constexpr auto AlignDownWithMask(T value, size_t mask) noexcept {
         return static_cast<T>((static_cast<size_t>(value) & ~mask));
     }
 
-    [[nodiscard]] inline constexpr auto AlignUp(auto value, size_t alignment) noexcept {
+    [[nodiscard]] constexpr auto AlignUp(auto value, size_t alignment) noexcept {
         return AlignUpWithMask(value, alignment - 1);
     }
 
-    [[nodiscard]] inline constexpr auto AlignDown(auto value, size_t alignment) noexcept {
+    [[nodiscard]] constexpr auto AlignDown(auto value, size_t alignment) noexcept {
         return AlignDownWithMask(value, alignment - 1);
     }
 
-    [[nodiscard]] inline constexpr bool IsAligned(auto value, size_t alignment) noexcept {
+    [[nodiscard]] constexpr bool IsAligned(auto value, size_t alignment) noexcept {
         return 0 == (static_cast<size_t>(value) & (alignment - 1));
     }
 
@@ -70,11 +70,11 @@ namespace Crystal::Math {
         return (value + alignment - 1) / alignment;
     }
 
-    [[nodiscard]] inline constexpr Number auto ToDegrees(const Number auto rads) noexcept {
+    [[nodiscard]] constexpr Number auto ToDegrees(const Number auto rads) noexcept {
         return rads * MathConstants::TO_DEGREES;
     }
 
-    [[nodiscard]] inline constexpr Number auto ToRadians(const Number auto degrees) noexcept {
+    [[nodiscard]] constexpr Number auto ToRadians(const Number auto degrees) noexcept {
         return degrees * MathConstants::TO_RADIANS;
     }
 
@@ -92,13 +92,13 @@ namespace Crystal::Math {
         if (mag < 0 && sgn < 0) {
             return mag;
         }
-        else if (mag < 0 && sgn > 0) {
+    	if (mag < 0 && sgn > 0) {
             return -1 * mag;
         }
-        else if (mag > 0 && sgn < 0) {
+    	if (mag > 0 && sgn < 0) {
             return -1 * mag;
         }
-        else if (mag > 0 && sgn > 0) {
+    	if (mag > 0 && sgn > 0) {
             return mag;
         }
 
@@ -106,9 +106,7 @@ namespace Crystal::Math {
             if (mag > 0) {
                 return -1 * mag;
             }
-            else {
-                return mag;
-            }
+            return mag;
         }
 
         if constexpr (std::numeric_limits<T>::has_infinity) {
@@ -116,24 +114,22 @@ namespace Crystal::Math {
                 if (sgn <= -0) {
                     return -1 * mag;
                 }
-                else {
-                    return mag;
-                }
+                return mag;
             }
         }
     }
 
-    template<Unsigned_Number T>
-    [[nodiscard]] inline constexpr T Signum(T x) {
+    template<UnsignedNumber T>
+    [[nodiscard]] constexpr T Signum(T x) {
         return 0 < x;
     }
 
     template<Number T>
-    [[nodiscard]] inline constexpr T Signum(T val) {
+    [[nodiscard]] constexpr T Signum(T val) {
         return (0 < val) - (val < 0);
     }
 
-    [[nodiscard]] inline auto GetNearestPow2(std::unsigned_integral auto val, bool roundUp = true) noexcept {
+    [[nodiscard]] auto GetNearestPow2(std::unsigned_integral auto val, bool roundUp = true) noexcept {
         if (std::has_single_bit(val)) {
             return val;
         }
@@ -209,7 +205,7 @@ namespace Crystal::Math {
         return Math::Sqrt(SquaredHypot(vals...));
     }
 
-    [[nodiscard]] constexpr inline auto Cos(std::floating_point auto degrees) noexcept {
+    [[nodiscard]] constexpr auto Cos(std::floating_point auto degrees) noexcept {
         if (std::is_constant_evaluated()) {
             using Type = decltype(degrees);
 
@@ -231,7 +227,7 @@ namespace Crystal::Math {
         return std::cos(degrees);
     }
 
-    [[nodiscard]] constexpr inline double Cos(int degrees) noexcept {
+    [[nodiscard]] constexpr double Cos(int degrees) noexcept {
         return Math::Cos(static_cast<double>(degrees));
     }
 

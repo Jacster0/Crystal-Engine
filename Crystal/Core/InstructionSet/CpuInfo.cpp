@@ -67,9 +67,9 @@ CpuInfo::CpuInfo() noexcept {
     };
 }
 
-const int CpuInfo::GetNumberOfCores() const noexcept {
+uint32_t CpuInfo::GetNumberOfCores() noexcept {
     DWORD sizeInBytes{ 0 };
-    int numCores{ 0 };
+    auto numCores{ 0 };
 
     //Retrieve the buffer length
     GetLogicalProcessorInformation(nullptr, &sizeInBytes);

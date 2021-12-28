@@ -37,7 +37,7 @@ namespace Crystal {
 		[[nodiscard]] uint32_t GetWidth() const noexcept { return m_windowInfo.Width; }
 		[[nodiscard]] uint32_t GetHeight() const noexcept { return m_windowInfo.Height; }
 		void ToggleFullScreen(bool fullscreen) noexcept;
-		bool FullScreen() { return m_fullScreen; }
+		bool FullScreen() const noexcept { return m_fullScreen; }
 		void Show() noexcept;
 
 		void MouseMove(LPARAM lParam, WPARAM wParam) noexcept;
@@ -46,15 +46,15 @@ namespace Crystal {
 		void MouseUp(LPARAM lParam, MouseButton buttonClicked) noexcept;
 		void RawMouseInput(LPARAM lParam) noexcept;
 
-		bool CursorEnabled() const noexcept { return m_mouse.cursor.m_cursorEnabled; }
-		void EnableCursor() noexcept { m_mouse.cursor.Enable(); }
-		void DisableCursor() noexcept { m_mouse.cursor.Disable(m_windowInfo.HWnd); }
+		bool CursorEnabled() const noexcept { return Mouse.cursor.m_cursorEnabled; }
+		void EnableCursor() noexcept { Mouse.cursor.Enable(); }
+		void DisableCursor() noexcept { Mouse.cursor.Disable(m_windowInfo.HWnd); }
 
 		void SetID(WindowID id) noexcept { m_id = id; }
 		[[nodiscard]] constexpr auto GetID() const noexcept { return m_id; }
 
 		Keyboard Kbd;
-		Mouse m_mouse;
+		Mouse Mouse;
 	private:
 		class WindowClass {
 		public:
@@ -65,7 +65,7 @@ namespace Crystal {
 			~WindowClass();
 			WindowClass(const WindowClass&)              = delete;
 			WindowClass& operator = (const WindowClass&) = delete;
-			static constexpr const wchar_t* wndClassName = L"Crystal Window";
+			static constexpr const wchar_t* WND_CLASS_NAME = L"Crystal Window";
 			static WindowClass wndClass;
 			HINSTANCE hInst;
 		};

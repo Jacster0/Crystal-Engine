@@ -5,9 +5,9 @@
 
 namespace Crystal {
     namespace detail {
-        template<crylib::FixedString str>
-        inline constexpr std::string date_time_format_helper() noexcept {
-            constexpr std::string_view fmt(str);
+        template<crylib::FixedString Str>
+        constexpr std::string date_time_format_helper() noexcept {
+            constexpr std::string_view fmt(Str);
             const std::chrono::zoned_time local = { std::chrono::current_zone(), std::chrono::system_clock::now() };
 
             if constexpr (fmt.find("%R") != std::string::npos) {

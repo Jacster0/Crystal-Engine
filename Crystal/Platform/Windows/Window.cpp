@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <comdef.h>
+#include "../Core/Utils/StringUtils.h"
 
 namespace Crystal {
 	Window::WindowClass Window::WindowClass::wndClass;
@@ -8,15 +9,15 @@ namespace Crystal {
 		:
 		hInst(GetModuleHandle(nullptr)) 
 	{
-		HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+		/*HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		if (FAILED(hr)) [[unlikely]] {
 			_com_error err(hr);
-			auto ErrorMsg = std::wstring(err.ErrorMessage());
+			const auto ErrorMsg = StringConverter::ConvertTo<std::string>(err.ErrorMessage());
 
-			//throw std::exception(ErrorMsg.c_str());
-		}
+			throw std::exception(ErrorMsg.c_str());
+		}*/
 
-		WNDCLASSEX wc = {
+		const WNDCLASSEX wc = {
 			.cbSize        = sizeof(wc),
 		    .style         = CS_HREDRAW | CS_VREDRAW,
 		    .lpfnWndProc   = SetupProc,
@@ -28,18 +29,18 @@ namespace Crystal {
 		    .hbrBackground = CreateSolidBrush(RGB(176, 196, 222)),
 		    .lpszMenuName  = nullptr,
 		    .lpszClassName = GetName(),
-		    .hIconSm       = LoadIcon(NULL, IDI_APPLICATION)
+		    .hIconSm       = LoadIcon(nullptr, IDI_APPLICATION)
 		};
 
-		ATOM atom = RegisterClassExW(&wc);
+		const ATOM atom = RegisterClassExW(&wc);
 		assert(atom > 0);
 	}
 
 	Window::WindowClass::~WindowClass() {
-		UnregisterClassW(wndClassName, GetInstance());
+		UnregisterClassW(WND_CLASS_NAME, GetInstance());
 	}
 
-	const wchar_t* Window::WindowClass::GetName() noexcept { return wndClassName; }
+	const wchar_t* Window::WindowClass::GetName() noexcept { return WND_CLASS_NAME; }
 	HINSTANCE Window::WindowClass::GetInstance() noexcept { return wndClass.hInst; }
 
 	Window::Window(const ApplicationCreateInfo& info) noexcept
@@ -103,97 +104,95 @@ namespace Crystal {
 	}
 
 	void Window::MouseMove(LPARAM lParam, WPARAM wParam) noexcept {
-		if (!m_mouse.cursor.IsEnabled()) {
-			if (!m_mouse.IsInWindow()) {
+		if (!Mouse.cursor.IsEnabled()) {
+			if (!Mouse.IsInWindow()) {
 				SetCapture(m_windowInfo.HWnd);
-				m_mouse.OnMouseEnter();
-				m_mouse.cursor.Hide();
+				Mouse.OnMouseEnter();
+				Mouse.cursor.Hide();
 			}
 			return;
 		}
 
 		const auto point = MAKEPOINTS(lParam);
-		int x = point.x;
-		int y = point.y;
+		const int x = point.x;
+		const int y = point.y;
 
-		int deltaX = x - m_mouseInfo.LastPosX;
-		int deltaY = y - m_mouseInfo.LastPosY;
+		const int deltaX = x - m_mouseInfo.LastPosX;
+		const int deltaY = y - m_mouseInfo.LastPosY;
 
-		m_mouse.m_deltaX = deltaX;
-		m_mouse.m_deltaY = deltaY;
+		Mouse.m_deltaX = deltaX;
+		Mouse.m_deltaY = deltaY;
 
 		m_mouseInfo.LastPosX = x;
 		m_mouseInfo.LastPosY = y;
 
 		if (x >= 0 && x <= m_windowInfo.Width && y >= 0 && y < m_windowInfo.Height) {
-			m_mouse.OnMouseMove(x, y);
+			Mouse.OnMouseMove(x, y);
 
-			if (!m_mouse.IsInWindow()) {
+			if (!Mouse.IsInWindow()) {
 				SetCapture(m_windowInfo.HWnd);
-				m_mouse.OnMouseEnter();
+				Mouse.OnMouseEnter();
 			}
 		}
 
 		else {
 			if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
-				m_mouse.OnMouseMove(x, y);
+				Mouse.OnMouseMove(x, y);
 			}
 			else {
 				ReleaseCapture();
-				m_mouse.OnMouseLeave();
+				Mouse.OnMouseLeave();
 			}
 		}
 	}
 
 	void Window::MouseWheel(LPARAM lParam, WPARAM wParam) noexcept {
-		const auto point = MAKEPOINTS(lParam);
+		const auto [x,y] = MAKEPOINTS(lParam);
 		const int delta  = GET_WHEEL_DELTA_WPARAM(wParam);
 
-		m_mouse.OnWheelDelta(point.x, point.y, delta);
+		Mouse.OnWheelDelta(x, y, delta);
 	}
 
 	void Window::MouseDown(LPARAM lParam, MouseButton buttonClicked) noexcept {
-		const auto point = MAKEPOINTS(lParam);
+		const auto [x, y] = MAKEPOINTS(lParam);
 
 		if (buttonClicked == MouseButton::Left) {
 			SetForegroundWindow(m_windowInfo.HWnd);
 
-			if (!m_mouse.cursor.m_cursorEnabled) {
-				m_mouse.cursor.Confine(m_windowInfo.HWnd);
-				m_mouse.cursor.Hide();
+			if (!Mouse.cursor.m_cursorEnabled) {
+				Mouse.cursor.Confine(m_windowInfo.HWnd);
+				Mouse.cursor.Hide();
 			}
 
-			m_mouse.OnLeftPressed(point.x, point.y);
+			Mouse.OnLeftPressed(x, y);
 		}
 		else {
-			m_mouse.OnRightPressed(point.x, point.y);
+			Mouse.OnRightPressed(x, y);
 		}
 	}
 
 	void Window::MouseUp(LPARAM lParam, MouseButton buttonClicked) noexcept {
-		const auto point = MAKEPOINTS(lParam);
-		int x = point.x;
-		int y = point.y;
+		const auto [x, y] = MAKEPOINTS(lParam);
 
 		(buttonClicked == MouseButton::Left)
 			?
-			m_mouse.OnLeftReleased(point.x, point.y)
+			Mouse.OnLeftReleased(x, y)
 			:
-			m_mouse.OnRightReleased(point.x, point.y);
+			Mouse.OnRightReleased(x, y);
 
 		if (x < 0 || x >= m_windowInfo.Width || y < 0 || y >= m_windowInfo.Height) {
 			ReleaseCapture();
-			m_mouse.OnMouseLeave();
+			Mouse.OnMouseLeave();
 		}
 	}
 
 	void Window::RawMouseInput(LPARAM lParam) noexcept {
-		if (!m_mouse.m_rawEnabled) {
+		if (!Mouse.m_rawEnabled) {
 			return;
 		}
 
-		uint32_t size;
-		auto hRawInput = reinterpret_cast<HRAWINPUT>(lParam);
+		uint32_t size{};
+		const auto hRawInput = reinterpret_cast<HRAWINPUT>(lParam);
 
 		//Get the size of the data
 		uint32_t result = GetRawInputData(hRawInput, RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER));
@@ -211,19 +210,20 @@ namespace Crystal {
 		}
 
 		//Process the data
-		const auto& rawInput = reinterpret_cast<const RAWINPUT&>(*m_rawInputBuffer.data());
-		int dx = rawInput.data.mouse.lLastX;
-		int dy = rawInput.data.mouse.lLastY;
+		const auto& [header, data] = reinterpret_cast<const RAWINPUT&>(*m_rawInputBuffer.data());
+		
+		const int dx = data.mouse.lLastX;
+		const int dy = data.mouse.lLastY;
 
-		if (rawInput.header.dwType == RIM_TYPEMOUSE && (dx != 0 || dy != 0)) {
-			m_mouse.OnRawDelta(dx, dy);
+		if (header.dwType == RIM_TYPEMOUSE && (dx != 0 || dy != 0)) {
+			Mouse.OnRawDelta(dx, dy);
 		}
 	}
 
 	LRESULT Window::SetupProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
 		if (msg == WM_NCCREATE) {
 			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
-			Window* const pWnd                 = static_cast<Window*>(pCreate->lpCreateParams);
+			auto* const pWnd                   = static_cast<Window*>(pCreate->lpCreateParams);
 
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 			SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::RedirectProc));
@@ -235,7 +235,7 @@ namespace Crystal {
 	}
 
 	LRESULT Window::RedirectProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
-		Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		auto* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 		return pWnd->MsgProc(hwnd, msg, wParam, lParam);
 	}
@@ -245,12 +245,12 @@ namespace Crystal {
 		case WM_ACTIVATE:
 			if (!CursorEnabled()) {
 				if (wParam & WA_ACTIVE) {
-					m_mouse.cursor.Confine(m_windowInfo.HWnd);
-					m_mouse.cursor.Hide();
+					Mouse.cursor.Confine(m_windowInfo.HWnd);
+					Mouse.cursor.Hide();
 				}
 				else {
-					m_mouse.cursor.Free();
-					m_mouse.cursor.Show();
+					Mouse.cursor.Free();
+					Mouse.cursor.Show();
 				}
 			}
 			break;
@@ -310,8 +310,8 @@ namespace Crystal {
 		RECT wndRect = { 0,0, m_windowInfo.Width, m_windowInfo.Height };
 		AdjustWindowRect(&wndRect, m_windowInfo.Style, false);
 
-		int width  = wndRect.right - wndRect.left;
-		int height = wndRect.bottom - wndRect.top;
+		const int width  = wndRect.right - wndRect.left;
+		const int height = wndRect.bottom - wndRect.top;
 		
 		m_windowInfo.WindowRect = wndRect;
 
@@ -332,7 +332,7 @@ namespace Crystal {
 			return;
 		}
 
-		RAWINPUTDEVICE rawInputDevice{
+		const RAWINPUTDEVICE rawInputDevice{
 			.usUsagePage = 0x01,
 			.usUsage     = 0x02,
 			.dwFlags     = 0,

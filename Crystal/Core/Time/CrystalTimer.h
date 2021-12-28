@@ -40,7 +40,7 @@ namespace Crystal {
 		}
 
 		template<class Duration = std::chrono::milliseconds>
-		auto end_measure() const noexcept ->
+		[[nodiscard]] auto end_measure() const noexcept ->
 			std::enable_if_t<
 				detail::is_duration_v<Duration>,
 				Duration
@@ -70,9 +70,9 @@ namespace Crystal {
 
 		template<
 			typename T = float,
-			typename U = std::ratio<1>,
+			typename U = std::ratio<1>
 		>
-		auto get_delta() const noexcept ->
+		[[nodiscard]] auto get_delta() const noexcept ->
 			std::enable_if_t<
 			    std::is_floating_point_v<T> && detail::is_ratio_v<U>,
 				T
@@ -83,9 +83,9 @@ namespace Crystal {
 
 		template<
 			typename T = float,
-			typename U = std::ratio<1>,
+			typename U = std::ratio<1>
 		>
-		auto get_elapsed() const noexcept ->
+		[[nodiscard]] auto get_elapsed() const noexcept ->
 			std::enable_if_t<
 			    std::is_floating_point_v<T>&& detail::is_ratio_v<U>,
 			    T
@@ -94,8 +94,8 @@ namespace Crystal {
 			return std::chrono::duration<T, U>(m_elapsed).count();
 		}
 	private:
-		Clock::time_point m_begin;
-		Clock::time_point m_last;
+		Clock::duration m_begin;
+		Clock::duration m_last;
 		Clock::duration m_delta{ 0 };
 		Clock::duration m_elapsed{ 0 };
 	};

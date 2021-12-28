@@ -31,21 +31,21 @@ namespace Crystal {
 		virtual ~CommandContext() = default;
 
 		void TransitionResource(
-			const Texture* const resource,
+			const Texture* resource,
 			const TransitionBarrierSpecification& specification) const noexcept;
 		void CopyResource(const Texture& source, const Texture& dest) noexcept;
 		void ResolveSubResource(
-			const Texture* const source,
-			const Texture* const dest,
+			const Texture* source,
+			const Texture* dest,
 			uint32_t sourceSubResource = 0,
 			uint32_t destSubResource = 0);
 		
 		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> GetNativeCommandList() const noexcept { return m_d3d12CommandList; }
 
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, ID3D12DescriptorHeap* heap) noexcept;
-		void SetPipelineState(const PipelineState* const pipelineState) noexcept;
+		void SetPipelineState(const PipelineState* pipelineState) noexcept;
 
-		bool Close(const CommandContext* const pendingCmdList) const noexcept;
+		bool Close(const CommandContext* pendingCmdList) const noexcept;
 		void Reset();
 
 		[[nodiscard]] class GraphicsContext& AsGraphicsContext() noexcept;
@@ -54,7 +54,7 @@ namespace Crystal {
 	protected:
 		void Close() const noexcept;
 
-		void TrackResource(const Microsoft::WRL::ComPtr<ID3D12Object> object) noexcept;
+		void TrackResource(Microsoft::WRL::ComPtr<ID3D12Object> object) noexcept;
 		void ReleaseTrackedObjects() noexcept;
 
 		void InsertUAVBarrier(const Texture& resource, bool flushImmediate = false) const noexcept;
@@ -83,20 +83,20 @@ namespace Crystal {
 	public:
 		explicit ComputeContext(CommandListType cmdListType);
 
-		void SetComputeRootSignature(const RootSignature* const rootSignature) noexcept;
+		void SetComputeRootSignature(const RootSignature* rootSignature) noexcept;
 		void Dispatch(uint32_t numGroupsX, uint32_t numGroupsY = 1, uint32_t numGroupsZ = 1) noexcept;
-		void SetComputeShaderConstants(uint32_t rootParameterIndex, uint32_t numConstants, const void* const constants) const noexcept;
+		void SetComputeShaderConstants(uint32_t rootParameterIndex, uint32_t numConstants, const void* constants) const noexcept;
 	};
 
 	class GraphicsContext : public ComputeContext {
 	public:
 		explicit GraphicsContext(CommandListType cmdListType);
 
-		void ClearRTV(const Texture& texture, const float* const clearColor) noexcept;
+		void ClearRTV(const Texture& texture, const float* clearColor) noexcept;
 		void ClearDSV(const Texture& texture, ClearFlag clearFlags, float depth = 1.0f, uint8_t stencil = 0) noexcept;
 
-		void SetGraphicsRootSignature(const RootSignature const* rootSignature) noexcept;
-		void SetGraphicsShaderConstants(uint32_t rootParameterIndex, uint32_t numConstants, const void* const constants) const noexcept;
+		void SetGraphicsRootSignature(const RootSignature* rootSignature) noexcept;
+		void SetGraphicsShaderConstants(uint32_t rootParameterIndex, uint32_t numConstants, const void* constants) const noexcept;
 		void SetConstantBuffer(uint32_t rootParameterIndex, size_t sizeInBytes, const void* bufferData) const noexcept;
 		void SetShaderResourceView(uint32_t slot, size_t numElements, size_t elementSize, const void* bufferData) const noexcept;
 
@@ -109,12 +109,12 @@ namespace Crystal {
 		void SetPrimitiveTopology(PrimitiveTopology topology) noexcept;
 		[[nodiscard]] const PrimitiveTopology& GetPrimitiveTopology() const noexcept;
 
-		void SetVertexBuffer(uint32_t slot, const Buffer* const vertexBuffer) noexcept;
+		void SetVertexBuffer(uint32_t slot, const Buffer* vertexBuffer) noexcept;
 		void SetVertexBuffers(uint32_t startSlot, const std::vector<const Buffer*>& vertexBuffers) noexcept;
-		void SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, size_t vertexSize, const void* vertexBufferData);
+		void SetDynamicVertexBuffer(uint32_t slot, size_t numVertices, size_t vertexSize, const void* vertexBufferData) const;
 
-		void SetIndexBuffer(const Buffer* const indexBuffer) noexcept;
-		void SetDynamicIndexBuffer(size_t numIndicies, IndexFormat_t indexFormat, const void* indexBufferData);
+		void SetIndexBuffer(const Buffer* indexBuffer) noexcept;
+		void SetDynamicIndexBuffer(size_t numIndicies, IndexFormat_t indexFormat, const void* indexBufferData) const;
 
 		void Draw(uint32_t vertexCount, uint32_t instanceCount = 1, uint32_t startVertex = 0, uint32_t startInstance = 0) noexcept;
 		void DrawIndexed(
