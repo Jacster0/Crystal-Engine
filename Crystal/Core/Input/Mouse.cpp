@@ -22,16 +22,16 @@ namespace Crystal {
         ClipCursor(&rect);
     }
 
-    void Mouse::Cursor::Free() noexcept {
+    void Mouse::Cursor::Free()  noexcept {
         ClipCursor(nullptr);
     }
 
     void Mouse::Cursor::Show() noexcept {
-        while (::ShowCursor(TRUE) < 0);
+        while (::ShowCursor(true) < 0);
     }
 
     void Mouse::Cursor::Hide() noexcept {
-        while (::ShowCursor(FALSE) >= 0);
+        while (::ShowCursor(false) >= 0);
     }
 
     void Mouse::EnableRawInput() noexcept { m_rawEnabled = true; }
@@ -164,7 +164,7 @@ namespace Crystal {
     }
 
     std::optional<Mouse::Event> Mouse::Read() noexcept {
-        if (m_buffer.size() > 0u) {
+        if (!m_buffer.empty()) {
             Mouse::Event e = m_buffer.front();
             m_buffer.pop();
 

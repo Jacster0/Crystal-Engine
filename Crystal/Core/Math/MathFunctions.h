@@ -6,7 +6,7 @@
 #include <bit>
 #include <cmath>
 
-//Macros is such a pain in the ass
+//Macros are such a pain in the ass
 #ifdef  max
 #undef max
 #endif
@@ -40,7 +40,7 @@ namespace Crystal::Math {
     };
 
     //Check for equality but allow for a small error
-    [[nodiscard]] inline constexpr bool equals(Number auto lhs, Number auto rhs, float error = MathConstants::EPSILON) {
+    [[nodiscard]] constexpr bool equals(Number auto lhs, Number auto rhs, float error = MathConstants::EPSILON) {
         return lhs + error >= rhs && lhs - error <= rhs;
     }
 
@@ -277,7 +277,7 @@ namespace Crystal::Math {
         const T k = Math::FusedMultiplyAdd(j                                     , yPow2 , static_cast<T>(0x1.e17813d66954fp-5)  );
         const T l = Math::FusedMultiplyAdd(k                                     , yPow2 , static_cast<T>(-0x1.11089ca9a5bcdp-4) );
         const T m = Math::FusedMultiplyAdd(l                                     , yPow2 , static_cast<T>(0x1.3b12b2db51738p-4)  );
-        const T n = Math::FusedMultiplyAdd(l                                     , yPow2 , static_cast<T>(0x1.3b12b2db51738p-4)  );
+        const T n = Math::FusedMultiplyAdd(m                                     , yPow2 , static_cast<T>(0x1.3b12b2db51738p-4)  );
         const T o = Math::FusedMultiplyAdd(n                                     , yPow2 , static_cast<T>(0x1.c71c709dfe927p-4)  );
         const T p = Math::FusedMultiplyAdd(o                                     , yPow2 , static_cast<T>(-0x1.2492491fa1744p-3) );
         const T q = Math::FusedMultiplyAdd(p                                     , yPow2 , static_cast<T>(0x1.99999999840d2p-3)  );

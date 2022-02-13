@@ -2,7 +2,7 @@
 #include "Utils/D3D12Exception.h"
 #include "D3D12CommandQueue.h"
 #include "D3D12CommandContext.h"
-#include "../Graphics/Types/Types.h"
+#include "Graphics/Types/Types.h"
 
 #include <dxgidebug.h>
 
@@ -52,19 +52,19 @@ namespace impl {
 			if (SUCCEEDED(hr)) {
 				ThrowIfFailed(dxgiAdapter.As(&dxgiAdapter4));
 
-				//We found a display subsystem so we don't need to fallback on a warp.
+				//We found a display subsystem, so we don't need to fallback on a warp.
 				useWarp = false;
 				break;
 			}
 		}
 
 		//Fallback on a software renderer if Direct3D hardware is not available 
-		if (useWarp) [[unlikley]] {
+		if (useWarp) [[unlikely]] {
 			ThrowIfFailed(dxgiFactory7->EnumWarpAdapter(IID_PPV_ARGS(&dxgiAdapter)));
 			ThrowIfFailed(dxgiAdapter.As(&dxgiAdapter4));
 		}
 
-			if (dxgiAdapter4) [[likley]] {
+			if (dxgiAdapter4) [[likely]] {
 				ThrowIfFailed(dxgiAdapter4->GetDesc3(&data.AdapterDesc));
 			}
 
@@ -118,7 +118,7 @@ namespace impl {
 
 using namespace impl;
 
-void RHICore::intialize() {
+void RHICore::initialize() {
 	if (data.IsInitialized) {
 		return;
 	}
@@ -141,7 +141,7 @@ void RHICore::intialize() {
 	}
 
 
-	//Aquire highest root signature version
+	//Acquire highest root signature version
 	D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData{ .HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1 };
 
 	if (FAILED(data.D3d12Device->CheckFeatureSupport(
@@ -160,7 +160,7 @@ ID3D12Device8& RHICore::get_device() noexcept { return *data.D3d12Device.Get(); 
 
 IDXGIAdapter4& RHICore::get_physical_device() noexcept { return *data.DxgiAdapter.Get(); }
 
-std::wstring RHICore::get_physical_device_description() noexcept { return std::wstring(data.AdapterDesc.Description); }
+std::wstring RHICore::get_physical_device_description() noexcept { return { data.AdapterDesc.Description }; }
 
 D3D_ROOT_SIGNATURE_VERSION RHICore::get_highest_root_signature_version() noexcept { return data.HighestRootSignatureVersion; }
 

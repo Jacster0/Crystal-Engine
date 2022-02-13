@@ -8,7 +8,7 @@ namespace CrystalEditor.Networking
 {
     public class NamedPipeServer<T> where T : struct
     {
-        public ConcurrentQueue<T> data { get; private set; } = new ConcurrentQueue<T>();
+        public ConcurrentQueue<T> Data { get; } = new ConcurrentQueue<T>();
         public string PipeName { get; set; }
         public bool Running { get; private set; } = false;
         public void Run()
@@ -31,7 +31,7 @@ namespace CrystalEditor.Networking
             pipeStream.BeginWaitForConnection(HandleConnection, pipeStream);
         }
 
-        void HandleConnection(IAsyncResult result)
+        private void HandleConnection(IAsyncResult result)
         {
             var pipeStream = result.AsyncState as NamedPipeServerStream;
 
@@ -48,7 +48,7 @@ namespace CrystalEditor.Networking
 
                 ProcessClients();
 
-                data.Enqueue(pipeStream.ReadStruct<T>());
+                Data.Enqueue(pipeStream.ReadStruct<T>());
             }
             catch (Exception e)
             {

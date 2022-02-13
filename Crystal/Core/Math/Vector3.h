@@ -27,15 +27,15 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] constexpr Vector3 operator+(const Vector3& rhs) const noexcept {
-            return Vector3(
+            return {
                 x + rhs.x,
                 y + rhs.y,
                 z + rhs.z
-            );
+            };
         }
 
         [[nodiscard]] constexpr Vector3 operator+(const float v) const noexcept {
-            return Vector3(x + v, y + v, z + v);
+            return {x + v, y + v, z + v};
         }
 
         constexpr void operator+=(Vector3& rhs) noexcept {
@@ -45,18 +45,18 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] constexpr Vector3 operator*(const Vector3& rhs) const noexcept {
-            return Vector3(
+            return {
                 x * rhs.x,
                 y * rhs.y,
                 z * rhs.z
-            );
+            };
         }
         [[nodiscard]] constexpr Vector3 operator*(const float value) const  noexcept {
-            return Vector3(
+            return {
                 x * value,
                 y * value,
                 z * value
-            );
+            };
         }
 
         constexpr void operator*=(const Vector3& other) noexcept {
@@ -72,18 +72,18 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] constexpr Vector3 operator-(const Vector3& rhs) const noexcept {
-            return Vector3(
+            return {
                 x - rhs.x,
                 y - rhs.y,
                 z - rhs.z
-            );
+            };
         }
         [[nodiscard]] constexpr Vector3 operator-(const float value) const noexcept {
-            return Vector3(
+            return {
                 x - value,
                 y - value,
                 z - value
-            );
+            };
         }
 
         constexpr void operator-=(const Vector3& other) {
@@ -93,16 +93,16 @@ namespace Crystal::Math {
         }
 
         [[nodiscard]] constexpr Vector3 operator/(const Vector3& rhs) const noexcept {
-            return Vector3(
+            return {
                 x / rhs.x,
                 y / rhs.y,
-                z / rhs.z);
+                z / rhs.z};
         }
         [[nodiscard]] constexpr Vector3 operator/(const float value) const noexcept {
-            return Vector3(
+            return {
                 x / value,
                 y / value,
-                z / value);
+                z / value};
         }
 
         constexpr void operator/=(const Vector3& other) noexcept {
@@ -164,20 +164,20 @@ namespace Crystal::Math {
             z = Math::Floor(z);
         }
 
-        [[nodiscard]] constexpr Vector3 Abs() const noexcept { return Vector3(Math::Abs(x), Math::Abs(y), Math::Abs(z)); }
+        [[nodiscard]] constexpr Vector3 Abs() const noexcept { return {Math::Abs(x), Math::Abs(y), Math::Abs(z)}; }
 
-        [[nodiscard]] constexpr const inline float Distance(const Vector3& rhs)        const noexcept { return (*this - rhs).Length(); }
-        [[nodiscard]] constexpr const inline float SquaredDistance(const Vector3& rhs) const noexcept { return (*this - rhs).SquaredLength(); }
+        [[nodiscard]] constexpr inline float Distance(const Vector3& rhs)        const noexcept { return (*this - rhs).Length(); }
+        [[nodiscard]] constexpr inline float SquaredDistance(const Vector3& rhs) const noexcept { return (*this - rhs).SquaredLength(); }
 
         [[nodiscard]] static constexpr inline float Dot(const Vector3& v1, const Vector3& v2) noexcept {
             return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
         }
         [[nodiscard]] static constexpr inline Vector3 Cross(const Vector3& v1, const Vector3& v2) noexcept {
-            return Vector3(
+            return {
                 v1.y * v2.z - v2.y * v1.z,
                 -(v1.x * v2.z - v2.x * v1.z),
                 v1.x * v2.y - v2.x * v2.y
-            );
+            };
         }
         [[nodiscard]] static constexpr inline Vector3 Normalize(const Vector3& rhs)                     noexcept { return rhs.Normalized(); }
         [[nodiscard]] static constexpr inline float Distance(const Vector3& a, const Vector3& b)        noexcept { return (b - a).Length(); }

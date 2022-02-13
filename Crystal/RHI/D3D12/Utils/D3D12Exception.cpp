@@ -1,5 +1,5 @@
 #include "D3D12Exception.h"
-#include "../Core/Utils/StringUtils.h"
+#include "Core/Utils/StringUtils.h"
 #include <comdef.h>
 
 using namespace Crystal;
@@ -19,12 +19,12 @@ const char* Crystal::D3D12Exception::what() const noexcept {
 	return m_message.c_str();
 }
 
-const std::string Crystal::D3D12Exception::GetType() const noexcept {
+std::string Crystal::D3D12Exception::GetType() const noexcept {
 	return "D3D12 Exception";
 }
 
-const std::string Crystal::D3D12Exception::GetOriginString() const noexcept {
-	_com_error error(m_errorCode);
+std::string Crystal::D3D12Exception::GetOriginString() const noexcept {
+	const _com_error error(m_errorCode);
 
 	return std::format("File: {}\nFunction: {}\nLine: {}\nError message : {}",
 		GetFile(),

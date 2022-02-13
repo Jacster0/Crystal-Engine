@@ -20,8 +20,8 @@ namespace Crystal {
 			Mutex.unlock();
 			m_lock = Lock_t::Unlocked;
 		}
-		[[nodiscard]] constexpr bool Locked()   noexcept { return m_lock == Lock_t::Locked; }
-		[[nodiscard]] constexpr bool UnLocked() noexcept { return m_lock == Lock_t::Unlocked; }
+		[[nodiscard]] constexpr bool Locked() const noexcept { return m_lock == Lock_t::Locked; }
+		[[nodiscard]] constexpr bool UnLocked() const noexcept { return m_lock == Lock_t::Unlocked; }
 
 		std::mutex Mutex;
 	private:
@@ -47,8 +47,8 @@ namespace Crystal {
 			D3D12_RESOURCE_STATES stateAfter,
 			uint32_t subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES) noexcept;
 
-		void UAVBarrier(const Texture const* resource = nullptr) noexcept;
-		void AliasBarrier(const Texture const* resourceBefore = nullptr, const Texture const* resourceAfter = nullptr) noexcept;
+		void UAVBarrier(const Texture* resource = nullptr) noexcept;
+		void AliasBarrier(const Texture* resourceBefore = nullptr, const Texture* resourceAfter = nullptr) noexcept;
 
 		uint32_t FlushPendingResourceBarriers(const CommandContext* context);
 		void FlushResourceBarriers(const CommandContext* context);
@@ -78,7 +78,7 @@ namespace Crystal {
 				}
 			}
 
-			D3D12_RESOURCE_STATES GetSubresourceState(uint32_t subresource) const {
+			[[nodiscard]] D3D12_RESOURCE_STATES GetSubresourceState(uint32_t subresource) const {
 				D3D12_RESOURCE_STATES state = State;
 				const auto iter = SubresourceState.find(subresource);
 

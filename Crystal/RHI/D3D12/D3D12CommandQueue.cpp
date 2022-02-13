@@ -14,7 +14,7 @@ CommandQueue::CommandQueue(CommandListType_t cmdListType) {
 
 	auto& device = RHICore::get_device();
 
-	D3D12_COMMAND_QUEUE_DESC desc{
+	const D3D12_COMMAND_QUEUE_DESC desc {
 		.Type     = type.As<D3D12_COMMAND_LIST_TYPE>(),
 		.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
 		.Flags    = D3D12_COMMAND_QUEUE_FLAG_NONE,
@@ -38,16 +38,18 @@ CommandQueue::CommandQueue(CommandListType_t cmdListType) {
 	}
 }
 
-uint64_t CommandQueue::Submit(const CommandContext const* context) {
+uint64_t CommandQueue::Submit(const CommandContext* const context) {
 	return Submit(std::array{ context });
 }
 
 uint64_t CommandQueue::Submit(std::span<const CommandContext* const> contexts) {
+	namespace  rn = std::ranges;
+
 	std::vector<ID3D12CommandList*> commandLists(contexts.size());
 
-	std::for_each(contexts.begin(), contexts.end(), 
-		[&commandLists](const CommandContext* const context) { 
-			commandLists.emplace_back(context->GetNativeCommandList().Get()); 
+	rn::for_each(contexts, 
+	[&commandLists](const CommandContext* const context) {
+			commandLists.emplace_back(context->GetNativeCommandList().Get());
 		}
 	);
 
@@ -63,9 +65,9 @@ uint64_t CommandQueue::Signal() {
 	return fenceValue;
 }
 
-void CommandQueue::WaitForFenceValue(uint64_t fenceValue) {
+void CommandQueue::WaitForFenceValue(uint64_t fenceValue) const {
 	if (!IsFenceComplete(fenceValue)) {
-		if (auto event = CreateEvent(nullptr, false, false, nullptr)) {
+		if (const auto event = CreateEvent(nullptr, false, false, nullptr)) {
 			ThrowIfFailed(m_fence->SetEventOnCompletion(fenceValue, event));
 
 			WaitForSingleObject(event, std::numeric_limits<DWORD>::max());

@@ -4,7 +4,7 @@
 #include "Utils/d3dx12.h"
 #include "Utils/D3D12Exception.h"
 
-#include "../Core/Math/MathFunctions.h"
+#include "Core/Math/MathFunctions.h"
 
 using namespace Crystal;
 
@@ -71,8 +71,6 @@ LinearAllocator::LinearAllocator(size_t pageSize) noexcept
 	m_pageSize(pageSize)
 {}
 
-LinearAllocator::~LinearAllocator() {}
-
 Allocation LinearAllocator::Allocate(const size_t sizeInBytes, const size_t alignment) {
 	if (sizeInBytes < m_pageSize) {
 		throw std::bad_alloc();
@@ -88,7 +86,7 @@ void LinearAllocator::Reset() noexcept {
 	m_currentPage    = nullptr;
 	m_availablePages = m_pagePool;
 
-	for (auto page : m_availablePages) {
+	for (const auto& page : m_availablePages) {
 		page->Reset();
 	}
 }

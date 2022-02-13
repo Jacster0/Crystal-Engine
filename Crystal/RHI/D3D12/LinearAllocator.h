@@ -1,5 +1,5 @@
 #pragma once
-#include "../Core/Memory/MemoryConstants.h"
+#include "Core/Memory/MemoryConstants.h"
 #include <d3d12.h>
 #include <wrl.h>
 #include <memory>
@@ -16,10 +16,10 @@ namespace Crystal {
 		explicit LinearAllocatorPage(size_t sizeInBytes);
 		LinearAllocatorPage(const LinearAllocatorPage& rhs)            = delete;
 		LinearAllocatorPage& operator=(const LinearAllocatorPage& rhs) = delete;
-		~LinearAllocatorPage();
+        ~LinearAllocatorPage();
 
 		[[nodiscard]] bool HasSpace(size_t sizeInBytes, size_t alignment) const noexcept;
-		[[nodiscard]] Allocation Allocate(const size_t sizeInBytes, const size_t alignment);
+		[[nodiscard]] Allocation Allocate(size_t sizeInBytes, size_t alignment);
 		void Reset() noexcept;
 
 	private:
@@ -34,10 +34,9 @@ namespace Crystal {
 	class LinearAllocator {
 	public:
 		explicit LinearAllocator(size_t pageSize = Crystal::_2MB) noexcept;
-		~LinearAllocator();
 
 		[[nodiscard]] constexpr size_t GetPageSize() const noexcept { return m_pageSize; }
-		[[nodiscard]] Allocation Allocate(const size_t sizeInBytes, const size_t alignment);
+		[[nodiscard]] Allocation Allocate(size_t sizeInBytes, size_t alignment);
 		void Reset() noexcept;
 	private:
 		[[nodiscard]] std::shared_ptr<LinearAllocatorPage> RequestPage() noexcept;

@@ -7,7 +7,7 @@ namespace Crystal::Math {
 	class Rng {
 	public:
 		template<typename T>
-		requires std::integral<T>
+        requires std::integral<T>
 		[[nodiscard]] static constexpr auto Random(T low, T high) noexcept {
 			std::default_random_engine engine{ std::random_device{}() };
 

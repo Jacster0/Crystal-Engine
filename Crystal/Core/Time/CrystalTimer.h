@@ -35,7 +35,7 @@ namespace Crystal {
 			m_last(Clock::now())
 		{}
 
-		void begin_mesure() noexcept {
+		void begin_measure() noexcept {
 			m_begin = Clock::now().time_since_epoch();
 		}
 

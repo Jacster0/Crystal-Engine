@@ -21,7 +21,7 @@ namespace Crystal {
 		[[nodiscard]] Math::Matrix GetProjection() const noexcept;
 
 		void SetFov(float vFov) noexcept;
-		[[nodiscard]] const float GetFov() const noexcept;
+		[[nodiscard]] float GetFov() const noexcept;
 	private:
 		void UpdateViewMatrix() const noexcept;
 

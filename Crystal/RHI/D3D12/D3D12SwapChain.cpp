@@ -6,7 +6,7 @@
 #include "D3D12Texture.h"
 #include "Utils/D3D12Exception.h"
 #include "Utils/ResourceStateTracker.h"
-#include "../Core/Math/Rectangle.h"
+#include "Core/Math/Rectangle.h"
 
 #include <cassert>
 #include <algorithm>

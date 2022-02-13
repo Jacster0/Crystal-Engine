@@ -11,7 +11,7 @@
 #include "Utils/D3D12Exception.h"
 #include "Utils/ResourceStateTracker.h"
 
-#include "../Core/Logging/Logger.h"
+#include "../../Core/Logging/Logger.h"
 
 #include <algorithm>
 
@@ -40,7 +40,7 @@ CommandContext::CommandContext(CommandListType cmdListType) {
 }
 
 void CommandContext::TransitionResource(
-	const Texture* const resource, 
+	const Texture* const resource,
 	const TransitionBarrierSpecification& specification) const noexcept
 {
 	TransitionResource(resource->GetUnderlyingResource(), specification);
@@ -57,6 +57,45 @@ void CommandContext::CopyResource(const Texture& source, const Texture& dest) no
 
 	TrackResource(d3d12DestResource);
 	TrackResource(d3d12SourceResource);
+}
+
+void CommandContext::CopyTextureSubresource(
+	const Texture& texture,
+	uint32_t firstSubresource,
+	std::span<const D3D12_SUBRESOURCE_DATA> subresourceData)
+{
+	auto& device = RHICore::get_device();
+
+	if(const auto dstResource = texture.GetUnderlyingResource()) {
+		TransitionResource(&texture, { {ResourceState_t::copy_dest} });
+		m_resourceStateTracker->FlushResourceBarriers(this);
+
+		const auto requiredSize = GetRequiredIntermediateSize(dstResource.Get(), firstSubresource, subresourceData.size());
+
+		ComPtr<ID3D12Resource> intermediateResource;
+		const auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+		const auto buffer         = CD3DX12_RESOURCE_DESC::Buffer(requiredSize);
+
+		ThrowIfFailed(device.CreateCommittedResource(
+			&heapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&buffer,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&intermediateResource)));
+
+		UpdateSubresources(
+			m_d3d12CommandList.Get(),
+			dstResource.Get(),
+			intermediateResource.Get(),
+			0,
+			firstSubresource,
+			subresourceData.size(),
+			subresourceData.data());
+
+		TrackResource(intermediateResource);
+		TrackResource(dstResource);
+	}
 }
 
 void CommandContext::ResolveSubResource(
@@ -169,7 +208,7 @@ void Crystal::CommandContext::InsertAliasingBarrier(const Texture& before, const
 }
 
 void CommandContext::TransitionResource(
-	ComPtr<ID3D12Resource> resource, 
+	const ComPtr<ID3D12Resource>& resource,
 	const TransitionBarrierSpecification& specification) const noexcept
 {
 	if (resource) {

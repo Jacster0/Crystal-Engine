@@ -1,6 +1,6 @@
 #include "Window.h"
 #include <comdef.h>
-#include "../Core/Utils/StringUtils.h"
+#include "Core/Utils/StringUtils.h"
 
 namespace Crystal {
 	Window::WindowClass Window::WindowClass::wndClass;
@@ -32,7 +32,7 @@ namespace Crystal {
 		    .hIconSm       = LoadIcon(nullptr, IDI_APPLICATION)
 		};
 
-		const ATOM atom = RegisterClassExW(&wc);
+		const ATOM atom = RegisterClassExW(reinterpret_cast<const WNDCLASSEXW*>(&wc));
 		assert(atom > 0);
 	}
 
@@ -53,6 +53,7 @@ namespace Crystal {
 	Window::~Window() {
 		DestroyWindow(m_windowInfo.HWnd);
 	}
+
 	void Window::ToggleFullScreen(bool fullscreen) noexcept {
 		if (m_fullScreen != fullscreen) {
 			m_fullScreen = fullscreen;
@@ -67,7 +68,7 @@ namespace Crystal {
 				// Query the name of the nearest display device for the window.
 				// This is required to set the fullscreen dimensions of the window
 				// when using a multi-monitor setup.
-				HMONITOR hMonitor = MonitorFromWindow(m_windowInfo.HWnd, MONITOR_DEFAULTTONEAREST);
+                const auto hMonitor = MonitorFromWindow(m_windowInfo.HWnd, MONITOR_DEFAULTTONEAREST);
 
 				MONITORINFOEX monitorInfo = {};
 				monitorInfo.cbSize        = sizeof(MONITORINFOEX);
@@ -108,14 +109,12 @@ namespace Crystal {
 			if (!Mouse.IsInWindow()) {
 				SetCapture(m_windowInfo.HWnd);
 				Mouse.OnMouseEnter();
-				Mouse.cursor.Hide();
+				Mouse::Cursor::Hide();
 			}
 			return;
 		}
 
-		const auto point = MAKEPOINTS(lParam);
-		const int x = point.x;
-		const int y = point.y;
+		const auto [x, y] = MAKEPOINTS(lParam);
 
 		const int deltaX = x - m_mouseInfo.LastPosX;
 		const int deltaY = y - m_mouseInfo.LastPosY;
@@ -147,7 +146,7 @@ namespace Crystal {
 	}
 
 	void Window::MouseWheel(LPARAM lParam, WPARAM wParam) noexcept {
-		const auto [x,y] = MAKEPOINTS(lParam);
+		const auto [x, y] = MAKEPOINTS(lParam);
 		const int delta  = GET_WHEEL_DELTA_WPARAM(wParam);
 
 		Mouse.OnWheelDelta(x, y, delta);
@@ -160,8 +159,8 @@ namespace Crystal {
 			SetForegroundWindow(m_windowInfo.HWnd);
 
 			if (!Mouse.cursor.m_cursorEnabled) {
-				Mouse.cursor.Confine(m_windowInfo.HWnd);
-				Mouse.cursor.Hide();
+				Mouse::Cursor::Confine(m_windowInfo.HWnd);
+				Mouse::Cursor::Hide();
 			}
 
 			Mouse.OnLeftPressed(x, y);
@@ -300,6 +299,9 @@ namespace Crystal {
 		case WM_CLOSE:
 			PostQuitMessage(0);
 			return 0;
+        default:
+                return DefWindowProcW(hWnd, msg, wParam, lParam);
+                break;
 		}
 		return DefWindowProcW(hWnd, msg, wParam, lParam);
 	}
@@ -307,7 +309,7 @@ namespace Crystal {
 	void Window::CreateMainWindow() noexcept {
 		m_windowInfo.Style |= m_windowInfo.ParentHwnd ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
-		RECT wndRect = { 0,0, m_windowInfo.Width, m_windowInfo.Height };
+		RECT wndRect = { 0,0, static_cast<LONG>(m_windowInfo.Width), static_cast<LONG>(m_windowInfo.Height) };
 		AdjustWindowRect(&wndRect, m_windowInfo.Style, false);
 
 		const int width  = wndRect.right - wndRect.left;

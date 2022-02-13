@@ -27,10 +27,10 @@ namespace Crystal::Math {
             Bottom(bottom)
         {}
 
-        constexpr auto Width()          const noexcept { return Right - Left; }
-        constexpr auto Height()         const noexcept { return Bottom - Top; }
-        constexpr long long Area()      const noexcept { return static_cast<long long>(Width()) * static_cast<long long>(Height()); }
-        constexpr long long Perimeter() const noexcept { return 2 * static_cast<long long>(Width()) + 2 * static_cast<long long>(Height()); }
+        [[nodiscard]] constexpr auto Width()          const noexcept { return Right - Left; }
+        [[nodiscard]] constexpr auto Height()         const noexcept { return Bottom - Top; }
+        [[nodiscard]] constexpr long long Area()      const noexcept { return static_cast<long long>(Width()) * static_cast<long long>(Height()); }
+        [[nodiscard]] constexpr long long Perimeter() const noexcept { return 2 * static_cast<long long>(Width()) + 2 * static_cast<long long>(Height()); }
 
         [[nodiscard]] constexpr bool operator==(const Rectangle& rhs) const noexcept {
             return Left == rhs.Left && Top == rhs.Top && Right == rhs.Right && Bottom == rhs.Bottom;

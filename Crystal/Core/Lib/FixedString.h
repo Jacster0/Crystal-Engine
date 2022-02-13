@@ -3,17 +3,15 @@
 namespace Crystal::crylib {
 	template<size_t Length>
 	struct FixedString {
-		constexpr FixedString(const char* const str) noexcept {
-			std::copy_n(str, Length, Value);
+        constexpr explicit FixedString(const char (&string)[Length]) noexcept {
+			std::copy_n(string, Length, Value);
 		}
 
-		[[nodiscard]] constexpr explicit operator const char* () const noexcept { return Value; }
+		[[nodiscard]] constexpr explicit operator std::string_view() const noexcept { return Value; }
 
 		[[nodiscard]] constexpr char* begin() const noexcept { return Value; }
 		[[nodiscard]] constexpr char* end() const noexcept   { return &Value[Length]; }
-		char Value[Length + 1]{};
-	};
 
-	template<size_t Length>
-	FixedString(const char(&)[Length])->FixedString<Length - 1>;
+		char Value[Length]{};
+	};
 }

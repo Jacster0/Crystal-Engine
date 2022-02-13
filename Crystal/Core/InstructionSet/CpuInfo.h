@@ -1,5 +1,5 @@
 #pragma once
-#include "../Platform/Windows/CrystalWindow.h"
+#include "Platform/Windows/CrystalWindow.h"
 #include "InstructionSet.h"
 #include <unordered_map>
 #include <thread>

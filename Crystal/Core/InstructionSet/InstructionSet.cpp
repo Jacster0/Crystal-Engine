@@ -43,13 +43,13 @@ InstructionSet::InstructionSet() noexcept {
 
     for (auto i = 0x80000000; i <= m_exIds; ++i) {
         __cpuidex(*m_cpuData.Data32().data(), i, 0);
-        m_extdata.push_back(m_cpuData);
+        m_extData.push_back(m_cpuData);
     }
 
     // load bitset with flags for function 0x80000001
     if (m_exIds >= 0x80000001) {
-        m_bitsetFlags[4] = m_extdata[1].Regs32().ECX;
-        m_bitsetFlags[5] = m_extdata[1].Regs32().EDX;
+        m_bitsetFlags[4] = m_extData[1].Regs32().ECX;
+        m_bitsetFlags[5] = m_extData[1].Regs32().EDX;
     }
 }
 
@@ -62,7 +62,7 @@ std::string InstructionSet::CaptureVendor() const noexcept {
                         .append(registers.ECX.data(), registers.ECX.size());
 }
 
-//Returns the 48 byte null terminated cpu brandstring stored in EAX, EBX, ECX and EDX
+//Returns the 48 byte null terminated cpu brandString stored in EAX, EBX, ECX and EDX
 //by calling the __cpuid intrinsic with EAX set to 0x80000002, 0x80000003 and 0x80000004
 std::string InstructionSet::CaptureBrandString() const noexcept {
     if (m_exIds < 0x80000004) [[unlikely]] {
@@ -72,7 +72,7 @@ std::string InstructionSet::CaptureBrandString() const noexcept {
     static constexpr std::array cpuIDBrandStringCalls{ 0x80000002,0x80000003,0x80000004 };
     std::string brandString{};
 
-    for (const auto& funcId : cpuIDBrandStringCalls) {
+    for (const auto funcId : cpuIDBrandStringCalls) {
         __cpuid(*m_cpuData.Data32().data(), funcId);
         const auto& data8 = m_cpuData.Data8();
 

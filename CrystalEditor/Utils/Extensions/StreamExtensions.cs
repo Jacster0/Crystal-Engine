@@ -11,7 +11,7 @@ namespace CrystalEditor.Utils.Extensions
         public static unsafe T ReadStruct<T>(this Stream stream) where T : struct
         {
             var length = Marshal.SizeOf<T>();
-            Span<byte> buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
+            var buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
 
             stream.Read(buffer);
 
@@ -24,7 +24,7 @@ namespace CrystalEditor.Utils.Extensions
         public static unsafe void WriteStruct<T>(this Stream stream, in T structure) where T : struct
         {
             var length = Marshal.SizeOf<T>();
-            Span<byte> buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
+            var buffer = (length <= MAX_STACKALLOC_SIZE) ? stackalloc byte[length] : new byte[length];
 
             fixed (byte* ptr = buffer)
             {

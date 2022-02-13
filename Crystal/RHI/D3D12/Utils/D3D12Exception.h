@@ -3,16 +3,16 @@
 #include <exception>
 #include <format>
 
-#include "../Platform/Windows/CrystalWindow.h"
-#include "../Core/Exceptions/CrystalException.h"
+#include "Platform/Windows/CrystalWindow.h"
+#include "Core/Exceptions/CrystalException.h"
 
 namespace Crystal {
 	class D3D12Exception final : public CrystalException {
 	public:
 		D3D12Exception(HRESULT hr, const std::string& functionName, const std::string& file, int line) noexcept;
 		[[nodiscard]] const char* what() const noexcept override;
-		[[nodiscard]] const std::string GetType() const noexcept override;
-		[[nodiscard]] const std::string GetOriginString() const noexcept override;
+		[[nodiscard]] std::string GetType() const noexcept override;
+		[[nodiscard]] std::string GetOriginString() const noexcept override;
 	private:
 		HRESULT m_errorCode = S_OK;
 		std::string m_functionName;

@@ -38,7 +38,7 @@ void Camera::SetFov(float vFov) noexcept {
 	}
 }
 
-const float Camera::GetFov() const noexcept {
+float Camera::GetFov() const noexcept {
 	return m_fov;
 }
 

@@ -15,14 +15,14 @@ namespace Crystal::Math {
             y = rhs.y;
         }
 
-        [[nodiscard]] constexpr Vector2 operator+(const Vector2& other) const noexcept { return Vector2(x + other.x, y + other.y); }
+        [[nodiscard]] constexpr Vector2 operator+(const Vector2& other) const noexcept { return {x + other.x, y + other.y}; }
         constexpr void operator+=(const Vector2& other) noexcept {
             x += other.x;
             y += other.y;
         }
 
-        [[nodiscard]] constexpr Vector2 operator*(const Vector2& other) const noexcept { return Vector2(x * other.x, y * other.y); }
-        [[nodiscard]] constexpr Vector2 operator*(const float value)    const noexcept { return Vector2(x * value, y * value); }
+        [[nodiscard]] constexpr Vector2 operator*(const Vector2& other) const noexcept { return {x * other.x, y * other.y}; }
+        [[nodiscard]] constexpr Vector2 operator*(const float value)    const noexcept { return {x * value, y * value}; }
 
         constexpr void operator*=(const Vector2& other) {
             x *= other.x;
@@ -33,16 +33,16 @@ namespace Crystal::Math {
             x *= value;
             y *= value;
         }
-        [[nodiscard]] constexpr Vector2 operator-(const Vector2& other) const noexcept { return Vector2(x - other.x, y - other.y); }
-        [[nodiscard]] constexpr Vector2 operator-(const float value)   const noexcept { return Vector2(x - value, y - value); }
+        [[nodiscard]] constexpr Vector2 operator-(const Vector2& other) const noexcept { return {x - other.x, y - other.y}; }
+        [[nodiscard]] constexpr Vector2 operator-(const float value)   const noexcept { return {x - value, y - value}; }
 
         constexpr void operator-=(const Vector2 other) {
             x -= other.x;
             y -= other.y;
         }
 
-        [[nodiscard]] constexpr Vector2 operator/(const Vector2& other) const noexcept { return Vector2(x / other.x, y / other.y); }
-        [[nodiscard]] constexpr Vector2 operator/(const float value)    const noexcept { return Vector2(x / value, y / value); }
+        [[nodiscard]] constexpr Vector2 operator/(const Vector2& other) const noexcept { return {x / other.x, y / other.y}; }
+        [[nodiscard]] constexpr Vector2 operator/(const float value)    const noexcept { return {x / value, y / value}; }
 
         constexpr void operator/=(const Vector2& other) noexcept {
             x /= other.x;

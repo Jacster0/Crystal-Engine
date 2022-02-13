@@ -152,7 +152,7 @@ namespace Crystal {
         std::array<std::bitset<32>, 6> m_bitsetFlags{};
 
         std::vector<CpuData> m_data{};
-        std::vector<CpuData> m_extdata{};
+        std::vector<CpuData> m_extData{};
 
         std::string m_vendor{};
         std::string m_brandstring{};

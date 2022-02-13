@@ -27,15 +27,15 @@ namespace Crystal {
 	public:
 		DynamicDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, uint32_t numDescriptorsPerHeap = 1024) noexcept;
 		void StageDescriptors(
-			const uint32_t rootParameterIndex,
-			const uint32_t offset,
-			const uint32_t numDescriptors,
-			const D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptors
+			uint32_t rootParameterIndex,
+			uint32_t offset,
+			uint32_t numDescriptors,
+			D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptors
 		);
 		void BindDescriptorsForDraw(CommandContext& context) noexcept;
 		void BindDescriptorsForDispatch(CommandContext& context) noexcept;
 
-		const D3D12_GPU_DESCRIPTOR_HANDLE CopyDescriptor(
+		D3D12_GPU_DESCRIPTOR_HANDLE CopyDescriptor(
 			CommandContext& commandList,  
 			D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor) noexcept;
 
@@ -43,7 +43,7 @@ namespace Crystal {
 		void StageInlineSRV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddr) noexcept;
 		void StageInlineUAV(uint32_t rootParameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddr) noexcept;
 
-		void ParseRootSignature(const RootSignature* const rootSignature) noexcept;
+		void ParseRootSignature(const RootSignature* rootSignature) noexcept;
 		void Reset() noexcept;
 	private:
 		//Binds the descriptors to the command list. 
@@ -67,14 +67,14 @@ namespace Crystal {
 		uint32_t m_descriptorHandleIncrementSize;
 
 		uint32_t m_descriptorTableBitMask;
-		uint32_t m_staleDescriptorTableBitMask;
-		uint32_t m_staleCBVBitMask;
-		uint32_t m_staleSRVBitMask;
-		uint32_t m_staleUAVBitMask;
+		uint32_t m_staleDescriptorTableBitMask{};
+		uint32_t m_staleCBVBitMask{};
+		uint32_t m_staleSRVBitMask{};
+		uint32_t m_staleUAVBitMask{};
 
-		std::array<D3D12_GPU_VIRTUAL_ADDRESS, MAX_DESCRIPTOR_TABLES> m_inlineCBV;
-		std::array<D3D12_GPU_VIRTUAL_ADDRESS, MAX_DESCRIPTOR_TABLES> m_inlineSRV;
-		std::array<D3D12_GPU_VIRTUAL_ADDRESS, MAX_DESCRIPTOR_TABLES> m_inlineUAV;
+		std::array<D3D12_GPU_VIRTUAL_ADDRESS, MAX_DESCRIPTOR_TABLES> m_inlineCBV{};
+		std::array<D3D12_GPU_VIRTUAL_ADDRESS, MAX_DESCRIPTOR_TABLES> m_inlineSRV{};
+		std::array<D3D12_GPU_VIRTUAL_ADDRESS, MAX_DESCRIPTOR_TABLES> m_inlineUAV{};
 
 		std::array<DescriptorTableCache, MAX_DESCRIPTOR_TABLES> m_descriptorTableCache;
 		std::unique_ptr<D3D12_CPU_DESCRIPTOR_HANDLE[]> m_descriptorHandleCache;

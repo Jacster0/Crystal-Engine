@@ -8,24 +8,24 @@ namespace CrystalEditor.Managers
 {
     class LogManager
     {
-        private const int MAX_LOG_SIZE = 512;
-        private const int MAX_FILE_NAME_LENGTH = 260;
-        private const int MAX_FUNCTION_NAME_LENGTH = 64;
+        private const int MaxLogSize = 512;
+        private const int MaxFileNameLength = 260;
+        private const int MaxFunctionNameLength = 64;
 
         private MessageInfo messageInfo;
-        NamedPipeServer<MessageInfo> server;
+        private NamedPipeServer<MessageInfo> server;
 
         [StructLayout(LayoutKind.Sequential)]
-        struct MessageInfo
+        private readonly struct MessageInfo
         {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_LOG_SIZE)]
-            public string Message;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_FILE_NAME_LENGTH)]
-            public string FileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_FUNCTION_NAME_LENGTH)]
-            public string FunctionName;
-            public int Line;
-            public LogLevel Level;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxLogSize)]
+            public readonly string Message;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxFileNameLength)]
+            public readonly string FileName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxFunctionNameLength)]
+            public readonly string FunctionName;
+            public readonly int Line;
+            public readonly LogLevel Level;
         }
 
         public async void StartUp() => await Task.Run(() => ListenForUnmanagedLogCalls());
@@ -38,7 +38,7 @@ namespace CrystalEditor.Managers
             }
         }
 
-        public void ListenForUnmanagedLogCalls()
+        private void ListenForUnmanagedLogCalls()
         {
             server = new NamedPipeServer<MessageInfo>()
             {
@@ -49,9 +49,9 @@ namespace CrystalEditor.Managers
 
             while (true)
             {
-                if (!server.data.Empty())
+                if (!server.Data.IsEmpty)
                 {
-                    if (server.data.TryDequeue(out messageInfo))
+                    if (server.Data.TryDequeue(out messageInfo))
                     {
                         Logger.Log(
                             messageInfo.Message,

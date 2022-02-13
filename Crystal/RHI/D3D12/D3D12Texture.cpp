@@ -8,7 +8,10 @@
 
 using namespace Crystal;
 
-Texture::Texture(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_CLEAR_VALUE const* clearValue) {
+Texture::Texture(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_CLEAR_VALUE* const clearValue)
+	:
+	m_resourceDesc(resourceDesc)
+{
 	auto& device = RHICore::get_device();
 
 	if (clearValue) {
@@ -26,17 +29,21 @@ Texture::Texture(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_CLEAR_VALU
 		IID_PPV_ARGS(&m_resource)));
 
 	//Todo: add resourcestate to our resourcestate tracker
+	SetTextureType();
 	CheckFeatureSupport();
 	CreateViews();
 }
 
-Texture::Texture(Microsoft::WRL::ComPtr<ID3D12Resource> resource, const D3D12_CLEAR_VALUE const* clearValue)
+Texture::Texture(Microsoft::WRL::ComPtr<ID3D12Resource> resource, const D3D12_CLEAR_VALUE* const clearValue)
 	:
-	m_resource(resource)
+	m_resource(resource),
+	m_resourceDesc(resource->GetDesc())
 {
 	if (clearValue) {
 		m_clearValue = std::make_unique<D3D12_CLEAR_VALUE>(*clearValue);
 	}
+
+	SetTextureType();
 	CheckFeatureSupport();
 	CreateViews();
 }
@@ -68,21 +75,33 @@ void Texture::Resize(uint32_t width, uint32_t height, uint32_t depthOrArraySize)
 	}
 }
 
-D3D12_RESOURCE_DESC Crystal::Texture::GetResourceDesc() const noexcept {
-	D3D12_RESOURCE_DESC resDesc = {};
-
-	if (m_resource) {
-		resDesc = m_resource->GetDesc();
-	}
-
-	return resDesc;
+D3D12_RESOURCE_DESC Texture::GetResourceDesc() const noexcept {
+	return m_resourceDesc;
 }
 
-void Texture::SetName(const std::wstring_view name) noexcept {
+void Texture::SetName(std::wstring_view name) noexcept {
 	m_textureName = name;
 
 	if (m_resource && !m_textureName.empty()) {
 		m_resource->SetName(m_textureName.c_str());
+	}
+}
+
+std::wstring Texture::GetName() const noexcept {
+	return m_textureName;
+}
+
+void Texture::SetTextureType() noexcept {
+	switch (m_resourceDesc.Dimension) {
+	case D3D12_RESOURCE_DIMENSION_TEXTURE1D:
+		m_textureType = TextureType::Texture1D;
+		break;
+	case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
+		m_textureType = TextureType::Texture2D;
+		break;
+	case D3D12_RESOURCE_DIMENSION_TEXTURE3D:
+		m_textureType = TextureType::Texture3D;
+		break;
 	}
 }
 
@@ -93,6 +112,26 @@ bool Texture::CheckFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport) const noex
 bool Texture::CheckFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport) const noexcept {
 	return (m_formatSupport.Support2 & formatSupport) != 0;
 }
+
+bool Texture::CheckSRVSupport() const noexcept {
+	return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE);
+}
+
+bool Texture::CheckRTVSupport() const noexcept {
+	return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_RENDER_TARGET);
+}
+
+bool Texture::CheckDSVSupport() const noexcept {
+	return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_DEPTH_STENCIL);
+}
+
+bool Texture::CheckUAVSupport() const noexcept {
+	return
+		CheckFormatSupport(D3D12_FORMAT_SUPPORT1_TYPED_UNORDERED_ACCESS_VIEW) &&
+		CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) &&
+		CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE);
+}
+
 
 void Texture::CreateViews() noexcept {
 	if (m_resource) {
@@ -190,4 +229,45 @@ D3D12_UNORDERED_ACCESS_VIEW_DESC Texture::GetUAVDesc(
 	}
 
 	return uavDesc;
+}
+
+uint32_t Texture::Width() const noexcept {
+	return m_resourceDesc.Width;
+}
+
+uint32_t Texture::Height() const noexcept {
+	return m_resourceDesc.Height; 
+}
+
+uint32_t Crystal::Texture::MipmapCount() const noexcept {
+	return m_resourceDesc.MipLevels;
+}
+
+TextureType Texture::GetTextureType() const noexcept {
+	return m_textureType;
+}
+
+bool Texture::IsMultiSampled() const noexcept {
+	return m_resourceDesc.SampleDesc.Count > 1;
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> Texture::GetUnderlyingResource() const noexcept {
+	return m_resource;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Texture::GetRenderTargetView() const
+{
+	return m_renderTargetView.GetDescriptorHandle(); 
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Texture::GetDepthStencilView() const {
+	return m_depthStencilView.GetDescriptorHandle();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Texture::GetShaderResourceView() const {
+	return m_shaderResourceView.GetDescriptorHandle();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Texture::GetUnorderedAccessView(uint32_t mipLevel) const {
+	return m_unorderedAccessView.GetDescriptorHandle(mipLevel);
 }

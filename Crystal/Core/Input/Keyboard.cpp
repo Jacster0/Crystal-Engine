@@ -10,18 +10,18 @@ namespace Crystal {
     }
 
     bool Keyboard::KeyIsPressed(uint8_t keycode) const noexcept {
-        return m_keystates[keycode];
+        return m_keyStates[keycode];
     }
 
     bool Keyboard::KeyIsPressedOnce(uint8_t keycode) noexcept {
         if (m_keyIsPressedOnce) {
-            m_keystates[keycode] = false;
+            m_keyStates[keycode] = false;
 
             return false;
         }
 
         if (KeyIsPressed(keycode)) {
-            m_keystates[keycode] = false;
+            m_keyStates[keycode] = false;
             m_keyIsPressedOnce = true;
 
             return true;
@@ -30,37 +30,37 @@ namespace Crystal {
     }
 
     std::optional<Keyboard::Event> Keyboard::ReadKey() noexcept {
-        if (m_keybuffer.size() > 0u) {
-            Keyboard::Event e = m_keybuffer.front();
-            m_keybuffer.pop();
+        if (!m_keyBuffer.empty()) {
+            const Event e = m_keyBuffer.front();
+            m_keyBuffer.pop();
             return e;
         }
         return std::nullopt;
     }
 
     bool Keyboard::KeyIsEmpty() const noexcept {
-        return m_keybuffer.empty();
+        return m_keyBuffer.empty();
     }
 
     void Keyboard::FlushKey() noexcept {
-        m_keybuffer = std::queue<Event>();
+        m_keyBuffer = std::queue<Event>();
     }
 
     std::optional<char> Keyboard::ReadChar() noexcept {
-        if (m_charbuffer.size() > 0u) {
-            auto charcode = m_charbuffer.front();
-            m_charbuffer.pop();
-            return charcode;
+        if (!m_charBuffer.empty()) {
+	        const auto charCode = m_charBuffer.front();
+            m_charBuffer.pop();
+            return charCode;
         }
         return std::nullopt;;
     }
 
     bool Keyboard::CharIsEmpty() const noexcept {
-        return m_charbuffer.empty();
+        return m_charBuffer.empty();
     }
 
     void Keyboard::FlushChar() noexcept {
-        m_charbuffer = std::queue<char>();
+        m_charBuffer = std::queue<char>();
     }
 
     void Keyboard::Flush() noexcept {
@@ -89,25 +89,25 @@ namespace Crystal {
     }
 
     void Keyboard::OnKeyPressed(uint8_t keycode) noexcept {
-        m_keystates[keycode] = true;
-        m_keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, keycode));
-        TrimBuffer(m_keybuffer);
+        m_keyStates[keycode] = true;
+        m_keyBuffer.push(Event(Event::Type::Press, keycode));
+        TrimBuffer(m_keyBuffer);
     }
 
     void Keyboard::OnKeyReleased(uint8_t keycode) noexcept {
         m_keyIsPressedOnce = false;
-        m_keystates[keycode] = false;
-        m_keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Release, keycode));
-        TrimBuffer(m_keybuffer);
+        m_keyStates[keycode] = false;
+        m_keyBuffer.push(Event(Event::Type::Release, keycode));
+        TrimBuffer(m_keyBuffer);
     }
 
     void Keyboard::OnChar(char character) noexcept {
-        m_charbuffer.push(character);
-        TrimBuffer(m_charbuffer);
+        m_charBuffer.push(character);
+        TrimBuffer(m_charBuffer);
     }
 
     void Keyboard::ClearState() noexcept {
-        m_keystates.reset();
+        m_keyStates.reset();
     }
 
     template<typename T>

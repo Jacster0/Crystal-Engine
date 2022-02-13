@@ -13,6 +13,11 @@
 namespace Crystal {
 	class Logger {
 	public:
+        Logger(const Logger& rhs)            = delete;
+        Logger& operator=(const Logger& rhs) = delete;
+        Logger(Logger&& rhs)                 = delete;
+        Logger& operator=(Logger&& rhs)      = delete;
+
 		[[nodiscard]] static Logger& Get() noexcept {
 			static Logger logger;
 			return logger;
@@ -21,7 +26,7 @@ namespace Crystal {
 		[[nodiscard]] static constexpr auto NewLine() noexcept { return std::endl<char, std::char_traits<char>>; }
 
 		template<std::derived_from<ISink> T>
-		static constexpr void AddSink(auto&&... args) noexcept
+		static void AddSink(auto&&... args) noexcept
 			requires std::constructible_from<T, decltype(args)...>
 		{
 			std::scoped_lock lock(Logger::Get().m_sinkMutex);
@@ -39,15 +44,7 @@ namespace Crystal {
 		template<std::derived_from<ISink> T>
 		static void RemoveSink() noexcept {
 			std::scoped_lock lock(Logger::Get().m_sinkMutex);
-
-			auto& logger = Logger::Get();
-
-			logger.m_sinks.erase(std::remove_if(logger.m_sinks.begin(), logger.m_sinks.end(),
-				[](const auto& sink)
-				{
-					return typeid(*sink) == typeid(T);
-				}
-			), logger.m_sinks.end());
+			std::erase_if(Logger::Get().m_sinks, [](const auto& sink) { return typeid(*sink) == typeid(T); });
 		}
 
 		constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept {
@@ -71,10 +68,6 @@ namespace Crystal {
 		}
 	private:
 		Logger()                             = default;
-		Logger(const Logger& rhs)            = delete;
-		Logger& operator=(const Logger& rhs) = delete;
-		Logger(Logger&& rhs)                 = delete;
-		Logger& operator=(Logger&& rhs)      = delete;
 		~Logger()                            = default;
 
 		mutable std::mutex m_loggingMutex;

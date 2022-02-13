@@ -19,12 +19,11 @@ namespace Crystal {
         [[nodiscard]] Window& GetWindow() const noexcept;
         [[nodiscard]] CpuInfo& GetCpuInfo() noexcept { return m_cpuInfo; };
 
-        void Run();
+        [[noreturn]] void Run() const;
     private:
-        void Initialize() noexcept;
-        void HandleInput() noexcept;
-        void KeyboardInput() noexcept;
-        void MouseInput() noexcept;
+        void HandleInput() const noexcept;
+        void KeyboardInput() const noexcept;
+        void MouseInput() const noexcept;
 
         std::unique_ptr<Window> m_window{ nullptr };
         std::unique_ptr<Graphics> m_gfx{ nullptr };

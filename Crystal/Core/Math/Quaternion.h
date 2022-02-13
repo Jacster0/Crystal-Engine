@@ -27,7 +27,7 @@ namespace Crystal::Math {
             const auto sin       = Math::Sin(halfAngle);
             const auto cos       = Math::Cos(halfAngle);
 
-            return Quaternion(axis.x * sin, axis.y * sin, axis.z * sin, cos);
+            return {static_cast<float>(axis.x * sin), static_cast<float>(axis.y * sin), static_cast<float>(axis.z * sin), cos};
         }
 
         static constexpr inline Quaternion FromPitchYawRoll(float pitch, float yaw, float roll) noexcept {
@@ -43,12 +43,12 @@ namespace Crystal::Math {
             const auto cosPitch = Math::Cos(halfPitch);
             const auto cosYaw   = Math::Cos(halfYaw);
 
-            return Quaternion(
-                cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll,
-                sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll,
-                cosYaw * cosPitch * sinRoll - sinYaw * sinPitch * cosRoll,
-                cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll
-            );
+            return {
+                static_cast<float>(cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll),
+                static_cast<float>(sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll),
+                static_cast<float>(cosYaw * cosPitch * sinRoll - sinYaw * sinPitch * cosRoll),
+                static_cast<float>(cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll)
+            };
         }
 
         static constexpr inline Quaternion FromEulerAngles(const Vector3& rotation) noexcept {
@@ -72,42 +72,42 @@ namespace Crystal::Math {
             const float num10 = (x * num3) - (y * num4);
             const float num9  = ((x * num4) + (y * num3)) + (z * num2);
 
-            return Quaternion(
+            return {
                 ((x * num) + (num4 * w)) + num12,
                 ((y * num) + (num3 * w)) + num11,
                 ((z * num) + (num2 * w)) + num10,
                 (w * num) - num9
-            );
+            };
         }
 
         constexpr void FromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis) noexcept;
 
-        constexpr auto Conjugate() const noexcept { return Quaternion(-x, -y, -z, w); }
-        constexpr auto SquaredLength() const noexcept { return Math::SquaredHypot(x, y, z, w); }
+        [[nodiscard]] constexpr auto Conjugate() const noexcept { return Quaternion(-x, -y, -z, w); }
+        [[nodiscard]] constexpr auto SquaredLength() const noexcept { return Math::SquaredHypot(x, y, z, w); }
 
-        constexpr Vector3 ToEulerAngles() const noexcept {
+        [[nodiscard]] constexpr Vector3 ToEulerAngles() const noexcept {
             //Order of rotations: Z, X, Y
             const float check = 2.0f * (-y * z + w * x);
 
             if (check < -0.995f) {
-                return Vector3(
+                return {
                     90.0f,
                     0.0f,
-                    Math::ToDegrees(Math::Atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
-                );
+                    static_cast<float>(Math::ToDegrees(Math::Atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z))))
+                };
             }
             else if (check < 0.0995f) {
-                return Vector3(
+                return {
                     90.0f,
                     0.0f,
-                    Math::ToDegrees(Math::Atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z)))
-                );
+                    static_cast<float>(Math::ToDegrees(Math::Atan2(2.0f * (x * z - w * y), 1.0f - 2.0f * (y * y + z * z))))
+                };
             }
-            return Vector3(
+            return {
                 Math::ToDegrees(Math::Asin(check)),
-                Math::ToDegrees(Math::Atan2(2.0f * (x * z + w * y), 1.0f - 2.0f * (x * x + y * y))),
-                Math::ToDegrees(Math::Atan2(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z)))
-            );
+                static_cast<float>(Math::ToDegrees(Math::Atan2(2.0f * (x * z + w * y), 1.0f - 2.0f * (x * x + y * y)))),
+                static_cast<float>(Math::ToDegrees(Math::Atan2(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z))))
+            };
         }
 
         constexpr void Normalize() noexcept {
@@ -123,7 +123,7 @@ namespace Crystal::Math {
             }
         }
 
-        constexpr Quaternion Normalized() const noexcept {
+        [[nodiscard]] constexpr Quaternion Normalized() const noexcept {
             const auto length_squared = SquaredLength();
 
             if (!Math::equals(length_squared, 1.0f) && length_squared > 0.0f) {
@@ -135,7 +135,7 @@ namespace Crystal::Math {
             }
         }
 
-        const Quaternion Inverse() const noexcept {
+        [[nodiscard]] Quaternion Inverse() const noexcept {
             const auto squaredLength = SquaredLength();
 
             if (squaredLength == 1.0f) {
@@ -168,7 +168,7 @@ namespace Crystal::Math {
             return *this;
         }
 
-        constexpr Quaternion operator *(float rhs) const noexcept { return Quaternion(x * rhs, y * rhs, z * rhs, w * rhs); }
+        constexpr Quaternion operator *(float rhs) const noexcept { return {x * rhs, y * rhs, z * rhs, w * rhs}; }
 
         constexpr bool operator ==(const Quaternion& rhs) const noexcept {
             return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
@@ -177,14 +177,14 @@ namespace Crystal::Math {
         constexpr bool operator!=(const Quaternion& rhs) const noexcept { return !(*this == rhs); }
 
         // Test for equality using epsilon
-        constexpr bool Equals(const Quaternion& rhs) const noexcept
+        [[nodiscard]] constexpr bool Equals(const Quaternion& rhs) const noexcept
         {
             return Math::equals(x, rhs.x) && Math::equals(y, rhs.y) && Math::equals(z, rhs.z) && Math::equals(w, rhs.w);
         }
 
-        const auto Pitch() const noexcept { return ToEulerAngles().x; }
-        const auto Yaw()   const noexcept { return ToEulerAngles().y; }
-        const auto Roll()  const noexcept { return ToEulerAngles().z; }
+        [[nodiscard]] auto Pitch() const noexcept { return ToEulerAngles().x; }
+        [[nodiscard]] auto Yaw()   const noexcept { return ToEulerAngles().y; }
+        [[nodiscard]] auto Roll()  const noexcept { return ToEulerAngles().z; }
 
 
         float x;

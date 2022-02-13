@@ -4,7 +4,7 @@
 #include "D3D12RootSignature.h"
 
 #include "Utils/D3D12Exception.h"
-#include "../Core/Logging/Logger.h"
+#include "Core/Logging/Logger.h"
 #include <stdexcept>
 
 using namespace Crystal;
@@ -68,7 +68,7 @@ void DynamicDescriptorHeap::BindDescriptorsForDispatch(CommandContext& context) 
     Bind(context, &ID3D12GraphicsCommandList::SetComputeRootDescriptorTable);
 }
 
-const D3D12_GPU_DESCRIPTOR_HANDLE DynamicDescriptorHeap::CopyDescriptor(
+D3D12_GPU_DESCRIPTOR_HANDLE DynamicDescriptorHeap::CopyDescriptor(
     CommandContext& commandList, 
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor) noexcept
 {
@@ -244,14 +244,14 @@ ComPtr<ID3D12DescriptorHeap> DynamicDescriptorHeap::RequestDescriptorHeap() {
 ComPtr<ID3D12DescriptorHeap> DynamicDescriptorHeap::CreateDescriptorHeap() {
     auto& device = RHICore::get_device();
 
-    D3D12_DESCRIPTOR_HEAP_DESC desciptorHeapDesk = {
+    D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesk = {
         .Type           = m_descriptorHeapType,
         .NumDescriptors = m_numDescriptorsPerHeap,
         .Flags          = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE
     };
 
     ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-    ThrowIfFailed(device.CreateDescriptorHeap(&desciptorHeapDesk, IID_PPV_ARGS(&descriptorHeap)));
+    ThrowIfFailed(device.CreateDescriptorHeap(&descriptorHeapDesk, IID_PPV_ARGS(&descriptorHeap)));
 
     return descriptorHeap;
 }

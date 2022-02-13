@@ -47,10 +47,10 @@ Viewport RenderTarget::GetViewPort(FSize scale, FSize bias, float minDepth, floa
 	}
 
 	return {
-		static_cast<float>(width  * bias.First),
-		static_cast<float>(height * bias.Second),
-		static_cast<float>(width  * scale.First),
-		static_cast<float>(height * scale.Second),
+		width  * bias.First,
+		height * bias.Second,
+		width  * scale.First,
+		height * scale.Second,
 		minDepth,
 		maxDepth
 	};
@@ -85,8 +85,8 @@ DXGI_FORMAT RenderTarget::GetDepthStencilFormat() const noexcept {
 DXGI_SAMPLE_DESC RenderTarget::GetSampleDesc() const noexcept {
 	DXGI_SAMPLE_DESC sampleDesc = { 1, 0 };
 	for (int i = AttachmentPoint::Color0; i <= AttachmentPoint::Color7; i++) {
-		if (const auto texure = m_textures.at(i)) {
-			sampleDesc = texure->GetResourceDesc().SampleDesc;
+		if (const auto texture = m_textures.at(i)) {
+			sampleDesc = texture->GetResourceDesc().SampleDesc;
 			break;
 		}
 	}

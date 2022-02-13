@@ -1,6 +1,6 @@
 #include "FileSystem.h"
 #include "../Utils/StringUtils.h"
-#include "../Core/Logging/Logger.h"
+#include "../Logging/Logger.h"
 
 #include <filesystem>
 #include <algorithm>
@@ -177,7 +177,7 @@ std::string FileSystem::GetFileNameFromFilePath(std::string_view path) noexcept 
 	return fs::path(path).filename().string();
 }
 
-constexpr std::string FileSystem::GetExtensionFromFilePath(std::string_view path) noexcept {
+std::string FileSystem::GetExtensionFromFilePath(std::string_view path) noexcept {
 	std::string ext;
 
 	try {

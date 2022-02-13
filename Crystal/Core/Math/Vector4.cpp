@@ -93,9 +93,9 @@ namespace Crystal::Math {
     }
 
     constexpr Vector4 Vector4::MultiplyAdd(const Vector4& first, const Vector4& second, const Vector4& third) noexcept {
-        return Vector4(Math::FusedMultiplyAdd(first.X, second.X, third.X),
-                       Math::FusedMultiplyAdd(first.Y, second.Y, third.Y),
-                       Math::FusedMultiplyAdd(first.Z, second.Z, third.Z),
-                       Math::FusedMultiplyAdd(first.W, second.W, third.W));
+        return { Math::FusedMultiplyAdd(first.X, second.X, third.X),
+                 Math::FusedMultiplyAdd(first.Y, second.Y, third.Y),
+                 Math::FusedMultiplyAdd(first.Z, second.Z, third.Z),
+                 Math::FusedMultiplyAdd(first.W, second.W, third.W) };
     }
 }

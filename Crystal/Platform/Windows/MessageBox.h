@@ -3,7 +3,7 @@
 #include <string_view>
 #include "CrystalWindow.h"
 
-//God damn Macros
+//God-damn Macros
 #ifdef MessageBox
 #undef MessageBox
 #endif
@@ -26,8 +26,8 @@ namespace Crystal::MessageBox {
 		Error = Hand,
 		Stop = Error,
 		Question = 0x20,
-		Exlamation = 0x30,
-		Warning = Exlamation,
+		Exclamation = 0x30,
+		Warning = Exclamation,
 		Asterisk = 0x40,
 		Information = Asterisk
 	};

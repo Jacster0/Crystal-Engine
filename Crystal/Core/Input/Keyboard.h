@@ -208,7 +208,7 @@ namespace Crystal {
             [[nodiscard]] bool IsPress() const noexcept { return type == Type::Press; }
             [[nodiscard]] bool IsRelease() const noexcept { return type == Type::Release; }
 
-            [[nodiscard]] const auto GetCode() const noexcept { return static_cast<KeyCode>(code); }
+            [[nodiscard]] auto GetCode() const noexcept { return static_cast<KeyCode>(code); }
         private:
             Type type;
             uint8_t code;
@@ -250,9 +250,9 @@ namespace Crystal {
         static constexpr unsigned int m_bufferSize = 16u;
         bool m_autorepeatEnabled = false;
         bool m_keyIsPressedOnce = false;
-        std::bitset<m_nKeys> m_keystates;
-        std::queue<Event> m_keybuffer;
-        std::queue<char> m_charbuffer;
+        std::bitset<m_nKeys> m_keyStates;
+        std::queue<Event> m_keyBuffer;
+        std::queue<char> m_charBuffer;
     };
 }
 

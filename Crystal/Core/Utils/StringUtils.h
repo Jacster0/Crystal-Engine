@@ -67,7 +67,7 @@ namespace Crystal {
 		}
 	}
 	
-	[[nodiscard]] constexpr inline bool IsEmptyOrWhiteSpace(std::string_view str) noexcept {
+	[[nodiscard]] constexpr bool IsEmptyOrWhiteSpace(std::string_view str) noexcept {
 		//Check if the string is empty
 		if (str.empty()) {
 			return true;

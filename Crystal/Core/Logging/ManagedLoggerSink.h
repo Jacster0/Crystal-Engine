@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Sink.h"
-#include "../Networking/NamedPipeClient.h"
+#include "../../Networking/NamedPipeClient.h"
 
 namespace Crystal {
 	class ManagedLoggerSink final : public ISink {

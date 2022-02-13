@@ -78,7 +78,7 @@ uint32_t CpuInfo::GetNumberOfCores() noexcept {
 
     std::vector<SYSTEM_LOGICAL_PROCESSOR_INFORMATION> buffer(numElements);
 
-    //Fill the buffer. If the function succed we can start counting cores.
+    //Fill the buffer. If the function succeeds we can start counting cores.
     if (GetLogicalProcessorInformation(buffer.data(), &sizeInBytes)) [[likely]] {
         std::ranges::for_each(buffer, [&numCores](const SYSTEM_LOGICAL_PROCESSOR_INFORMATION& processorInfo) {
             if (processorInfo.Relationship == RelationProcessorCore) {

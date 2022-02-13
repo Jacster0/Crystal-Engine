@@ -6,8 +6,8 @@
 #include <vector>
 #include <span>
 
-#include "../Graphics/Types/Types.h"
-#include "../Core/Math/Rectangle.h"
+#include "../../Core/Math/Rectangle.h"
+#include "../../Graphics/Types/Types.h"
 
 namespace Crystal {
 	class Buffer;
@@ -34,6 +34,7 @@ namespace Crystal {
 			const Texture* resource,
 			const TransitionBarrierSpecification& specification) const noexcept;
 		void CopyResource(const Texture& source, const Texture& dest) noexcept;
+		void CopyTextureSubresource(const Texture& texture, uint32_t firstSubresource, std::span<const D3D12_SUBRESOURCE_DATA> subresourceData);
 		void ResolveSubResource(
 			const Texture* source,
 			const Texture* dest,
@@ -60,7 +61,7 @@ namespace Crystal {
 		void InsertUAVBarrier(const Texture& resource, bool flushImmediate = false) const noexcept;
 		void InsertAliasingBarrier(const Texture& before, const Texture& after, bool flushImmediate = false) const noexcept;
 		void TransitionResource(
-			Microsoft::WRL::ComPtr<ID3D12Resource> resource,
+			const Microsoft::WRL::ComPtr<ID3D12Resource>& resource,
 			const TransitionBarrierSpecification& specification) const noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;

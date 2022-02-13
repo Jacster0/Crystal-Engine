@@ -5,7 +5,7 @@
 #include <wrl/client.h>
 #include <memory>
 #include <array>
-#include "../Graphics/Types/Types.h"
+#include "Graphics/Types/Types.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -17,7 +17,7 @@ namespace Crystal { class CommandQueue; }
 namespace Crystal::RHICore {
 	using Crystal::CommandQueue;
 
-	void intialize();
+	void initialize();
 
 	[[nodiscard]] ID3D12Device8& get_device() noexcept;
 	[[nodiscard]] IDXGIAdapter4& get_physical_device() noexcept;

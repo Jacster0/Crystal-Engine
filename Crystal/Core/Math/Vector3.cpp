@@ -28,7 +28,7 @@ namespace Crystal::Math {
 
         const Quaternion& res = rotation * p * q;
 
-        return Vector3(res.x, res.y, res.z);
+        return {res.x, res.y, res.z};
     }
 
     constexpr Vector3 Vector3::TransformNormal(const Vector3& vec3, const Matrix& mat) noexcept {
@@ -36,9 +36,9 @@ namespace Crystal::Math {
         Vector3 row1{ mat.m10,mat.m11, mat.m12 };
         Vector3 row2{ mat.m20,mat.m21, mat.m22 };
 
-        Vector3 X = Vector3(vec3.x);
-        Vector3 Y = Vector3(vec3.y);
-        Vector3 Z = Vector3(vec3.z);
+        auto X = Vector3(vec3.x);
+        auto Y = Vector3(vec3.y);
+        auto Z = Vector3(vec3.z);
 
         Vector3 Result = Z * row2;
         Result         = MultiplyAdd(Y, row1, Result);
@@ -53,22 +53,22 @@ namespace Crystal::Math {
         Vector3 row2{ mat.m20,mat.m21, mat.m22 };
         Vector3 row3{ mat.m20,mat.m21, mat.m22 };
 
-        Vector3 X = Vector3(vec3.x);
-        Vector3 Y = Vector3(vec3.y);
-        Vector3 Z = Vector3(vec3.z);
+        auto X = Vector3(vec3.x);
+        auto Y = Vector3(vec3.y);
+        auto Z = Vector3(vec3.z);
 
         Vector3 Result = MultiplyAdd(Z, row2, row3);
         Result         = MultiplyAdd(Y, row1, Result);
         Result         = MultiplyAdd(X, row0, Result);
 
-        Vector3 W = Vector3(Result.z);
+        auto W = Vector3(Result.z);
         return Result / W;
     }
 
     constexpr Vector3 Vector3::MultiplyAdd(const Vector3& first, const Vector3& second, const Vector3& third) noexcept {
-        return Vector3(Math::FusedMultiplyAdd(first.x, second.x ,third.x),
+        return {Math::FusedMultiplyAdd(first.x, second.x ,third.x),
                        Math::FusedMultiplyAdd(first.y, second.y, third.y),
-                       Math::FusedMultiplyAdd(first.z, second.z, third.z));
+                       Math::FusedMultiplyAdd(first.z, second.z, third.z)};
     }
 
     const Vector3 Vector3::Zero(0.0f, 0.0f, 0.0f);

@@ -42,12 +42,12 @@ namespace Crystal::Math {
         ~Matrix() = default;
 
         [[nodiscard]] static constexpr inline Matrix CreateTranslation(const Vector3& translation) noexcept {
-            return Matrix(
+            return {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
                 translation.x, translation.y, translation.z, 1
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix CreateRotation(const Quaternion& rotation) noexcept {
@@ -71,48 +71,48 @@ namespace Crystal::Math {
             const float i21 = 2.0f * (num2 - num);
             const float i22 = 1.0f - (2.0f * (num8 + num9));
 
-            return Matrix(
+            return {
                 i00,  i01,  i02,  0.0f,
                 i10,  i11,  i12,  0.0f,
                 i20,  i21,  i22,  0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix RotationX(const float angle) {
             const float sinAngle = Math::Sin(angle);
             const float cosAngle = Math::Cos(angle);
 
-            return Matrix(
+            return {
                 1, 0, 0, 0,
                 0, cosAngle, sinAngle, 0,
                 0, -sinAngle, cosAngle, 0,
                 0, 0, 0, 1
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix RotationY(const float angle) {
             const float sinAngle = Math::Sin(angle);
             const float cosAngle = Math::Cos(angle);
 
-            return Matrix(
+            return {
                 cosAngle, 0, -sinAngle, 0,
                 0,        1,  0,        0,
                 sinAngle, 0,  cosAngle, 0,
                 0,        0,  0,        1
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix RotationZ(const float angle) {
             const float sinAngle = Math::Sin(angle);
             const float cosAngle = Math::Cos(angle);
 
-            return Matrix(
+            return {
                 cosAngle,  sinAngle, 0, 0,
                -sinAngle,  cosAngle, 0, 0,
                 0,         0,        1, 0,
                 0,         0,        0, 1
-            );
+            };
         }
 
         [[nodiscard]] constexpr Vector3 GetTranslation() const noexcept { return Vector3(m30, m31, m32); }
@@ -191,22 +191,22 @@ namespace Crystal::Math {
             const int ys = (Math::Signum(m10 * m11 * m12 * m13) < 0) ? -1 : 1;
             const int zs = (Math::Signum(m20 * m21 * m22 * m23) < 0) ? -1 : 1;
 
-            return Vector3(
+            return {
                 static_cast<float>(xs) * Math::Sqrt(m00 * m00 + m01 * m01 + m02 * m02),
                 static_cast<float>(ys) * Math::Sqrt(m10 * m10 + m11 * m11 + m12 * m12),
                 static_cast<float>(zs) * Math::Sqrt(m20 * m20 + m21 * m21 + m22 * m22)
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix CreateScale(float scale)          noexcept { return CreateScale(scale, scale, scale); }
         [[nodiscard]] static constexpr inline Matrix CreateScale(const Vector3& scale) noexcept { return CreateScale(scale.x, scale.y, scale.z); }
         [[nodiscard]] static constexpr inline Matrix CreateScale(float scaleX, float scaleY, float ScaleZ) noexcept {
-            return Matrix(
+            return {
                 scaleX, 0,      0,      0,
                 0,      scaleY, 0,      0,
                 0,      0,      ScaleZ, 0,
                 0,      0,      0,      1
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix CreateLookAtLH(
@@ -218,12 +218,12 @@ namespace Crystal::Math {
             const Vector3 xAxis = Vector3::Normalize(Vector3::Cross(up, zAxis));
             const Vector3 yAxis = Vector3::Cross(zAxis, xAxis);
 
-            return Matrix(
+            return {
                 xAxis.x, yAxis.x, zAxis.x, 0,
                 xAxis.y, yAxis.y, zAxis.y, 0,
                 xAxis.z, yAxis.z, zAxis.z, 0,
                 -Vector3::Dot(xAxis, cameraPosition), -Vector3::Dot(yAxis, cameraPosition), -Vector3::Dot(zAxis, cameraPosition), 1.0f
-            );
+            };
         }
 
         [[nodiscard]] static constexpr inline Matrix CreatePerspectiveFieldOfViewLH(
@@ -238,24 +238,24 @@ namespace Crystal::Math {
             const float zn = nearPlaneDistance;
             const float zf = farPlaneDistance;
 
-            return Matrix(
+            return {
                 xScale, 0, 0, 0,
                 0, yScale, 0, 0,
                 0, 0, zf / (zf - zn), 1,
                 0, 0, -zn * zf / (zf - zn), 0
-            );
+            };
         }
 
         [[nodiscard]] constexpr Matrix Transposed() const noexcept { return Transpose(*this); }
         constexpr void Transpose() { *this = Transpose(*this); }
 
         [[nodiscard]] static constexpr inline Matrix Transpose(const Matrix& matrix) noexcept {
-            return Matrix(
+            return {
                 matrix.m00, matrix.m10, matrix.m20, matrix.m30,
                 matrix.m01, matrix.m11, matrix.m21, matrix.m31,
                 matrix.m02, matrix.m12, matrix.m22, matrix.m32,
                 matrix.m03, matrix.m13, matrix.m23, matrix.m33
-            );
+            };
         }
 
         [[nodiscard]] constexpr Matrix Inversed() const noexcept { return Inverse(*this); }
@@ -309,11 +309,11 @@ namespace Crystal::Math {
             const float i23 = -(v4 * matrix.m00 - v2 * matrix.m01 + v0 * matrix.m03) * invDet;
             const float i33 = (v3  * matrix.m00 - v1 * matrix.m01 + v0 * matrix.m02) * invDet;
 
-            return Matrix(
+            return {
                 i00, i01, i02, i03,
                 i10, i11, i12, i13,
                 i20, i21, i22, i23,
-                i30, i31, i32, i33);
+                i30, i31, i32, i33 };
         }
 
         void constexpr Decompose(Vector3& scale, Quaternion& rotation, Vector3& translation) const noexcept
@@ -333,7 +333,7 @@ namespace Crystal::Math {
 
         [[nodiscard]] constexpr Matrix operator*(const Matrix& rhs) const noexcept
         {
-            return Matrix(
+            return {
                 m00 * rhs.m00 + m01 * rhs.m10 + m02 * rhs.m20 + m03 * rhs.m30,
                 m00 * rhs.m01 + m01 * rhs.m11 + m02 * rhs.m21 + m03 * rhs.m31,
                 m00 * rhs.m02 + m01 * rhs.m12 + m02 * rhs.m22 + m03 * rhs.m32,
@@ -350,7 +350,7 @@ namespace Crystal::Math {
                 m30 * rhs.m01 + m31 * rhs.m11 + m32 * rhs.m21 + m33 * rhs.m31,
                 m30 * rhs.m02 + m31 * rhs.m12 + m32 * rhs.m22 + m33 * rhs.m32,
                 m30 * rhs.m03 + m31 * rhs.m13 + m32 * rhs.m23 + m33 * rhs.m33
-            );
+            };
         }
 
         constexpr void operator*=(const Matrix& rhs) { (*this) = (*this) * rhs; }
@@ -363,17 +363,16 @@ namespace Crystal::Math {
             vec4.Z = (rhs.x * m02) + (rhs.y * m12) + (rhs.z * m22) + m32;
             vec4.W = 1 / ((rhs.x * m03) + (rhs.y * m13) + (rhs.z * m23) + m33);
 
-            return Vector3(vec4.X * vec4.W, vec4.Y * vec4.W, vec4.Z * vec4.W);
+            return {vec4.X * vec4.W, vec4.Y * vec4.W, vec4.Z * vec4.W};
         }
 
         [[nodiscard]] constexpr Vector4 operator*(const Vector4& rhs) const noexcept {
-            return Vector4
-            (
+            return {
                 (rhs.X * m00) + (rhs.Y * m10) + (rhs.Z * m20) + (rhs.W * m30),
                 (rhs.X * m01) + (rhs.Y * m11) + (rhs.Z * m21) + (rhs.W * m31),
                 (rhs.X * m02) + (rhs.Y * m12) + (rhs.Z * m22) + (rhs.W * m32),
                 (rhs.X * m03) + (rhs.Y * m13) + (rhs.Z * m23) + (rhs.W * m33)
-            );
+            };
         }
 
         [[nodiscard]] constexpr bool operator==(const Matrix& rhs) const noexcept {
@@ -392,7 +391,7 @@ namespace Crystal::Math {
         [[nodiscard]] constexpr bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
 
         // Test for equality with another matrix with epsilon.
-        [[nodiscard]] constexpr bool Equals(const Matrix& rhs) {
+        [[nodiscard]] constexpr bool Equals(const Matrix& rhs) const {
             const float* data_left = Data();
             const float* data_right = rhs.Data();
 

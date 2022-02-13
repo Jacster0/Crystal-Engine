@@ -40,7 +40,7 @@ namespace Crystal {
 	private:
 		std::string m_name;
 		HANDLE m_hPipe;
-		static constexpr auto m_format = "\\\\.\\pipe\\";
+		static constexpr auto m_format = R"(\\.\pipe\)";
 
 		PipeAccess m_access = PipeAccess::Write;
 		PipeSharing m_shareMode = PipeSharing::None;

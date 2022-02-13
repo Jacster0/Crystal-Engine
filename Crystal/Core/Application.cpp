@@ -6,48 +6,51 @@
 #include "../Platform/Windows/Types.h"
 #include "../RHI/RHICore.h"
 #include "../Graphics/Graphics.h"
+#include "Time/Time.h"
+#include "Math/MathFunctions.h"
 
 namespace Crystal {
-	Application::Application(const ApplicationCreateInfo& info) 
+	Application::Application(const ApplicationCreateInfo& info)
+		:
+		m_window(std::make_unique<Window>(info)),
+		m_gfx(std::make_unique<Graphics>())
 	{
-		m_window = std::make_unique<Window>(info);
-		m_gfx = std::make_unique<Graphics>();
 		m_gfx->SetWindowHandle(m_window->GetWindowHandle());
 
-		Logger::AddSink<ManagedLoggerSink, "ManagedLogger">();
-		m_cpuInfo = CpuInfo{};
+		Logger::AddSink<ManagedLoggerSink>();
 
 		SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-		Initialize();
+
+        RHICore::initialize();
+		m_gfx->Initialize(m_window->GetWidth(), m_window->GetHeight());
+		m_window->Kbd.EnableAutorepeat();
+
+		crylog_info(current_date());
+		crylog_info(current_time());
+		crylog_info(current_date_time());
+		crylog_warning("Test");
 	}
 
-	Application::~Application() { }
+	Application::~Application() { 
+		Logger::RemoveSink<ManagedLoggerSink>();
+	}
 
 	Window& Application::GetWindow() const noexcept {
 		return *m_window;
 	}
 
-	void Application::Run()
-	{
+    [[noreturn]] void Application::Run() const {
 		while (true) {
 			HandleInput();
 		}
 	}
 
-	void Application::Initialize() noexcept {
-		RHICore::Intialize();
-		m_gfx->Initialize(m_window->GetWidth(), m_window->GetHeight());
-
-		m_window->Kbd.EnableAutorepeat();
-		m_isInitialized = true;
-	}
-
-	void Application::HandleInput() noexcept {
+	void Application::HandleInput() const noexcept {
 		KeyboardInput();
 		MouseInput();
 	}
 
-	void Application::KeyboardInput() noexcept {
+	void Application::KeyboardInput() const noexcept {
 		while (const auto e = m_window->Kbd.ReadKey()) {
 			if (!e->IsPress()) {
 				continue;
@@ -59,11 +62,11 @@ namespace Crystal {
 
 				if (m_window->CursorEnabled()) {
 					m_window->DisableCursor();
-					m_window->m_mouse.EnableRawInput();
+					m_window->Mouse.EnableRawInput();
 				}
 				else {
 					m_window->EnableCursor();
-					m_window->m_mouse.DisableRawInput();
+					m_window->Mouse.DisableRawInput();
 				}
 				break;
 			case KeyCode::F11:
@@ -79,9 +82,9 @@ namespace Crystal {
 		}
 	}
 
-	void Application::MouseInput() noexcept {
+	void Application::MouseInput() const noexcept {
 		using enum Mouse::Event::Type;
-		while (const auto e = m_window->m_mouse.Read()) {
+		while (const auto e = m_window->Mouse.Read()) {
 			switch (e->GetType()) {
 			case Move:
 				break;
@@ -91,8 +94,8 @@ namespace Crystal {
 			}
 		}
 
-		while (const auto delta = m_window->m_mouse.ReadRawDelta()) {
-			if (!m_window->m_mouse.cursor.IsEnabled()) {
+		while (const auto delta = m_window->Mouse.ReadRawDelta()) {
+			if (!m_window->Mouse.cursor.IsEnabled()) {
 			}
 		}
 	}

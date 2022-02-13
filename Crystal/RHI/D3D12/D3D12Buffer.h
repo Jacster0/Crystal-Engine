@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cstdint>
-#include "../Graphics/Types/Types.h"
+#include "Graphics/Types/Types.h"
 
 namespace Crystal {
     struct BufferDescription {
@@ -15,7 +15,7 @@ namespace Crystal {
     class Buffer {
     public:
         explicit Buffer(const BufferDescription& desc);
-        Buffer(const BufferDescription& desc, const Texture* const texture) noexcept;
+        Buffer(const BufferDescription& desc, const Texture* texture) noexcept;
 
         [[nodiscard]] D3D12_GPU_VIRTUAL_ADDRESS BufferLocation() const noexcept { return m_resource->GetGPUVirtualAddress(); };
         [[nodiscard]] uint32_t Count()  const noexcept { return m_bufferDesc.Count; };

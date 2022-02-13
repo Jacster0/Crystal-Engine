@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "../Core/Lib/CrystalTypes.h"
-#include "../Graphics/Viewport.h"
-#include "../Platform/Windows/CrystalWindow.h"
+#include "Core/Lib/CrystalTypes.h"
+#include "Graphics/Viewport.h"
+#include "Platform/Windows/CrystalWindow.h"
 #include <d3d12.h>
 
 namespace Crystal {
@@ -24,7 +24,7 @@ namespace Crystal {
     class RenderTarget {
     public:
         void AttachTexture(AttachmentPoint attachmentPoint, std::shared_ptr<Texture> texture) noexcept;
-        std::shared_ptr<Texture> GetTexture(AttachmentPoint attachmentPoint) const noexcept;
+        [[nodiscard]] std::shared_ptr<Texture> GetTexture(AttachmentPoint attachmentPoint) const noexcept;
 
         void Resize(USize size) noexcept;
         void Resize(uint32_t width, uint32_t height) noexcept;

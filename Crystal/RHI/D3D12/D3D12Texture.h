@@ -1,5 +1,5 @@
 #pragma once
-#include "../Platform/Windows/CrystalWindow.h"
+#include "Platform/Windows/CrystalWindow.h"
 #include "D3D12DescriptorHeap.h"
 
 #include <d3d12.h>
@@ -8,36 +8,44 @@
 #include <memory>
 
 namespace Crystal {
+	enum class TextureType {
+		Texture1D,
+		Texture2D,
+		Texture3D,
+	};
+
 	class Texture {
 	public:
-		Texture(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_CLEAR_VALUE const* clearValue = nullptr);
-		Texture(Microsoft::WRL::ComPtr<ID3D12Resource> resource, const D3D12_CLEAR_VALUE const* clearValue = nullptr);
+		Texture(const D3D12_RESOURCE_DESC& resourceDesc, const D3D12_CLEAR_VALUE* clearValue = nullptr);
+		Texture(Microsoft::WRL::ComPtr<ID3D12Resource> resource, const D3D12_CLEAR_VALUE* clearValue = nullptr);
 
 		void Resize(uint32_t width, uint32_t height, uint32_t depthOrArraySize = 1);
+		[[nodiscard]] uint32_t Width() const noexcept;
+		[[nodiscard]] uint32_t Height() const noexcept; 
+		[[nodiscard]] uint32_t MipmapCount() const noexcept; 
+		[[nodiscard]] TextureType GetTextureType() const noexcept;
+		[[nodiscard]] bool IsMultiSampled() const noexcept;
 
-		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> GetUnderlyingResource() const noexcept { return m_resource; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> GetUnderlyingResource() const noexcept;
 		[[nodiscard]] D3D12_RESOURCE_DESC GetResourceDesc() const noexcept;
 
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const { return m_renderTargetView.GetDescriptorHandle(); }
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const { return m_depthStencilView.GetDescriptorHandle(); }
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const { return m_shaderResourceView.GetDescriptorHandle(); }
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(uint32_t mipLevel) const { return m_unorderedAccessView.GetDescriptorHandle(mipLevel); }
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const; 
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const; 
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetShaderResourceView() const; 
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetUnorderedAccessView(uint32_t mipLevel) const;
 
-		void SetName(const std::wstring_view namme) noexcept;
-		const [[nodiscard]] std::wstring& GetName() const noexcept { return m_textureName; }
+		void SetName(std::wstring_view name) noexcept;
+		[[nodiscard]] std::wstring GetName() const noexcept;
 	private:
+		void SetTextureType() noexcept;
+
 		[[nodiscard]] bool CheckFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport) const noexcept;
 		[[nodiscard]] bool CheckFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport) const noexcept;
 
-		[[nodiscard]] bool CheckSRVSupport() const noexcept { return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE); }
-		[[nodiscard]] bool CheckRTVSupport() const noexcept { return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_RENDER_TARGET); }
-		[[nodiscard]] bool CheckDSVSupport() const noexcept { return CheckFormatSupport(D3D12_FORMAT_SUPPORT1_DEPTH_STENCIL); }
-		[[nodiscard]] bool CheckUAVSupport() const noexcept {
-			return
-				CheckFormatSupport(D3D12_FORMAT_SUPPORT1_TYPED_UNORDERED_ACCESS_VIEW) &&
-				CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD) &&
-				CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE);
-		}
+		[[nodiscard]] bool CheckSRVSupport() const noexcept;
+		[[nodiscard]] bool CheckRTVSupport() const noexcept; 
+		[[nodiscard]] bool CheckDSVSupport() const noexcept;
+		[[nodiscard]] bool CheckUAVSupport() const noexcept; 
 
 		void CreateViews() noexcept;
 		void CheckFeatureSupport();
@@ -56,5 +64,8 @@ namespace Crystal {
 		DescriptorAllocation m_depthStencilView;
 		DescriptorAllocation m_shaderResourceView;
 		DescriptorAllocation m_unorderedAccessView;
+
+		D3D12_RESOURCE_DESC m_resourceDesc;
+		TextureType m_textureType;
 	};
 }

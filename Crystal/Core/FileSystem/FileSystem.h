@@ -22,7 +22,7 @@ namespace Crystal::FileSystem {
     [[nodiscard]] std::string ReplaceExtension(std::string_view path, std::string_view ext) noexcept;
     [[nodiscard]] constexpr std::string GetDirectoryFromFilePath(std::string_view path) noexcept;
     [[nodiscard]] std::string GetFileNameFromFilePath(std::string_view path) noexcept;
-    [[nodiscard]] constexpr std::string GetExtensionFromFilePath(std::string_view path) noexcept;
+    [[nodiscard]] std::string GetExtensionFromFilePath(std::string_view path) noexcept;
     [[nodiscard]] std::string GetWorkingDirectory() noexcept;
     [[nodiscard]] std::string GetRootDirectory(std::string_view path) noexcept;
     [[nodiscard]] std::string GetParentDirectory(std::string_view path) noexcept;

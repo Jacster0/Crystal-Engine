@@ -4,8 +4,8 @@
 #include <vector>
 #include <cstdint>
 #include <string>
-#include "../Core/Input/Keyboard.h"
-#include "../Core/Input/Mouse.h"
+#include "Core/Input/Keyboard.h"
+#include "Core/Input/Mouse.h"
 #include "Types.h"
 
 namespace Crystal {
@@ -33,11 +33,11 @@ namespace Crystal {
 		Window& operator=(Window&&)      = delete;
 		~Window();
 
-		[[nodiscard]] HWND GetWindowHandle() const { return m_windowInfo.HWnd; }
+		[[nodiscard]] HWND GetWindowHandle() const noexcept { return m_windowInfo.HWnd; }
 		[[nodiscard]] uint32_t GetWidth() const noexcept { return m_windowInfo.Width; }
 		[[nodiscard]] uint32_t GetHeight() const noexcept { return m_windowInfo.Height; }
 		void ToggleFullScreen(bool fullscreen) noexcept;
-		bool FullScreen() const noexcept { return m_fullScreen; }
+		[[nodiscard]] bool FullScreen() const noexcept { return m_fullScreen; }
 		void Show() noexcept;
 
 		void MouseMove(LPARAM lParam, WPARAM wParam) noexcept;
@@ -46,25 +46,26 @@ namespace Crystal {
 		void MouseUp(LPARAM lParam, MouseButton buttonClicked) noexcept;
 		void RawMouseInput(LPARAM lParam) noexcept;
 
-		bool CursorEnabled() const noexcept { return Mouse.cursor.m_cursorEnabled; }
+		[[nodiscard]] bool CursorEnabled() const noexcept { return Mouse.cursor.m_cursorEnabled; }
 		void EnableCursor() noexcept { Mouse.cursor.Enable(); }
 		void DisableCursor() noexcept { Mouse.cursor.Disable(m_windowInfo.HWnd); }
 
 		void SetID(WindowID id) noexcept { m_id = id; }
 		[[nodiscard]] constexpr auto GetID() const noexcept { return m_id; }
 
-		Keyboard Kbd;
-		Mouse Mouse;
+		Keyboard Kbd{};
+		Mouse Mouse{};
 	private:
 		class WindowClass {
 		public:
+            WindowClass(const WindowClass&)              = delete;
+            WindowClass& operator = (const WindowClass&) = delete;
+
 			static const wchar_t* GetName() noexcept;
 			static HINSTANCE GetInstance() noexcept;
 		private:
 			WindowClass();
 			~WindowClass();
-			WindowClass(const WindowClass&)              = delete;
-			WindowClass& operator = (const WindowClass&) = delete;
 			static constexpr const wchar_t* WND_CLASS_NAME = L"Crystal Window";
 			static WindowClass wndClass;
 			HINSTANCE hInst;
@@ -79,9 +80,9 @@ namespace Crystal {
 
 		ApplicationCreateInfo m_windowInfo;
 		MouseInfo m_mouseInfo;
-		bool m_fullScreen;
+		bool m_fullScreen{};
 		std::wstring m_name = L"Crystal";
 		std::vector<std::byte> m_rawInputBuffer;
-		WindowID m_id;
+		WindowID m_id{};
 	};
 }

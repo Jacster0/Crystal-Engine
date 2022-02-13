@@ -2,14 +2,14 @@
 #include "../D3D12CommandContext.h"
 #include "../D3D12Texture.h"
 
-#include "../Core/Logging/Logger.h"
+#include "Core/Logging/Logger.h"
 
 using namespace Crystal;
 
 MutexLock ResourceStateTracker::m_lock;
 std::unordered_map<ID3D12Resource*, ResourceStateTracker::ResourceState> ResourceStateTracker::m_globalResourceState;
 
-ResourceStateTracker::ResourceStateTracker() noexcept {}
+ResourceStateTracker::ResourceStateTracker() noexcept = default;
 
 void ResourceStateTracker::ResourceBarrier(const D3D12_RESOURCE_BARRIER& barrier) noexcept {
 	constexpr int allSubResources = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
@@ -77,11 +77,11 @@ void ResourceStateTracker::TransitionResource(ID3D12Resource* resource, D3D12_RE
 	}
 }
 
-void ResourceStateTracker::UAVBarrier(const Texture const* resource) noexcept {
+void ResourceStateTracker::UAVBarrier(const Texture* const resource) noexcept {
 	ResourceBarrier(CD3DX12_RESOURCE_BARRIER::UAV(resource->GetUnderlyingResource().Get()));
 }
 
-void ResourceStateTracker::AliasBarrier(const Texture const* resourceBefore, const Texture const* resourceAfter) noexcept {
+void ResourceStateTracker::AliasBarrier(const Texture* const resourceBefore, const Texture* const resourceAfter) noexcept {
 	ResourceBarrier(CD3DX12_RESOURCE_BARRIER::Aliasing(
 		resourceBefore->GetUnderlyingResource().Get(), 
 		resourceAfter->GetUnderlyingResource().Get()));

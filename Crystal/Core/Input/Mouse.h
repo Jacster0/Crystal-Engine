@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
 #include <queue>
-#include "../Platform/Windows/CrystalWindow.h"
+#include "Platform/Windows/CrystalWindow.h"
 
 namespace Crystal {
 
@@ -11,13 +11,13 @@ namespace Crystal {
         public:
             void Enable() noexcept;
             void Disable(HWND hWnd) noexcept;
-            bool IsEnabled() const noexcept;
-            bool IsInWindow() const noexcept { return m_isInWindow; }
+            [[nodiscard]] bool IsEnabled() const noexcept;
+            [[nodiscard]] bool IsInWindow() const noexcept { return m_isInWindow; }
         private:
-            void Confine(HWND hWnd) noexcept;
-            void Free() noexcept;
-            void Show() noexcept;
-            void Hide() noexcept;
+            static void Confine(HWND hWnd) noexcept;
+            static void Free() noexcept;
+            static void Show() noexcept;
+            static void Hide() noexcept;
 
             bool m_cursorEnabled = true;
             bool m_isInWindow = false;
@@ -58,35 +58,35 @@ namespace Crystal {
                 y(mouse.m_y)
             {}
 
-            Type GetType() const noexcept { return type; }
-            std::pair<int, int> GetPos() const noexcept { return{ x,y }; }
+            [[nodiscard]] Type GetType() const noexcept { return type; }
+            [[nodiscard]] std::pair<int, int> GetPos() const noexcept { return{ x,y }; }
 
-            int GetPosX() const noexcept { return x; }
-            int GetPosY() const noexcept { return y; }
+            [[nodiscard]] int GetPosX() const noexcept { return x; }
+            [[nodiscard]] int GetPosY() const noexcept { return y; }
 
-            bool LeftIsPressed() const noexcept { return leftIsPressed; }
-            bool RightIsPressed() const noexcept { return rightIsPressed; }
+            [[nodiscard]] bool LeftIsPressed() const noexcept { return leftIsPressed; }
+            [[nodiscard]] bool RightIsPressed() const noexcept { return rightIsPressed; }
         };
 
         Mouse() = default;
         Mouse(const Mouse&) = delete;
         Mouse& operator=(const Mouse&) = delete;
 
-        int GetWheelDelta() const noexcept { return m_wheelDelta; }
-        std::pair<int, int> GetPos() const noexcept;
+        [[nodiscard]] int GetWheelDelta() const noexcept { return m_wheelDelta; }
+        [[nodiscard]] std::pair<int, int> GetPos() const noexcept;
 
-        int GetPosX() const noexcept;
-        int GetPosY() const noexcept;
+        [[nodiscard]] int GetPosX() const noexcept;
+        [[nodiscard]] int GetPosY() const noexcept;
 
-        int GetDeltaX() const noexcept;
-        int GetDeltaY() const noexcept;
+        [[nodiscard]] int GetDeltaX() const noexcept;
+        [[nodiscard]] int GetDeltaY() const noexcept;
 
-        bool LeftIsPressed() const noexcept;
-        bool RightIsPressed() const noexcept;
-        bool IsInWindow() const noexcept;
+        [[nodiscard]] bool LeftIsPressed() const noexcept;
+        [[nodiscard]] bool RightIsPressed() const noexcept;
+        [[nodiscard]] bool IsInWindow() const noexcept;
 
         std::optional<Mouse::Event> Read() noexcept;
-        bool IsEmpty() const noexcept { return m_buffer.empty(); }
+        [[nodiscard]] bool IsEmpty() const noexcept { return m_buffer.empty(); }
         void Flush() noexcept;
 
         void EnableRawInput() noexcept;

@@ -3,6 +3,7 @@
 #include "Utils/D3D12Exception.h"
 #include <cassert>
 #include <algorithm>
+#include <utility>
 
 //Stupid fucking macros.
 #ifdef max
@@ -47,7 +48,7 @@ DescriptorAllocation DescriptorAllocatorPage::Allocate(uint32_t numDescriptors) 
 	// If There are less than the requested number of descriptors left in the heap,
 	// return a NULL descriptor and try another heap
 	if (numDescriptors > m_numFreeHandles) {
-		return DescriptorAllocation();
+		return {};
 	}
 
 	//Get the first block that is large enough to satisfy the request
@@ -55,7 +56,7 @@ DescriptorAllocation DescriptorAllocatorPage::Allocate(uint32_t numDescriptors) 
 
 	if (smallestBlockIterator == m_freeListBySize.end()) {
 		// There was no free block that could satisfy the request
-		return DescriptorAllocation();
+		return {};
 	}
 
 	//The size of the smallest block that satisfies the request
@@ -81,11 +82,11 @@ DescriptorAllocation DescriptorAllocatorPage::Allocate(uint32_t numDescriptors) 
 
 	m_numFreeHandles -= numDescriptors;
 
-	return DescriptorAllocation(
+	return {
 		CD3DX12_CPU_DESCRIPTOR_HANDLE(m_baseDescriptor, offset, m_descriptorHandleIncrementSize),
 		numDescriptors,
 		m_descriptorHandleIncrementSize,
-		shared_from_this());
+		shared_from_this() };
 }
 
 bool DescriptorAllocatorPage::HasSpace(uint32_t numDescriptors) const noexcept {
@@ -208,7 +209,7 @@ DescriptorAllocation::DescriptorAllocation(
 	m_descriptor{descriptor},
 	m_numHandles(numHandles),
 	m_descriptorSize(descriptorSize),
-	m_page(page)
+	m_page(std::move(page))
 {}
 
 DescriptorAllocation::DescriptorAllocation(DescriptorAllocation&& allocation) noexcept 
@@ -323,7 +324,7 @@ void Crystal::DescriptorAllocator::ReleaseStaleDescriptors() noexcept {
 }
 
 std::shared_ptr<DescriptorAllocatorPage> Crystal::DescriptorAllocator::CreateAllocatorPage() noexcept {
-	const auto newPage = std::make_shared<DescriptorAllocatorPage>(m_heapType, m_numDescriptorsPerHeap);
+    auto newPage = std::make_shared<DescriptorAllocatorPage>(m_heapType, m_numDescriptorsPerHeap);
 
 	m_heapPool.emplace_back(newPage);
 	m_availableHeaps.insert(m_heapPool.size() - 1);
