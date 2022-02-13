@@ -9,14 +9,13 @@ source_group("Headers" FILES ${Headers})
 
 set(Sources
     "CrystalApi.cpp"
-    "dllmain.cpp"
-)
+        )
 source_group("Sources" FILES ${Sources})
 
 set(ALL_FILES
     ${Headers}
     ${Sources}
-)
+        dllmain.cpp)
 
 ################################################################################
 # Target
