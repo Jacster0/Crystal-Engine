@@ -37,8 +37,8 @@ set(Header_Files
     "Graphics/Camera.h"
     "Graphics/Graphics.h"
     "Graphics/Material.h"
- #[[   "Graphics/Mesh.h"
-    "Graphics/Scene.h"]]
+    "Graphics/Mesh.h"
+    "Graphics/Scene.h"
     "Graphics/Types/Types.h"
     "Graphics/Viewport.h"
     "Networking/NamedPipeClient.h"
@@ -89,7 +89,6 @@ set(Source_Files
     "Core/Math/MathFunctions.h"
     "Core/Math/Quaternion.cpp"
     "Core/Math/Transform.cpp"
-    "Core/Math/Vector2.cpp"
     "Core/Math/Vector3.cpp"
     "Core/Math/Vector4.cpp"
     "Core/Utils/StringUtils.h"
@@ -97,8 +96,8 @@ set(Source_Files
     "Graphics/Camera.cpp"
     "Graphics/Graphics.cpp"
     "Graphics/Material.cpp"
-   #[[ "Graphics/Mesh.cpp"
-    "Graphics/Scene.cpp"]]
+    "Graphics/Mesh.cpp"
+    "Graphics/Scene.cpp"
     "Networking/NamedPipeClient.cpp"
     "Platform/Windows/Window.cpp"
     "Platform/Windows/Window.h"
@@ -122,8 +121,7 @@ source_group("Source Files" FILES ${Source_Files})
 
 set(ALL_FILES
     ${Header_Files}
-    ${Source_Files}
-)
+    ${Source_Files})
 
  #[[add_subdirectory(Extern/Assimp)]]
 

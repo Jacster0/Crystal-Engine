@@ -86,4 +86,5 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ################################################################################
 add_subdirectory(Crystal)
 add_subdirectory(CrystalDll)
+add_subdirectory(CrystalSandbox)
 
