@@ -8,8 +8,20 @@ namespace Crystal {
 		template<class T>
 		constexpr bool is_string_v = false;
 
+		template<class T>
+		struct is_string : std::false_type {};
+
+		template<class Elem, class Traits, class Alloc>
+		struct is_string<std::basic_string<Elem, Traits, Alloc>> : std::true_type {};
+
 		template<class Elem, class Traits, class Alloc>
 		constexpr bool is_string_v<std::basic_string<Elem, Traits, Alloc>> = true;
+
+		template<class T>
+		using can_construct_string = std::is_constructible<std::string, T>;
+
+		template<class T>
+		using can_construct_wstring = std::is_constructible<std::wstring, T>;
 
 		template<class T>
 		constexpr bool can_construct_string_v = std::is_constructible_v<std::string, T>;
@@ -18,14 +30,14 @@ namespace Crystal {
 		constexpr bool can_construct_wstring_v = std::is_constructible_v<std::wstring, T>;
 
 		std::string inline ToNarrow(std::wstring_view wide) noexcept {
-			std::string narrow(wide.size(), ' ');
+			std::string narrow(wide.size() + 1, ' ');
 			wcstombs_s(nullptr, narrow.data(), narrow.size(), wide.data(), static_cast<size_t>(-1));
 
 			return narrow;
 		}
 
 		std::wstring inline ToWide(std::string_view narrow) noexcept {
-			std::wstring wide(narrow.size(), ' ');
+			std::wstring wide(narrow.size() + 1, ' ');
 			mbstowcs_s(nullptr, wide.data(), wide.size(), narrow.data(), static_cast<size_t>(-1));
 
 			return wide;
@@ -34,12 +46,14 @@ namespace Crystal {
 
 	namespace StringConverter {
 		template<class To, class From>
-		constexpr auto ConvertTo(From&& from) noexcept -> 
-			std::enable_if_t<
-				(detail::is_string_v<From> || detail::can_construct_string_v<From> || detail::can_construct_wstring_v<From>) && 
-			    (detail::is_string_v<To>   || detail::can_construct_string_v<To>   || detail::can_construct_wstring_v<To>),
-				To
-			>  
+		constexpr auto ConvertTo(From&& from) noexcept ->
+		std::enable_if_t <
+			std::conjunction_v<
+				std::disjunction<detail::is_string<From>, detail::can_construct_string<From>, detail::can_construct_wstring<From>>,
+				std::disjunction<detail::is_string<To>, detail::can_construct_string<To>, detail::can_construct_wstring<To>>
+			>,
+			To
+		>
 		{
 			if constexpr (std::is_same_v<std::string, std::decay_t<To>>) {
 				if constexpr (std::is_same_v<std::string, std::decay_t<From>>) {
