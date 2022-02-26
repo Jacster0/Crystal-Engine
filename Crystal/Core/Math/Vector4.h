@@ -132,10 +132,11 @@ namespace Crystal::Math {
         float W;
     };
 
-    static constexpr auto inf = std::numeric_limits<float>::infinity();
-
-    static constexpr Vector4 One = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-    static constexpr Vector4 Zero(0.0f, 0.0f, 0.0f, 0.0f);
-    static constexpr Vector4 Infinity(inf, inf, inf, inf);
-    static constexpr Vector4 InfinityNeg(-inf, -inf, -inf, -inf);
+    namespace vec4 {
+        constexpr auto inf = std::numeric_limits<float>::infinity();
+        constexpr Vector4 One = Vector4(1.0f);
+        constexpr Vector4 Zero(0.0f);
+        constexpr Vector4 Infinity(inf);
+        constexpr Vector4 InfinityNeg(-inf);
+    }
 }

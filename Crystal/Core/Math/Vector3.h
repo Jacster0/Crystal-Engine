@@ -11,7 +11,7 @@ namespace Crystal::Math {
     class Vector3 {
     public:
         constexpr Vector3() noexcept : x(0), y(0), z(0) {}
-        constexpr Vector3(float x, float y, float z) : x(x), y(y), z(0) {}
+        constexpr Vector3(float x, float y, float z) noexcept : x(x), y(y), z(0) {}
         constexpr Vector3(float v) noexcept : x(v), y(v), z(v) {}
         constexpr Vector3(const Vector3& rhs) noexcept {
             x = rhs.x;
@@ -191,18 +191,22 @@ namespace Crystal::Math {
         float x;
         float y;
         float z;
-
-        static const Vector3 Zero;
-        static const Vector3 Left;
-        static const Vector3 Right;
-        static const Vector3 Up;
-        static const Vector3 Down;
-        static const Vector3 Forward;
-        static const Vector3 Backward;
-        static const Vector3 One;
-        static const Vector3 Infinity;
-        static const Vector3 InfinityNeg;
     };
 
     inline Vector3 operator*(float val, const Vector3& rhs) { return rhs * val; }
+
+    static constexpr auto infinity = std::numeric_limits<float>::infinity();
+
+    namespace vec3 {
+        constexpr Vector3 Zero(0.0f);
+        constexpr Vector3 Left(-1.0f, 0.0f, 0.0f);
+        constexpr Vector3 Right(1.0f, 0.0f, 0.0f);
+        constexpr Vector3 Up(0.0f, 1.0f, 0.0f);
+        constexpr Vector3 Down(0.0f, -1.0f, 0.0f);
+        constexpr Vector3 Forward(0.0f, 0.0f, 1.0f);
+        constexpr Vector3 Backward(0.0f, 0.0f, -1.0f);
+        constexpr Vector3 One(1.0f);
+        constexpr Vector3 Infinity(infinity);
+        constexpr Vector3 InfinityNeg(-infinity);
+    }
 }

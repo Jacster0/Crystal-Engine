@@ -6,8 +6,6 @@
 #include "MathFunctions.h"
 
 namespace Crystal::Math {
-	constexpr auto infinity = std::numeric_limits<float>::infinity();
-
     constexpr Vector3::Vector3(const Vector4& rhs) noexcept
         :
         x(rhs.X),
@@ -70,15 +68,4 @@ namespace Crystal::Math {
                        Math::FusedMultiplyAdd(first.y, second.y, third.y),
                        Math::FusedMultiplyAdd(first.z, second.z, third.z)};
     }
-
-    const Vector3 Vector3::Zero(0.0f, 0.0f, 0.0f);
-    const Vector3 Vector3::One(1.0f, 1.0f, 1.0f);
-    const Vector3 Vector3::Left(-1.0f, 0.0f, 0.0f);
-    const Vector3 Vector3::Right(1.0f, 0.0f, 0.0f);
-    const Vector3 Vector3::Up(0.0f, 1.0f, 0.0f);
-    const Vector3 Vector3::Down(0.0f, -1.0f, 0.0f);
-    const Vector3 Vector3::Forward(0.0f, 0.0f, 1.0f);
-    const Vector3 Vector3::Backward(0.0f, 0.0f, -1.0f);
-    const Vector3 Vector3::Infinity(infinity, infinity, infinity);
-    const Vector3 Vector3::InfinityNeg(-infinity, -infinity, -infinity);
 }

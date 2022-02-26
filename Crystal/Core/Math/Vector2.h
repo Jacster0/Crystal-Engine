@@ -60,8 +60,10 @@ namespace Crystal::Math {
 
 		float x;
 		float y;
-
-		static const Vector2 Zero;
-		static const Vector2 one;
 	};
+
+    namespace vec2 {
+        constexpr Vector2 Zero(0.0f);
+        constexpr Vector2 one(1.0f);
+    }
 }
