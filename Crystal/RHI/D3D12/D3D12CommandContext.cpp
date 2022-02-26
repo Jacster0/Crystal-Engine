@@ -41,7 +41,7 @@ CommandContext::CommandContext(CommandListType cmdListType) {
 
 void CommandContext::TransitionResource(
 	const Texture* const resource,
-	const TransitionBarrierSpecification& specification) const noexcept
+    TransitionBarrierSpecification specification) const noexcept
 {
 	TransitionResource(resource->GetUnderlyingResource(), specification);
 }
@@ -50,7 +50,7 @@ void CommandContext::CopyResource(const Texture& source, const Texture& dest) no
 	const auto d3d12SourceResource = source.GetUnderlyingResource();
 	const auto d3d12DestResource   = dest.GetUnderlyingResource();
 
-	TransitionResource(d3d12DestResource, { {ResourceState_t::copy_dest} });
+	TransitionResource(d3d12DestResource, { { ResourceState_t::copy_dest } });
 	TransitionResource(d3d12SourceResource, { { ResourceState_t::copy_source } });
 
 	m_d3d12CommandList->CopyResource(d3d12DestResource.Get(), d3d12SourceResource.Get());
@@ -209,7 +209,7 @@ void Crystal::CommandContext::InsertAliasingBarrier(const Texture& before, const
 
 void CommandContext::TransitionResource(
 	const ComPtr<ID3D12Resource>& resource,
-	const TransitionBarrierSpecification& specification) const noexcept
+    TransitionBarrierSpecification specification) const noexcept
 {
 	if (resource) {
 		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -349,7 +349,7 @@ void GraphicsContext::SetScissorRects(std::span<const Math::Rectangle> scissorRe
 }
 
 void GraphicsContext::SetViewport(const Viewport& viewport) const noexcept {
-	SetViewports(std::array{ viewport });
+	SetViewports({ { viewport } });
 }
 
 void GraphicsContext::SetViewports(std::span<const Viewport> viewports) const noexcept {

@@ -32,7 +32,7 @@ namespace Crystal {
 
 		void TransitionResource(
 			const Texture* resource,
-			const TransitionBarrierSpecification& specification) const noexcept;
+            TransitionBarrierSpecification specification) const noexcept;
 		void CopyResource(const Texture& source, const Texture& dest) noexcept;
 		void CopyTextureSubresource(const Texture& texture, uint32_t firstSubresource, std::span<const D3D12_SUBRESOURCE_DATA> subresourceData);
 		void ResolveSubResource(
@@ -62,7 +62,7 @@ namespace Crystal {
 		void InsertAliasingBarrier(const Texture& before, const Texture& after, bool flushImmediate = false) const noexcept;
 		void TransitionResource(
 			const Microsoft::WRL::ComPtr<ID3D12Resource>& resource,
-			const TransitionBarrierSpecification& specification) const noexcept;
+			TransitionBarrierSpecification specification) const noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList6> m_d3d12CommandList;
