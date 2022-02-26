@@ -85,8 +85,8 @@ namespace Crystal::Math {
         const auto z = Vector4(vec4.Z);
 
         auto result = MultiplyAdd(z, row2, row3);
-        result         = MultiplyAdd(y, row1, result);
-        result         = MultiplyAdd(x, row0, result);
+        result      = MultiplyAdd(y, row1, result);
+        result      = MultiplyAdd(x, row0, result);
 
         const auto w = Vector4(result.W);
         return result / w;
