@@ -11,6 +11,10 @@
 #include "Sink.h"
 
 namespace Crystal {
+    namespace LogTag {
+        constexpr auto Core = "CrystalCore: ";
+        constexpr auto Gfx  = "CrystalGfx: ";
+    }
 	class Logger {
 	public:
         Logger(const Logger& rhs)            = delete;
@@ -23,7 +27,8 @@ namespace Crystal {
 			return logger;
 		}
 
-		[[nodiscard]] static constexpr auto NewLine() noexcept { return std::endl<char, std::char_traits<char>>; }
+		[[nodiscard]] static constexpr auto EndLine() noexcept { return std::endl<char, std::char_traits<char>>; }
+		[[nodiscard]] static constexpr auto NewLine() noexcept { return "\n"; }
 
 		template<std::derived_from<ISink> T>
 		static void AddSink(auto&&... args) noexcept
@@ -47,20 +52,20 @@ namespace Crystal {
 			std::erase_if(Logger::Get().m_sinks, [](const auto& sink) { return typeid(*sink) == typeid(T); });
 		}
 
-		constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept {
+		constexpr void Log(std::string_view tag, LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept {
 			std::scoped_lock lock(m_loggingMutex);
 
-			const std::string& message = (std::stringstream{} << ... << args).str();
+			const std::string& message = ((std::stringstream{} << tag) << ... << args).str();
 
 			for (const auto& sink : m_sinks) {
 				sink->Emit(message, lvl, loc);
 			}
 		}
 
-		constexpr void FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept {
+		constexpr void FormatLog(std::string_view tag, LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept {
 			std::scoped_lock lock(m_loggingMutex);
 
-			const std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
+			const std::string message = std::string(tag).append(std::format(fmt, std::forward<decltype(args)>(args)...));
 
 			for (const auto& sink : m_sinks) {
 				sink->Emit(message, lvl, loc);
@@ -76,11 +81,11 @@ namespace Crystal {
 	};
 }
 
-#define crylog_info(...)    Crystal::Logger::Get().Log(LogLevel::info,    std::source_location::current(), __VA_ARGS__)
-#define crylog_warning(...) Crystal::Logger::Get().Log(LogLevel::warning, std::source_location::current(), __VA_ARGS__)
-#define crylog_error(...)   Crystal::Logger::Get().Log(LogLevel::error,   std::source_location::current(), __VA_ARGS__)
+#define crylog_info(TAG, ...)    Crystal::Logger::Get().Log(TAG, LogLevel::info,    std::source_location::current(), __VA_ARGS__)
+#define crylog_warning(TAG, ...) Crystal::Logger::Get().Log(TAG, LogLevel::warning, std::source_location::current(), __VA_ARGS__)
+#define crylog_error(TAG, ...)   Crystal::Logger::Get().Log(TAG, LogLevel::error,   std::source_location::current(), __VA_ARGS__)
 
-#define cryfmtlog_info(fmt, ...)    Crystal::Logger::Get().FormatLog(LogLevel::info,    std::source_location::current(), fmt, __VA_ARGS__)
-#define cryfmtlog_warning(fmt, ...) Crystal::Logger::Get().FormatLog(LogLevel::warning, std::source_location::current(), fmt, __VA_ARGS__)
-#define cryfmtlog_error(fmt, ...)   Crystal::Logger::Get().FormatLog(LogLevel::error,   std::source_location::current(), fmt, __VA_ARGS__)
+#define cryfmtlog_info(TAG, fmt, ...)    Crystal::Logger::Get().FormatLog(TAG, LogLevel::info,    std::source_location::current(), fmt, __VA_ARGS__)
+#define cryfmtlog_warning(TAG, fmt, ...) Crystal::Logger::Get().FormatLog(TAG, LogLevel::warning, std::source_location::current(), fmt, __VA_ARGS__)
+#define cryfmtlog_error(TAG, fmt, ...)   Crystal::Logger::Get().FormatLog(TAG, LogLevel::error,   std::source_location::current(), fmt, __VA_ARGS__)
 

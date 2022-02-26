@@ -1,15 +1,13 @@
 #include "Graphics.h"
 
 #include "../RHI/RHICore.h"
-
 #include "../Core/Logging/Logger.h"
-
 #include "../Core/Utils/StringUtils.h"
 
 using namespace Crystal;
 
 void Graphics::Initialize(uint32_t width, uint32_t height) {
-	cryfmtlog_info("Graphics device: {}\n", StringConverter::ConvertTo<std::string>(RHICore::get_physical_device_description()));
+	cryfmtlog_info(LogTag::Gfx, "Graphics device: {}\n", StringConverter::ConvertTo<std::string>(RHICore::get_physical_device_description()));
 	m_swapChain = std::make_unique<SwapChain>(m_hWnd);
 
 	m_clientWidth  = width;
