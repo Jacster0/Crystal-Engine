@@ -2,7 +2,7 @@
 #include <chrono>
 #include <type_traits>
 #include <cstdint>
-#include "../Core/Lib/type_traits.h"
+#include "Core/Lib/type_traits.h"
 
 namespace Crystal {
 	namespace detail {
