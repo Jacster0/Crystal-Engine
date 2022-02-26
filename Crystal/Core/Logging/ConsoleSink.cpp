@@ -3,6 +3,9 @@
 #include "Core/Time/CrystalTimer.h"
 #include "Core/Time/Time.h"
 
+#include <format>
+#include <source_location>
+
 using namespace Crystal;
 
 ConsoleSink::ConsoleSink() noexcept {
@@ -21,6 +24,9 @@ void ConsoleSink::Emit(std::string_view msg, Crystal::LogLevel lvl, const std::s
             break;
     }
 
-    Console::WriteLine(std::string(m_prefix).append(msg));
+    auto str = std::format("{0}{1}({2}) {3}",
+                           m_prefix, loc.file_name(), loc.line(), msg);
+
+    Console::WriteLine(str);
     Console::SetTextColor(ConsoleColor::White);
 }
