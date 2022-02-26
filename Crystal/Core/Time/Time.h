@@ -6,7 +6,7 @@
 
 namespace Crystal {
     namespace detail {
-         std::string date_time_format_helper(std::string_view fmt) noexcept {
+         inline std::string date_time_format_helper(std::string_view fmt) noexcept {
              const std::chrono::zoned_time local = { std::chrono::current_zone(), std::chrono::system_clock::now() };
 
              if(fmt.find("%R") != std::string::npos) {
