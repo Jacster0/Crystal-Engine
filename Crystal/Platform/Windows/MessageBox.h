@@ -20,7 +20,7 @@ namespace Crystal::MessageBox {
 		No = 0x7,
 	};
 
-	enum class MessageBoxIcon {
+	enum class Icon {
 		None = 0x0,
 		Hand = 0x10,
 		Error = Hand,
@@ -32,7 +32,7 @@ namespace Crystal::MessageBox {
 		Information = Asterisk
 	};
 
-	enum class MessageBoxButtons {
+	enum class Buttons {
 		OK = 0x0,
 		OKCancel = 0x1,
 		AbortRetryIgnore = 0x2,
@@ -41,13 +41,13 @@ namespace Crystal::MessageBox {
 		RetryCancel = 0x5
 	};
 
-	enum class MessageBoxDefaultButton {
+	enum class DefaultButton {
 		Button1 = 0x0,
 		Button2 = 0x100,
 		Button3 = 0x200,
 	};
 
-	enum class MessageBoxOptions {
+	enum class Options {
 		Default = 0x0,
 		RightAlign = 0x80000,
 		DefaultDesktopOnly = 0x20000,
@@ -55,52 +55,52 @@ namespace Crystal::MessageBox {
 		ServiceNotification = 0x200000
 	};
 
-	inline MessageBoxButtons operator |(MessageBoxButtons a, MessageBoxIcon b) noexcept {
-		return static_cast<MessageBoxButtons>(static_cast<int>(a) | static_cast<int>(b));
+	inline Buttons operator |(Buttons a, Icon b) noexcept {
+		return static_cast<Buttons>(static_cast<int>(a) | static_cast<int>(b));
 	}
 
-	inline MessageBoxButtons operator |(MessageBoxButtons a, MessageBoxDefaultButton b) noexcept {
-		return static_cast<MessageBoxButtons>(static_cast<int>(a) | static_cast<int>(b));
+	inline Buttons operator |(Buttons a, DefaultButton b) noexcept {
+		return static_cast<Buttons>(static_cast<int>(a) | static_cast<int>(b));
 	}
 
-	inline MessageBoxButtons operator |(MessageBoxButtons a, MessageBoxOptions b) noexcept {
-		return static_cast<MessageBoxButtons>(static_cast<int>(a) | static_cast<int>(b));
+	inline Buttons operator |(Buttons a, Options b) noexcept {
+		return static_cast<Buttons>(static_cast<int>(a) | static_cast<int>(b));
 	}
 
 	DialogResult Show(
-		std::string_view text,
-		std::string_view caption,
-		MessageBoxButtons buttons,
-		MessageBoxIcon icon,
-		MessageBoxDefaultButton defaultButton,
-		MessageBoxOptions options) noexcept
+            std::string_view text,
+            std::string_view caption,
+            Buttons buttons,
+            Icon icon,
+            DefaultButton defaultButton,
+            Options options) noexcept
 	{
 		return static_cast<DialogResult>(MessageBoxA(nullptr, text.data(), caption.data(), static_cast<int>(buttons | icon | defaultButton | options)));
 	}
 
 	DialogResult Show(
-		std::string_view text,
-		std::string_view caption,
-		MessageBoxButtons buttons,
-		MessageBoxIcon icon,
-		MessageBoxDefaultButton defaultButton) noexcept
+            std::string_view text,
+            std::string_view caption,
+            Buttons buttons,
+            Icon icon,
+            DefaultButton defaultButton) noexcept
 	{
-		return Show(text, caption, buttons, icon, defaultButton, MessageBoxOptions::Default);
+		return Show(text, caption, buttons, icon, defaultButton, Options::Default);
 	}
 
 	DialogResult Show(
-		std::string_view text,
-		std::string_view caption,
-		MessageBoxButtons buttons,
-		MessageBoxIcon icon) noexcept
+            std::string_view text,
+            std::string_view caption,
+            Buttons buttons,
+            Icon icon) noexcept
 	{
-		return Show(text, caption, buttons, icon, MessageBoxDefaultButton::Button1);
+		return Show(text, caption, buttons, icon, DefaultButton::Button1);
 	}
 
-	DialogResult Show(std::string_view text, std::string_view caption, MessageBoxButtons buttons) noexcept {
-		return Show(text, caption, buttons, MessageBoxIcon::None);
+	DialogResult Show(std::string_view text, std::string_view caption, Buttons buttons) noexcept {
+		return Show(text, caption, buttons, Icon::None);
 	}
 
-	DialogResult Show(std::string_view text, std::string_view caption) noexcept { return Show(text, caption, MessageBoxButtons::OKCancel); }
+	DialogResult Show(std::string_view text, std::string_view caption) noexcept { return Show(text, caption, Buttons::OKCancel); }
 	DialogResult Show(std::string_view text) noexcept { return Show(text, ""); }
 }
