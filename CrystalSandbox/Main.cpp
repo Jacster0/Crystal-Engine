@@ -3,10 +3,17 @@
 #include "Platform/Windows/Types.h"
 #include "Core/Exceptions/CrystalException.h"
 #include "Platform/Windows/MessageBox.h"
+#include "Core/CLI/Console.h"
+#include "Core/Logging/Logger.h"
+#include "Core/Logging/ConsoleSink.h"
 
 using namespace Crystal;
 int main() {
     try {
+        Console::Create();
+
+        Logger::AddSink<ConsoleSink>();
+
          Application{
              ApplicationCreateInfo{}
          }.Run();
