@@ -7,8 +7,9 @@
 using namespace Crystal;
 int main() {
     try {
-        Application{ ApplicationCreateInfo{} }.Run();
-        return 0;
+         Application{
+             ApplicationCreateInfo{}
+         }.Run();
     }
     catch(const CrystalException e) {
         MessageBox::Show(

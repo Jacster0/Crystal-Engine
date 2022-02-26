@@ -9,6 +9,7 @@
 #include "Time/Time.h"
 #include "Math/MathFunctions.h"
 
+using namespace Crystal;
 namespace Crystal {
 	Application::Application(const ApplicationCreateInfo& info)
 		:
@@ -25,11 +26,11 @@ namespace Crystal {
 		m_gfx->Initialize(m_window->GetWidth(), m_window->GetHeight());
 		m_window->Kbd.EnableAutorepeat();
 
-		crylog_info(current_date());
-		crylog_info(current_time());
-		crylog_info(current_date_time());
-		crylog_warning("Test");
-	}
+		crylog_info(LogTag::Core, current_date());
+		crylog_info(LogTag::Core, current_time());
+		crylog_info(LogTag::Core, current_date_time());
+		crylog_warning(LogTag::Core, "Test");
+	} 
 
 	Application::~Application() { 
 		Logger::RemoveSink<ManagedLoggerSink>();
@@ -39,15 +40,18 @@ namespace Crystal {
 		return *m_window;
 	}
 
-    [[noreturn]] void Application::Run() const {
+    [[noreturn]] int Application::Run() const {
 		while (true) {
+            if(const auto code = Window::MessagePump()) {
+                return *code;
+            }
 			HandleInput();
 		}
 	}
 
 	void Application::HandleInput() const noexcept {
-		KeyboardInput();
-		MouseInput();
+        KeyboardInput();
+        MouseInput();
 	}
 
 	void Application::KeyboardInput() const noexcept {

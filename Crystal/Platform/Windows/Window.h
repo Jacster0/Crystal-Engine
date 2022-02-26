@@ -33,6 +33,7 @@ namespace Crystal {
 		Window& operator=(Window&&)      = delete;
 		~Window();
 
+        static std::optional<int> MessagePump() noexcept;
 		[[nodiscard]] HWND GetWindowHandle() const noexcept { return m_windowInfo.HWnd; }
 		[[nodiscard]] uint32_t GetWidth() const noexcept { return m_windowInfo.Width; }
 		[[nodiscard]] uint32_t GetHeight() const noexcept { return m_windowInfo.Height; }

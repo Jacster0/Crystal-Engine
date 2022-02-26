@@ -19,7 +19,7 @@ namespace Crystal {
         [[nodiscard]] Window& GetWindow() const noexcept;
         [[nodiscard]] CpuInfo& GetCpuInfo() noexcept { return m_cpuInfo; };
 
-        [[noreturn]] void Run() const;
+        [[noreturn]] int Run() const;
     private:
         void HandleInput() const noexcept;
         void KeyboardInput() const noexcept;

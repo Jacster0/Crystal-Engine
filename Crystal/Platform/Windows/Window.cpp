@@ -351,4 +351,17 @@ namespace Crystal {
 		m_windowInfo.Width  = rect.right - rect.left;
 		m_windowInfo.Height = rect.bottom - rect.top;
 	}
+
+    std::optional<int> Window::MessagePump() noexcept {
+        MSG msg{};
+
+        while(PeekMessageA(&msg, nullptr, 0u,0u,PM_REMOVE)) {
+            if(msg.message == WM_QUIT) {
+                return msg.wParam;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        return {};
+    }
 }
