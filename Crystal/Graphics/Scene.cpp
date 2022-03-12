@@ -2,16 +2,13 @@
 
 #include <cassert>
 
-#include "Scene.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "Core/FileSystem/FileSystem.h"
-#include "RHI/CommandContext.h"
 
 #include "assimp/Exporter.hpp"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
-#include "assimp/ProgressHandler.hpp"
 #include "RHI/RHICore.h"
 #include "RHI/VertexTypes.h"
 #include "RHI/D3D12/Managers/TextureManager.h"
@@ -20,10 +17,10 @@ using namespace Crystal;
 
 bool Scene::LoadSceneFromFile(CommandContext& ctx, std::string_view fileName) {
 	const auto parentPath = FileSystem::HasParentPath(fileName)
-							? FileSystem::GetParentDirectory(fileName)
-							: FileSystem::GetWorkingDirectory();
+		? FileSystem::GetParentDirectory(fileName)
+		: FileSystem::GetWorkingDirectory();
 
-	if(const auto scene = PreProcess(fileName)){
+	if (const auto scene = PreProcess(fileName)) {
 		ImportScene(ctx, *scene.value(), parentPath);
 		return true;
 	}
@@ -38,7 +35,7 @@ void Scene::ImportScene(CommandContext& ctx, const aiScene& scene, std::string_v
 		ImportMaterial(ctx, *(scene.mMaterials[i]), parentPath);
 	}
 
-	for(auto i = 0; i < scene.mNumMeshes; i++) {
+	for (auto i = 0; i < scene.mNumMeshes; i++) {
 		ImportMesh(ctx, *(scene.mMeshes[i]));
 	}
 }
@@ -94,14 +91,14 @@ void Scene::LoadTextures(CommandContext& ctx, Material& material, const aiMateri
 
 	const auto hasTexture = [&](aiTextureType textureType) {
 		return assimpMaterial.GetTextureCount(textureType) > 0 &&
-			   assimpMaterial.GetTexture(
-			       textureType,
-			       0, &aiTexturePath,
-			       nullptr, nullptr,
-			       &blendFactor, &aiBlendOperation) == aiReturn_SUCCESS;
+			assimpMaterial.GetTexture(
+				textureType,
+				0, &aiTexturePath,
+				nullptr, nullptr,
+				&blendFactor, &aiBlendOperation) == aiReturn_SUCCESS;
 	};
 
-	for(const auto& [textureType, make_sRGB] : AiTextureTypes) {
+	for (const auto& [textureType, make_sRGB] : AiTextureTypes) {
 		if (hasTexture(textureType)) {
 			const auto filePath = FileSystem::Append(parentPath, aiTexturePath.C_Str());
 			auto texture = TextureManager::LoadTextureFromFile(ctx, filePath, make_sRGB);
@@ -117,7 +114,7 @@ std::optional<const aiScene*> Scene::PreProcess(std::string_view fileName) noexc
 
 	//Check if preprocessed file exists
 	if (FileSystem::IsFile(exportPath)) {
-		if(const auto scene = importer.ReadFile(exportPath, aiProcess_GenBoundingBoxes)) {
+		if (const auto scene = importer.ReadFile(exportPath, aiProcess_GenBoundingBoxes)) {
 			return scene;
 		}
 		return {};
@@ -147,17 +144,17 @@ void Scene::ProcessVertices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMes
 
 	assert(aiMesh.mMaterialIndex < m_materials.size());
 
-	if(aiMesh.HasPositions()) [[likely]] {
-		for(uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
+	if (aiMesh.HasPositions()) [[likely]] {
+		for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
 			vertices[i].Position = reinterpret_cast<Math::Vector3&>(aiMesh.mVertices[i]);
 		}
 	}
 
-	if(aiMesh.HasNormals()) {
-		for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
-			vertices[i].Normal = reinterpret_cast<Math::Vector3&>(aiMesh.mNormals[i]);
+		if (aiMesh.HasNormals()) {
+			for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
+				vertices[i].Normal = reinterpret_cast<Math::Vector3&>(aiMesh.mNormals[i]);
+			}
 		}
-	}
 
 	if (aiMesh.HasTangentsAndBitangents()) {
 		for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
@@ -184,11 +181,11 @@ void Scene::ProcessIndices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMesh
 	if (aiMesh.HasFaces()) [[likely]] {
 		std::vector<uint32_t> indices;
 
-		for(uint32_t i = 0; i < aiMesh.mNumFaces; i++) {
+		for (uint32_t i = 0; i < aiMesh.mNumFaces; i++) {
 			const auto& face = aiMesh.mFaces[i];
 
 			// Only extract triangular faces
-			if(face.mNumIndices == 3) {
+			if (face.mNumIndices == 3) {
 				indices.emplace_back(face.mIndices[0]);
 				indices.emplace_back(face.mIndices[1]);
 				indices.emplace_back(face.mIndices[2]);
@@ -207,4 +204,3 @@ void Scene::ProcessIndices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMesh
 	}
 }
 
- 
