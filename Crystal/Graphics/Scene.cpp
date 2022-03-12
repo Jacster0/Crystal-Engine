@@ -170,7 +170,7 @@ void Scene::ProcessVertices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMes
 	}
 
 	BufferDescription vbd = {
-		.Count  = static_cast<uint32_t>(vertices.size()),
+		.Count = static_cast<uint32_t>(vertices.size()),
 		.Stride = sizeof(std::decay_t<decltype(vertices)>)
 	};
 
