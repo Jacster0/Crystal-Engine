@@ -36,7 +36,7 @@ void Scene::ImportScene(CommandContext& ctx, const aiScene& scene, std::string_v
 	}
 
 	for (auto i = 0; i < scene.mNumMeshes; i++) {
-		ImportMesh(ctx, *(scene.mMeshes[i]));
+	    ImportMesh(ctx, *(scene.mMeshes[i]));
 	}
 }
 
@@ -44,7 +44,7 @@ void Scene::ImportMesh(CommandContext& ctx, const aiMesh& assimpMesh) {
 	m_meshes.clear();
 	Mesh mesh;
 
-	ProcessVertices(ctx, mesh, assimpMesh);
+    ProcessVertices(ctx, mesh, assimpMesh);
 	ProcessIndices(ctx, mesh, assimpMesh);
 
 	m_meshes.emplace_back(mesh);
@@ -64,24 +64,24 @@ void Scene::SetMaterials(Material& material, const aiMaterial& assimpMaterial) c
 	float value{};
 
 	//Set materials
-	for (const auto& [spec, func] : m_materialFunctionMap) {
-		if (spec.Unit == detail::MaterialUnit::Vec4) {
-			if (assimpMaterial.Get(spec.Key.data(), spec.Type, spec.Id, color) == aiReturn_SUCCESS) {
-				(material.*func.ColorFuncPtr)(reinterpret_cast<Math::Vector4&>(color));
-			}
-		}
-		else if (spec.Unit == detail::MaterialUnit::Float) {
-			if (assimpMaterial.Get(spec.Key.data(), spec.Type, spec.Id, value) == aiReturn_SUCCESS) {
-				//Special case when MaterialType is Reflectivity
-				if (spec.Key.compare("$mat.reflectivity") == 0) [[unlikely]] {
-					(material.*func.ColorFuncPtr)({ value });
-				}
-				else {
-					(material.*func.ValueFuncPtr)(value);
-				}
-			}
-		}
-	}
+    for (const auto& [spec, func] : m_materialFunctionMap) {
+        if (spec.Unit == detail::MaterialUnit::Vec4) {
+		    if (assimpMaterial.Get(spec.Key.data(), spec.Type, spec.Id, color) == aiReturn_SUCCESS) {
+			    (material.*func.ColorFuncPtr)(reinterpret_cast<Math::Vector4&>(color));
+		    }
+	    }
+	    else if (spec.Unit == detail::MaterialUnit::Float) {
+		    if (assimpMaterial.Get(spec.Key.data(), spec.Type, spec.Id, value) == aiReturn_SUCCESS) {
+			    //Special case when MaterialType is Reflectivity
+			    if (spec.Key.compare("$mat.reflectivity") == 0) [[unlikely]] {
+				    (material.*func.ColorFuncPtr)({ value });
+			    }
+			    else {
+				    (material.*func.ValueFuncPtr)(value);
+			    }
+		    }
+	    }
+    }
 }
 
 void Scene::LoadTextures(CommandContext& ctx, Material& material, const aiMaterial& assimpMaterial, std::string_view parentPath) const noexcept {
@@ -170,7 +170,7 @@ void Scene::ProcessVertices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMes
 	}
 
 	BufferDescription vbd = {
-		.Count = static_cast<uint32_t>(vertices.size()),
+		.Count  = static_cast<uint32_t>(vertices.size()),
 		.Stride = sizeof(std::decay_t<decltype(vertices)>)
 	};
 
