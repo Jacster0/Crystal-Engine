@@ -26,10 +26,12 @@ namespace Crystal {
 		m_gfx->Initialize(m_window->GetWidth(), m_window->GetHeight());
 		m_window->Kbd.EnableAutorepeat();
 
-		crylog_info(LogTag::Core, current_date());
-		crylog_info(LogTag::Core, current_time());
-		crylog_info(LogTag::Core, current_date_time());
-		crylog_warning(LogTag::Core, "Test");
+		crylog_info("Test2");
+
+		crylog_info(current_date());
+		crylog_info(current_time());
+		crylog_info(current_date_time());
+		crylog_warning("Test");
 	} 
 
 	Application::~Application() { 

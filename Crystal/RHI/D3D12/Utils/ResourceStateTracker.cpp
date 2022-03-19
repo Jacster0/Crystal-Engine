@@ -149,7 +149,7 @@ uint32_t ResourceStateTracker::FlushPendingResourceBarriers(const CommandContext
 	return numBarriers;
 }
 
-void Crystal::ResourceStateTracker::FlushResourceBarriers(const CommandContext* context) {
+void ResourceStateTracker::FlushResourceBarriers(const CommandContext* context) {
 	if (!m_resourceBarriers.empty()) {
 		const auto d3d12CommandList = context->GetNativeCommandList();
 		d3d12CommandList->ResourceBarrier(static_cast<uint32_t>(m_resourceBarriers.size()), m_resourceBarriers.data());
@@ -158,7 +158,7 @@ void Crystal::ResourceStateTracker::FlushResourceBarriers(const CommandContext* 
 	}
 }
 
-void Crystal::ResourceStateTracker::CommitFinalResourceStates() {
+void ResourceStateTracker::CommitFinalResourceStates() {
 	if (m_lock.UnLocked()) {
 		crylog_warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
 	}

@@ -34,8 +34,7 @@ void Crystal::DynamicDescriptorHeap::StageDescriptors(
     // Cannot stage more descriptors than m_numDescriptorsPerHeap.
     // Cannot stage more than MAX_DESCRIPTOR_TABLES root parameters.
     if (numDescriptors > m_numDescriptorsPerHeap || rootParameterIndex >= MAX_DESCRIPTOR_TABLES) {
-        cryfmtlog_error(
-                Crystal::LogTag::Gfx,
+        crylog_error(
                 "Maximun descriptors per heap is {}. Number of descriptors you are trying to stage: {}"
                 "Maximun number of descriptor tables per root signature: {}. Current rootparameter index: {}",
                 m_numDescriptorsPerHeap, numDescriptors, MAX_DESCRIPTOR_TABLES, rootParameterIndex);
