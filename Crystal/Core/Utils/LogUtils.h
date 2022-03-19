@@ -2,7 +2,7 @@
 #include <string_view>
 
 namespace Crystal {
-	namespace Log_tag {
+	namespace log_tag {
 		constexpr auto Default  = "Crystal";
 		constexpr auto Compute  = "CrystalCompute";
 		constexpr auto Core     = "CrystalCore: ";
@@ -13,30 +13,30 @@ namespace Crystal {
 		constexpr auto RHI      = "CrystalRHI: ";
 	}
 
-	namespace Log_utils {
+	namespace log_utils {
 		[[nodiscard]] constexpr auto parse_log_tag(std::string_view path) noexcept {
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\Compute))")) {
-				return Log_tag::Compute;
+				return log_tag::Compute;
 			}
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\Core)")) {
-				return Log_tag::Core;
+				return log_tag::Core;
 			}
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\Extern))")) {
-				return Log_tag::Extern;
+				return log_tag::Extern;
 			}
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\Graphics)")) {
-				return Log_tag::Gfx;
+				return log_tag::Gfx;
 			}
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\NetWorking))")) {
-				return Log_tag::Net;
+				return log_tag::Net;
 			}
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\Platform)")) {
-				return Log_tag::Platform;
+				return log_tag::Platform;
 			}
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\RHI)")) {
-				return Log_tag::RHI;
+				return log_tag::RHI;
 			}
-			return Log_tag::Default;
+			return log_tag::Default;
 		}
 	}
 }

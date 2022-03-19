@@ -79,45 +79,45 @@ namespace Crystal {
 }
 
 constexpr void crylog_info(Crystal::detail::log_fmt fmt, auto&& args...) noexcept {
-	const auto tag = Crystal::Log_utils::parse_log_tag(fmt.loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::info, fmt, std::forward<decltype(args)>(args));
 }
 
 constexpr void crylog_info(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-	const auto tag = Crystal::Log_utils::parse_log_tag(loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::info, { "{}", loc }, msg);
 }
 
 constexpr void crylog_warning(Crystal::detail::log_fmt fmt, auto&& args...) noexcept {
-	const auto tag = Crystal::Log_utils::parse_log_tag(fmt.loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::warning, fmt, std::forward<decltype(args)>(args));
 }
 
 constexpr void crylog_warning(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-	const auto tag = Crystal::Log_utils::parse_log_tag(loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::warning, { "{}", loc }, msg);
 }
 
 constexpr void crylog_error(Crystal::detail::log_fmt fmt, auto&& args...)  noexcept {
-	const auto tag = Crystal::Log_utils::parse_log_tag(fmt.loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::error, fmt, std::forward<decltype(args)>(args));
 }
 
 constexpr void crylog_error(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-	const auto tag = Crystal::Log_utils::parse_log_tag(loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::error, { "{}", loc }, msg);
 }
 
 constexpr void crylog_debug(Crystal::detail::log_fmt fmt, auto&& args...)  noexcept {
 #if _DEBUG
-	const auto tag = Crystal::Log_utils::parse_log_tag(fmt.loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::debug, fmt, std::forward<decltype(args)>(args));
 #endif
 }
 
 constexpr void crylog_debug(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
 #if _DEBUG
-	const auto tag = Crystal::Log_utils::parse_log_tag(loc.file_name());
+	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
 	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::debug, { "{}", loc }, msg);
 #endif
 }
