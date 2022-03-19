@@ -20,8 +20,8 @@ namespace Crystal {
 		        loc{ loc }
 		    {}
 
-			std::string_view msg;
-			std::source_location loc;
+		    std::string_view msg;
+		    std::source_location loc;
 		};
 	}
 
@@ -62,10 +62,10 @@ namespace Crystal {
 		constexpr void Log(std::string_view tag, LogLevel lvl, const detail::log_fmt& fmt, auto&&... args) const noexcept {
 			std::scoped_lock lock(m_loggingMutex);
 
-			const std::string message = std::string(tag).append(std::format(fmt.msg, std::forward<decltype(args)>(args)...));
+		    const std::string message = std::string(tag).append(std::format(fmt.msg, std::forward<decltype(args)>(args)...));
 
-			for (const auto& sink : m_sinks) {
-				sink->Emit(message, lvl, fmt.loc);
+		    for (const auto& sink : m_sinks) {
+		        sink->Emit(message, lvl, fmt.loc);
 			}
 		}
 	private:
