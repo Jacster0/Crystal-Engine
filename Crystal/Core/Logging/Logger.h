@@ -60,13 +60,13 @@ namespace Crystal {
 		}
 
 		constexpr void Log(std::string_view tag, LogLevel lvl, const detail::log_fmt& fmt, auto&&... args) const noexcept {
-			std::scoped_lock lock(m_loggingMutex);
+		    std::scoped_lock lock(m_loggingMutex);
 
 		    const std::string message = std::string(tag).append(std::format(fmt.msg, std::forward<decltype(args)>(args)...));
 
 		    for (const auto& sink : m_sinks) {
 		        sink->Emit(message, lvl, fmt.loc);
-			}
+		    }
 		}
 	private:
 		Logger()  = default;
