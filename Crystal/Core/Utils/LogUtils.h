@@ -13,8 +13,9 @@ namespace Crystal {
 		constexpr auto RHI      = "CrystalRHI: ";
 	}
 
-	namespace log_utils {
-		[[nodiscard]] constexpr auto parse_log_tag(std::string_view path) noexcept {
+    namespace log_utils {
+	    [[nodiscard]]
+	    constexpr std::string_view parse_log_tag(std::string_view path) noexcept {
 			if (path.contains(R"(CrystalEngine\Crystal\Crystal\Compute))")) {
 				return log_tag::Compute;
 			}

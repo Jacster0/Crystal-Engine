@@ -89,7 +89,7 @@ void ResourceStateTracker::AliasBarrier(const Texture* const resourceBefore, con
 
 uint32_t ResourceStateTracker::FlushPendingResourceBarriers(const CommandContext* context) {
 	if (m_lock.UnLocked()) {
-		crylog_warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
+		Logger::Warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
 	}
 
 	// Resolve the pending resource barriers by checking the global state of the 
@@ -160,7 +160,7 @@ void ResourceStateTracker::FlushResourceBarriers(const CommandContext* context) 
 
 void ResourceStateTracker::CommitFinalResourceStates() {
 	if (m_lock.UnLocked()) {
-		crylog_warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
+		Logger::Warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
 	}
 
 	for (const auto& resourceState : m_finalResourceState) {

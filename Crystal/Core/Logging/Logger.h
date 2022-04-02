@@ -1,123 +1,129 @@
 #pragma once
-#include <mutex>
-#include <string>
+#include <concepts>
 #include <format>
 #include <memory>
+#include <mutex>
 #include <source_location>
-#include <concepts>
+#include <string>
 
-#include "Core/Utils/LogUtils.h"
 #include "LogLevels.h"
 #include "Sink.h"
+#include "Core/Utils/LogUtils.h"
 
-namespace Crystal {
-	namespace detail{
-		struct log_fmt {
-			template<class T>
-			log_fmt(T&& msg, std::source_location loc = std::source_location::current())
-		        :
-		        msg{ std::forward<T>(msg) },
-		        loc{ loc }
-		    {}
+namespace Crystal{
+    namespace detail{
+        struct log_fmt {
+            template<class T>
+            log_fmt(T&& msg, std::source_location loc = std::source_location::current())
+                :
+                msg{ std::forward<T>(msg) },
+                loc{loc}
+            {}
 
-		    std::string_view msg;
-		    std::source_location loc;
-		};
-	}
+            std::string_view msg;
+            std::source_location loc;
+        };
+    }
 
-	class Logger {
-	public:
-        Logger(const Logger& rhs)            = delete;
+    class Logger {
+    public:
+        Logger(const Logger& rhs) = delete;
         Logger& operator=(const Logger& rhs) = delete;
-        Logger(Logger&& rhs)                 = delete;
-        Logger& operator=(Logger&& rhs)      = delete;
+        Logger(Logger&& rhs) = delete;
+        Logger& operator=(Logger&& rhs) = delete;
 
-		[[nodiscard]] static Logger& Get() noexcept {
-			static Logger logger;
-			return logger;
-		}
+        [[nodiscard]] static Logger& Get() noexcept {
+            static Logger logger;
+            return logger;
+        }
 
-		[[nodiscard]] static constexpr auto EndLine() noexcept { return std::endl<char, std::char_traits<char>>; }
-		[[nodiscard]] static constexpr auto NewLine() noexcept { return "\n"; }
+        [[nodiscard]] static constexpr auto EndLine() noexcept { return std::endl<char, std::char_traits<char>>; }
+        [[nodiscard]] static constexpr auto NewLine() noexcept { return "\n"; }
 
-		template<std::derived_from<ISink> T>
-		static void AddSink(auto&&... args) noexcept
-			requires std::constructible_from<T, decltype(args)...>
-		{
-			std::scoped_lock lock(Get().m_sinkMutex);
-			Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<decltype(args)>(args)...));
-		}
+        template<std::derived_from<ISink> T>
+        static void AddSink(auto&&... args) noexcept
+            requires std::constructible_from<T, decltype(args)...> {
+            std::scoped_lock lock(Get().m_sinkMutex);
+            Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<decltype(args)>(args)...));
+        }
 
-		static void AddSink(std::unique_ptr<ISink>&& sink) noexcept {
-			std::scoped_lock lock(Get().m_sinkMutex);
-			Get().m_sinks.emplace_back(std::move(sink));
-		}
+        static void AddSink(std::unique_ptr<ISink>&& sink) noexcept {
+            std::scoped_lock lock(Get().m_sinkMutex);
+            Get().m_sinks.emplace_back(std::move(sink));
+        }
 
-		template<std::derived_from<ISink> T>
-		static void RemoveSink() noexcept {
-			std::scoped_lock lock(Get().m_sinkMutex);
-			std::erase_if(Get().m_sinks, [](const auto& sink) { return typeid(*sink) == typeid(T); });
-		}
+        template <std::derived_from<ISink> T>
+        static void RemoveSink() noexcept {
+            std::scoped_lock lock(Get().m_sinkMutex);
+            std::erase_if(Get().m_sinks, [](const auto& sink) { return typeid(*sink) == typeid(T); });
+        }
 
-		constexpr void Log(std::string_view tag, LogLevel lvl, const detail::log_fmt& fmt, auto&&... args) const noexcept {
-		    std::scoped_lock lock(m_loggingMutex);
+        static constexpr void SetDefaultTag(std::string_view newTag) noexcept { Get().m_tag = newTag; }
+        static constexpr std::string_view GetDefaultTag() noexcept { return Get().m_tag; }
 
-		    const std::string message = std::string(tag).append(std::format(fmt.msg, std::forward<decltype(args)>(args)...));
+        constexpr void Log(LogLevel lvl, const detail::log_fmt& fmt, auto&&... args) const noexcept {
+            std::scoped_lock lock(m_loggingMutex);
 
-		    for (const auto& sink : m_sinks) {
-		        sink->Emit(message, lvl, fmt.loc);
-		    }
-		}
-	private:
-		Logger()  = default;
-		~Logger() = default;
+            const std::string message = std::format("{}{}", m_tag, std::format(fmt.msg, std::forward<decltype(args)>(args)...));
 
-		mutable std::mutex m_loggingMutex;
-		std::mutex m_sinkMutex;
-		std::vector<std::unique_ptr<ISink>> m_sinks;
-	};
-}
+            for (const auto& sink : m_sinks) {
+                sink->Emit(message, lvl, fmt.loc);
+            }
+        }
 
-constexpr void crylog_info(Crystal::detail::log_fmt fmt, auto&& args...) noexcept {
-	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::info, fmt, std::forward<decltype(args)>(args));
-}
+        static constexpr void Info(detail::log_fmt fmt, auto&& args...) {
+            Get().Log(LogLevel::info, fmt, std::forward<decltype(args)>(args));
+        }
 
-constexpr void crylog_info(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::info, { "{}", loc }, msg);
-}
+        static constexpr void Info(std::string_view msg, std::source_location loc = std::source_location::current()) {
+            Info(detail::log_fmt{"{}", loc}, msg);
+        }
 
-constexpr void crylog_warning(Crystal::detail::log_fmt fmt, auto&& args...) noexcept {
-	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::warning, fmt, std::forward<decltype(args)>(args));
-}
+        static constexpr void Warning(detail::log_fmt fmt, auto&& args...) {
+            Get().Log(LogLevel::warning, fmt, std::forward<decltype(args)>(args));
+        }
 
-constexpr void crylog_warning(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::warning, { "{}", loc }, msg);
-}
+        static constexpr void Warning(std::string_view msg,
+                                      std::source_location loc = std::source_location::current()) {
+            Warning(detail::log_fmt{"{}", loc}, msg);
+        }
 
-constexpr void crylog_error(Crystal::detail::log_fmt fmt, auto&& args...)  noexcept {
-	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::error, fmt, std::forward<decltype(args)>(args));
-}
+        static constexpr void Error(detail::log_fmt fmt, auto&& args...) {
+            Get().Log(LogLevel::error, fmt, std::forward<decltype(args)>(args));
+        }
 
-constexpr void crylog_error(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::error, { "{}", loc }, msg);
-}
+        static constexpr void Error(std::string_view msg, std::source_location loc = std::source_location::current()) {
+            Error(detail::log_fmt{"{}", loc}, msg);
+        }
 
-constexpr void crylog_debug(Crystal::detail::log_fmt fmt, auto&& args...)  noexcept {
+        static constexpr void Debug(detail::log_fmt fmt, auto&& args...) {
 #if _DEBUG
-	const auto tag = Crystal::log_utils::parse_log_tag(fmt.loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::debug, fmt, std::forward<decltype(args)>(args));
+            Get().Log(LogLevel::debug, fmt, std::forward<decltype(args)>(args));
 #endif
-}
+        }
 
-constexpr void crylog_debug(std::string_view msg, std::source_location loc = std::source_location::current()) noexcept {
-#if _DEBUG
-	const auto tag = Crystal::log_utils::parse_log_tag(loc.file_name());
-	Crystal::Logger::Get().Log(tag, Crystal::LogLevel::debug, { "{}", loc }, msg);
-#endif
+        static constexpr void Debug(std::string_view msg, std::source_location loc = std::source_location::current()) {
+            Debug(detail::log_fmt{"{}", loc}, msg);
+        }
+
+        static void Trace(detail::log_fmt fmt, auto&& args...) {
+            auto& logger = Get();
+
+            logger.m_tag.append(std::format(" {}", log_utils::parse_log_tag(fmt.loc.file_name())));
+            logger.Log(LogLevel::trace, fmt, std::forward<decltype(args)>(args));
+        }
+
+        static void Trace(std::string_view msg, std::source_location loc = std::source_location::current()) {
+            Trace(detail::log_fmt{"{}", loc}, msg);
+        }
+
+    private:
+        Logger() = default;
+        ~Logger() = default;
+
+        mutable std::mutex m_loggingMutex;
+        std::mutex m_sinkMutex;
+        std::vector<std::unique_ptr<ISink>> m_sinks;
+        std::string m_tag;
+    };
 }

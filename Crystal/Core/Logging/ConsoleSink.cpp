@@ -14,6 +14,7 @@ ConsoleSink::ConsoleSink() noexcept {
 
 void ConsoleSink::Emit(std::string_view msg, Crystal::LogLevel lvl, const std::source_location &loc) noexcept {
     std::string msgPrefix{};
+
     switch (lvl) {
         case LogLevel::info:
             msgPrefix = "<INFO>";
@@ -29,13 +30,18 @@ void ConsoleSink::Emit(std::string_view msg, Crystal::LogLevel lvl, const std::s
             break;
         case LogLevel::debug:
             msgPrefix = "<DEBUG>";
-            Console::SetTextColor(ConsoleColor::Red);
+            Console::SetTextColor(ConsoleColor::Green);
             break;
+        case LogLevel::trace:
+            Console::SetTextColor(ConsoleColor::Green);
+
+            msgPrefix = "<TRACE>";
+            Console::WriteLine(std::format("{0} {1} {2}({3}) {4}", m_prefix, msgPrefix, loc.file_name(), loc.line(), msg));
+
+            Console::SetTextColor(ConsoleColor::White);
+            return;
     }
 
-    const auto str = std::format("{0}{1}({2}) {3} {4}",
-                           m_prefix, loc.file_name(), loc.line(), msgPrefix, msg);
-
-    Console::WriteLine(str);
+    Console::WriteLine(std::format("{} {} {}", m_prefix, msgPrefix, msg));
     Console::SetTextColor(ConsoleColor::White);
 }

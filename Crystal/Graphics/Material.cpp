@@ -10,12 +10,12 @@ Material::Material(const MaterialProperties& materialProperties)
     m_materialProperties(std::make_unique<MaterialProperties>(materialProperties))
 {}
 
-Texture* Crystal::Material::GetTexture(TextureID id) const noexcept {
+Texture* Material::GetTexture(TextureID id) const noexcept {
     if (m_textures.contains(id)) {
         return m_textures.at(id).get();
     }
     else {
-        cryfmtlog_warning("Material did not contain a {} texture, returning nullptr", detail::TextuserIDToString(id));
+        Logger::Warning("Material did not contain a {} texture, returning nullptr", detail::TextuserIDToString(id));
         return nullptr;
     }
 }
@@ -54,7 +54,7 @@ void Material::SetTexture(TextureID id, std::unique_ptr<Texture>&& texture) noex
         }
     }
     else {
-        crylog_warning("Texture is null");
+        Logger::Warning("Texture is null");
     }
 }
 

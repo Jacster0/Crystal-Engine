@@ -26,12 +26,11 @@ namespace Crystal {
 		m_gfx->Initialize(m_window->GetWidth(), m_window->GetHeight());
 		m_window->Kbd.EnableAutorepeat();
 
-		crylog_info("Test2");
-
-		crylog_info(current_date());
-		crylog_info(current_time());
-		crylog_info(current_date_time());
-		crylog_warning("Test");
+		Logger::Trace("Test");
+		Logger::Info(current_date());
+		Logger::Info(current_time());
+		Logger::Info(current_date_time());
+		Logger::Warning("Test2");
 	} 
 
 	Application::~Application() { 
@@ -64,7 +63,7 @@ namespace Crystal {
 
 			switch (e->GetCode()) {
 			case KeyCode::Escape:
-				crylog_info("Escape pressed");
+				Logger::Info("Escape pressed");
 
 				if (m_window->CursorEnabled()) {
 					m_window->DisableCursor();
@@ -79,7 +78,7 @@ namespace Crystal {
 				m_window->ToggleFullScreen(!m_window->FullScreen());
 				break;
 			case KeyCode::Space:
-				crylog_info("Escape pressed");
+				Logger::Info("Escape pressed");
 				break;
 			}
 		}

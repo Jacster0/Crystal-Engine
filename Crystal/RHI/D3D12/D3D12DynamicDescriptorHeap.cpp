@@ -34,7 +34,7 @@ void Crystal::DynamicDescriptorHeap::StageDescriptors(
     // Cannot stage more descriptors than m_numDescriptorsPerHeap.
     // Cannot stage more than MAX_DESCRIPTOR_TABLES root parameters.
     if (numDescriptors > m_numDescriptorsPerHeap || rootParameterIndex >= MAX_DESCRIPTOR_TABLES) {
-        crylog_error(
+        Logger::Error(
                 "Maximun descriptors per heap is {}. Number of descriptors you are trying to stage: {}"
                 "Maximun number of descriptor tables per root signature: {}. Current rootparameter index: {}",
                 m_numDescriptorsPerHeap, numDescriptors, MAX_DESCRIPTOR_TABLES, rootParameterIndex);
@@ -146,7 +146,7 @@ void DynamicDescriptorHeap::ParseRootSignature(const RootSignature* const rootSi
     }
 
     if (currentoffset <= m_numDescriptorsPerHeap) {
-        crylog_warning("The root signature requires more than the maximum number of descriptors per descriptor heap."
+        Logger::Warning("The root signature requires more than the maximum number of descriptors per descriptor heap."
             " Consider increasing the maximum number of descriptors per descriptor heap.");
     }
 }

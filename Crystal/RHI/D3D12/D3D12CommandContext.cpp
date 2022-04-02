@@ -105,8 +105,8 @@ void CommandContext::ResolveSubResource(
 	uint32_t destSubResource)
 {
 	if (source && dest) {
-		TransitionResource(dest, { { ResourceState_t::resolve_dest }, false, destSubResource });
-		TransitionResource(source, { { ResourceState_t::resolve_source }, false, destSubResource });
+		TransitionResource(dest, { { ResourceState_t::resolve_dest }, destSubResource, false });
+		TransitionResource(source, { { ResourceState_t::resolve_source }, destSubResource, false });
 
 		m_resourceStateTracker->FlushResourceBarriers(this);
 
@@ -121,7 +121,7 @@ void CommandContext::ResolveSubResource(
 		TrackResource(dest->GetUnderlyingResource());
 	}
 	else {
-		crylog_info("Cannot resolve subresource because source or dest is null");
+		Logger::Info("Cannot resolve subresource because source or dest is null");
 	}
 }
 
@@ -151,7 +151,7 @@ void CommandContext::SetPipelineState(const PipelineState* const pipelineState) 
 		}
 	}
 	else {
-		crylog_error("PipelineState cannot be null");
+		Logger::Error("PipelineState cannot be null");
 	}
 }
 
@@ -180,7 +180,7 @@ void CommandContext::Close() const noexcept {
 	m_d3d12CommandList->Close();
 }
 
-void CommandContext::TrackResource(const ComPtr<ID3D12Object> object) noexcept {
+void CommandContext::TrackResource(const ComPtr<ID3D12Object>& object) noexcept {
 	m_trackedObjects.push_back(object);
 }
 
@@ -198,7 +198,7 @@ void CommandContext::InsertUAVBarrier(const Texture& resource, bool flushImmedia
 	}
 }
 
-void Crystal::CommandContext::InsertAliasingBarrier(const Texture& before, const Texture& after, bool flushImmediate) const noexcept  {
+void CommandContext::InsertAliasingBarrier(const Texture& before, const Texture& after, bool flushImmediate) const noexcept  {
 	const auto barrier = CD3DX12_RESOURCE_BARRIER::Aliasing(before.GetUnderlyingResource().Get(), after.GetUnderlyingResource().Get());
 	m_resourceStateTracker->ResourceBarrier(barrier);
 
@@ -248,7 +248,7 @@ void ComputeContext::SetComputeRootSignature(const RootSignature* const rootSign
 		}
 	}
 	else {
-		crylog_error("RootSignature cannot be null");
+		Logger::Error("RootSignature cannot be null");
 	}
 }
 
@@ -303,7 +303,7 @@ void GraphicsContext::SetGraphicsRootSignature(const RootSignature* const rootSi
 		}
 	}
 	else {
-		crylog_error("RootSignature cannot be null");
+		Logger::Error("RootSignature cannot be null");
 	}
 }
 
@@ -320,24 +320,60 @@ void GraphicsContext::SetConstantBuffer(
 	size_t sizeInBytes, 
 	const void* bufferData) const noexcept
 {
-	const auto alloc = m_linearAllocator->Allocate(sizeInBytes, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
-	std::memcpy(alloc.CPU, bufferData, sizeInBytes);
+	const auto [CPU, GPU] = m_linearAllocator->Allocate(sizeInBytes, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+	std::memcpy(CPU, bufferData, sizeInBytes);
 
-	m_d3d12CommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, alloc.GPU);
+	m_d3d12CommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, GPU);
 }
 
 void GraphicsContext::SetShaderResourceView(
-	uint32_t slot, 
-	size_t numElements, 
-	size_t elementSize, 
-	const void* bufferData) const noexcept
+	uint32_t rootParameterIndex,
+	uint32_t descriptorOffset,
+    const Texture& texture,
+	ResourceState_t stateAfter,
+	uint32_t firstSubresource,
+	uint32_t numSubresources) noexcept
 {
-	const size_t bufferSize = numElements * elementSize;
-	const auto [CPU, GPU] = m_linearAllocator->Allocate(bufferSize, elementSize);
+	if(numSubresources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES) {
+		for (auto i = 0; i < numSubresources; i++) {
+			TransitionResource(&texture, { { stateAfter }, firstSubresource + i });
+		}
+	}
+	else {
+		TransitionResource(&texture, { { stateAfter } });
+	}
 
-	std::memcpy(CPU, bufferData, bufferSize);
+	TrackResource(texture.GetUnderlyingResource());
 
-	m_d3d12CommandList->SetGraphicsRootShaderResourceView(slot, GPU);
+	m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(
+		rootParameterIndex,
+		descriptorOffset,
+		1,
+		texture.GetShaderResourceView());
+}
+
+void GraphicsContext::SetUnorderedAccessView(
+	uint32_t rootParameterIndex, 
+	uint32_t descriptorOffset,
+    const Texture& texture, 
+	ResourceState_t stateAfter, 
+	uint32_t firstSubresource, 
+	uint32_t numSubresources) noexcept
+{
+	if (numSubresources < D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES) {
+		for (auto i = 0; i < numSubresources; i++) {
+			TransitionResource(&texture, { { stateAfter }, firstSubresource + i });
+		}
+	}
+    else {
+		TransitionResource(&texture, { { stateAfter } });
+    }
+
+	m_dynamicDescriptorHeap[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV]->StageDescriptors(
+		rootParameterIndex,
+		descriptorOffset,
+		1,
+		texture.GetUnorderedAccessView(descriptorOffset));
 }
 
 void GraphicsContext::SetScissorRect(const Math::Rectangle& scissorRect) const noexcept {
@@ -368,7 +404,7 @@ void GraphicsContext::SetRenderTarget(const RenderTarget& renderTarget) noexcept
 		auto texture = textures[i];
 
 		if (texture) {
-			TransitionResource(texture.get(), { {ResourceState_t::render_target} });
+			TransitionResource(texture.get(), { { ResourceState_t::render_target } });
 			renderTargetDescriptors.push_back(texture->GetRenderTargetView());
 
 			TrackResource(texture->GetUnderlyingResource());
@@ -379,7 +415,7 @@ void GraphicsContext::SetRenderTarget(const RenderTarget& renderTarget) noexcept
 	CD3DX12_CPU_DESCRIPTOR_HANDLE depthStencilDescriptor(D3D12_DEFAULT);
 
 	if(depthTexture) {
-		TransitionResource(depthTexture.get(), { {ResourceState_t::depth_write} });
+		TransitionResource(depthTexture.get(), { { ResourceState_t::depth_write } });
 		depthStencilDescriptor = depthTexture->GetDepthStencilView();
 
 		TrackResource(depthTexture->GetUnderlyingResource());

@@ -27,7 +27,7 @@ constexpr bool FileSystem::IsEmpty(std::string_view str) noexcept {
 		return fs::is_empty(str);
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning(e.what());
+		Logger::Warning(e.what());
 	}
 	return false;
 }
@@ -84,7 +84,7 @@ bool FileSystem::CreateDirectory(std::string_view path) noexcept {
 		return fs::create_directories(path);
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning("{} {}", e.what(), path);
+		Logger::Warning("{} {}", e.what(), path);
 	}
 	return false;
 }
@@ -96,7 +96,7 @@ bool FileSystem::Delete(std::string_view path) noexcept {
 		}
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning("{} {}", e.what(), path);
+		Logger::Warning("{} {}", e.what(), path);
 	}
 	return false;
 }
@@ -106,7 +106,7 @@ bool FileSystem::Exists(std::string_view path) noexcept {
 		return fs::exists(path);
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning("{} {}", e.what(), path);
+		Logger::Warning("{} {}", e.what(), path);
 	}
 	return false;
 }
@@ -118,7 +118,7 @@ bool FileSystem::IsDirectory(std::string_view path) noexcept {
 		}
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning("{}, {}", e.what(), path);
+		Logger::Warning("{}, {}", e.what(), path);
 	}
 	return false;
 }
@@ -133,7 +133,7 @@ constexpr bool FileSystem::IsFile(std::string_view path) noexcept {
 		}
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning("{} {}", e.what(), path);
+		Logger::Warning("{} {}", e.what(), path);
 	}
 	return false;
 }
@@ -151,7 +151,7 @@ constexpr bool FileSystem::CopyFile(std::string_view src, std::string_view dst) 
 		return fs::copy_file(src, dst, fs::copy_options::overwrite_existing);
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning(e.what());
+		Logger::Warning(e.what());
 		return false;
 	}
 }
@@ -184,7 +184,7 @@ std::string FileSystem::GetExtensionFromFilePath(std::string_view path) noexcept
 		ext = fs::path(path).extension().string();
 	}
 	catch (const fs::filesystem_error& e) {
-		crylog_warning(e.what());
+		Logger::Warning(e.what());
 	}
 	return ext;
 }
@@ -237,7 +237,7 @@ FileSystem::DirectoryList FileSystem::GetDirectoriesInDirectory(std::string_view
 			dir = iter->path().string();
 		}
 		catch (const std::system_error& e) {
-			crylog_warning("Failed to read directory path {}", e.what());
+			Logger::Warning("Failed to read directory path {}", e.what());
 		}
 
 		if (!dir.empty()) {
@@ -261,7 +261,7 @@ FileSystem::FileList FileSystem::GetFilesInDirectory(std::string_view path) noex
 			files.emplace_back(std::move(iter->path().string()));
 		}
 		catch (const std::system_error& e) {
-			crylog_warning("Failed to read file path {}", e.what());
+			Logger::Warning("Failed to read file path {}", e.what());
 		}
 	}
 
