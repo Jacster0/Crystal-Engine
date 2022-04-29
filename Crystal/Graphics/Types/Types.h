@@ -89,9 +89,9 @@ namespace Crystal {
 
     struct TransitionBarrierSpecification {
         TransitionBarrierSpecification(
-            ResourceState newState, 
-            bool flushBarriers = false, 
-            uint32_t subresource = ALL_SUBRESOURCES) noexcept
+            ResourceState newState,
+            uint32_t subresource = ALL_SUBRESOURCES,
+            bool flushBarriers = false) noexcept
             :
             NewState(newState),
             Subresource(subresource),
@@ -99,7 +99,7 @@ namespace Crystal {
         {}
 
         ResourceState NewState;
-        bool FlushBarriers;
         uint32_t Subresource;
+        bool FlushBarriers;
     };
 }
