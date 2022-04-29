@@ -47,6 +47,7 @@ namespace Crystal {
                 return *code;
             }
 			HandleInput();
+			m_gfx->Render();
 		}
 	}
 

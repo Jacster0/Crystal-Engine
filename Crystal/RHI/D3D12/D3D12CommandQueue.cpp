@@ -7,6 +7,8 @@
 #include <array>
 #include <algorithm>
 
+#include "Core/Logging/Logger.h"
+
 using namespace Crystal;
 
 CommandQueue::CommandQueue(CommandListType_t cmdListType) {
@@ -38,24 +40,29 @@ CommandQueue::CommandQueue(CommandListType_t cmdListType) {
 	}
 }
 
-uint64_t CommandQueue::Submit(const CommandContext* const context) {
-	return Submit(std::array{ context });
+void CommandQueue::Submit(CommandContext* const context) {
+    Submit(std::array { context });
 }
 
-uint64_t CommandQueue::Submit(std::span<const CommandContext* const> contexts) {
-	namespace  rn = std::ranges;
+void CommandQueue::Submit(std::span<CommandContext* const> contexts) {
+	namespace rn = std::ranges;
 
-	std::vector<ID3D12CommandList*> commandLists(contexts.size());
+	std::vector<ID3D12CommandList*> commandLists;
 
-	rn::for_each(contexts, 
-	[&commandLists](const CommandContext* const context) {
-			commandLists.emplace_back(context->GetNativeCommandList().Get());
-		}
-	);
+	//commandLists.emplace_back((* contexts.begin())->GetNativeCommandList().Get());
 
-	m_d3d12CommandQueue->ExecuteCommandLists(commandLists.size(), commandLists.data());
+	for (const auto ctx : contexts) {
+		ctx->Close();
+		commandLists.emplace_back(ctx->GetNativeCommandList().Get());
+	}
 
-	return Signal();
+	m_d3d12CommandQueue->ExecuteCommandLists(1, commandLists.data());
+
+	WaitForFenceValue(Signal());
+
+	for(const auto ctx : contexts) {
+		ctx->Reset();
+	}
 }
 
 uint64_t CommandQueue::Signal() {

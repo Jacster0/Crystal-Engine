@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <chrono>
 
+#include "Core/Logging/Logger.h"
+
 using namespace Crystal;
 using namespace Microsoft::WRL;
 using namespace std::chrono_literals;
@@ -93,22 +95,22 @@ uint32_t SwapChain::Present(const Texture* const texture) {
 		else {
 			ctx.CopyResource(*backBuffer, *texture);
 		}
-
-		ctx.TransitionResource(backBuffer, { { ResourceState_t::present } });
-		queue.Submit(&ctx);
-
-		auto syncInterval     = static_cast<uint32_t>(m_vSync);
-		uint32_t presentFlags = (m_tearingSupported && !m_fullscreen && m_vSync == VSync::Off) ? DXGI_PRESENT_ALLOW_TEARING : 0u;
-
-		ThrowIfFailed(m_dxgiSwapChain->Present(syncInterval, presentFlags));
-
-		m_fenceValues[m_currentBackbufferIndex] = queue.Signal();
-		m_currentBackbufferIndex                = m_dxgiSwapChain->GetCurrentBackBufferIndex();
-
-		RHICore::release_stale_descriptors();
-
-		return m_currentBackbufferIndex;
 	}
+
+	ctx.TransitionResource(backBuffer, { { ResourceState_t::present } });
+	queue.Submit(&ctx);
+
+	const auto syncInterval = static_cast<uint32_t>(m_vSync);
+	const uint32_t presentFlags = (m_tearingSupported && !m_fullscreen && m_vSync == VSync::Off) ? DXGI_PRESENT_ALLOW_TEARING : 0u;
+
+	ThrowIfFailed(m_dxgiSwapChain->Present(syncInterval, presentFlags));
+
+	m_fenceValues[m_currentBackbufferIndex] = queue.Signal();
+	m_currentBackbufferIndex = m_dxgiSwapChain->GetCurrentBackBufferIndex();
+
+	RHICore::release_stale_descriptors();
+
+	return m_currentBackbufferIndex;
 }
 
 void Crystal::SwapChain::Resize(USize size) {
@@ -146,13 +148,13 @@ void SwapChain::WaitForSwapChain() noexcept {
 	auto result = WaitForSingleObjectEx(m_frameLatencyWaitableObject, duration.count(), true);
 }
 
-const RenderTarget& Crystal::SwapChain::GetRenderTarget() const noexcept {
+const RenderTarget& SwapChain::GetRenderTarget() const noexcept {
 	m_renderTarget.AttachTexture(AttachmentPoint::Color0, m_backbufferTextures[m_currentBackbufferIndex]);
 
 	return m_renderTarget;
 }
 
-RenderTarget& Crystal::SwapChain::GetRenderTarget() noexcept {
+RenderTarget& SwapChain::GetRenderTarget() noexcept {
 	m_renderTarget.AttachTexture(AttachmentPoint::Color0, m_backbufferTextures[m_currentBackbufferIndex]);
 
 	return m_renderTarget;

@@ -1,11 +1,13 @@
 #pragma once
-#include "Utils/d3dx12.h"
+#include <d3d12.h>
+#include <wrl.h>
 
 namespace Crystal {
 	struct PipelineStateSpecification {
 		size_t sizeInBytes;
 		void* pipeLineStateStream;
 	};
+
 	class PipelineState {
 	public:
 		explicit PipelineState(const PipelineStateSpecification& specification) noexcept;

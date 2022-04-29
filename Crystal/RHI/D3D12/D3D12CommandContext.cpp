@@ -223,6 +223,7 @@ void CommandContext::TransitionResource(
 
 	if (specification.FlushBarriers) {
 		m_resourceStateTracker->FlushResourceBarriers(this);
+		m_resourceStateTracker->FlushPendingResourceBarriers(this);
 	}
 }
 
@@ -275,7 +276,7 @@ GraphicsContext::GraphicsContext(CommandListType cmdListType)
 {}
 
 void GraphicsContext::ClearRTV(const Texture& texture, const float* const clearColor) noexcept {
-	TransitionResource(&texture, { { ResourceState_t::render_target }, true });
+	TransitionResource(&texture, { { ResourceState_t::render_target }, ALL_SUBRESOURCES, true });
 	m_d3d12CommandList->ClearRenderTargetView(texture.GetRenderTargetView(), clearColor, 0, nullptr);
 	TrackResource(texture.GetUnderlyingResource());
 }

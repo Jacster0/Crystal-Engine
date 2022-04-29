@@ -10,11 +10,12 @@
 using namespace Crystal;
 int main() {
     try {
+        
         Console::Create();
 
         Logger::AddSink<ConsoleSink>();
 
-         Application{
+         return Application{
              ApplicationCreateInfo{}
          }.Run();
     }
@@ -27,7 +28,7 @@ int main() {
 
         return 1;
     }
-    catch(const std::exception& e){
+    catch(const std::exception& e) {
         MessageBox::Show(
                 e.what(),
                 "Standard exception",
@@ -37,7 +38,7 @@ int main() {
         return 1;
     }
 
-    catch(...){
+    catch(...) {
         MessageBox::Show(
                 "No details available",
                 "Unknown exception",

@@ -19,6 +19,7 @@ namespace Crystal {
         Graphics& operator=(Graphics&& rhs)      = delete;
         ~Graphics()                              = default;
 
+        void Render();
         void Initialize(uint32_t width, uint32_t height);
         void Resize(USize size);
         void Resize(uint32_t width, uint32_t height);

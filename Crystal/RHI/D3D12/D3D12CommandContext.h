@@ -46,20 +46,22 @@ namespace Crystal {
 		void SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, ID3D12DescriptorHeap* heap) noexcept;
 		void SetPipelineState(const PipelineState* pipelineState) noexcept;
 
+		void Close() const noexcept;
 		bool Close(const CommandContext* pendingCmdList) const noexcept;
 		void Reset();
+
+		void TrackResource(const Microsoft::WRL::ComPtr<ID3D12Object>& object) noexcept;
+		void InsertUAVBarrier(const Texture& resource, bool flushImmediate = false) const noexcept;
+		void InsertAliasingBarrier(const Texture& before, const Texture& after, bool flushImmediate = false) const noexcept;
 
 		[[nodiscard]] class GraphicsContext& AsGraphicsContext() noexcept;
 		[[nodiscard]] class ComputeContext& AsComputeContext() noexcept;
 		[[nodiscard]] class RayTracingContext& AsRayTracingContext() noexcept;
 	protected:
-		void Close() const noexcept;
+		
 
-		void TrackResource(Microsoft::WRL::ComPtr<ID3D12Object> object) noexcept;
 		void ReleaseTrackedObjects() noexcept;
 
-		void InsertUAVBarrier(const Texture& resource, bool flushImmediate = false) const noexcept;
-		void InsertAliasingBarrier(const Texture& before, const Texture& after, bool flushImmediate = false) const noexcept;
 		void TransitionResource(
 			const Microsoft::WRL::ComPtr<ID3D12Resource>& resource,
 			TransitionBarrierSpecification specification) const noexcept;
@@ -99,7 +101,22 @@ namespace Crystal {
 		void SetGraphicsRootSignature(const RootSignature* rootSignature) noexcept;
 		void SetGraphicsShaderConstants(uint32_t rootParameterIndex, uint32_t numConstants, const void* constants) const noexcept;
 		void SetConstantBuffer(uint32_t rootParameterIndex, size_t sizeInBytes, const void* bufferData) const noexcept;
-		void SetShaderResourceView(uint32_t slot, size_t numElements, size_t elementSize, const void* bufferData) const noexcept;
+		void SetShaderResourceView(
+			uint32_t rootParameterIndex,
+			uint32_t descriptorOffset,
+			const Texture& texture,
+			ResourceState_t stateAfter,
+			uint32_t firstSubresource,
+			uint32_t numSubresources) noexcept;
+
+		void SetUnorderedAccessView(
+			uint32_t rootParameterIndex,
+			uint32_t descriptorOffset,
+			const Texture& texture,
+			ResourceState_t stateAfter,
+			uint32_t firstSubresource,
+			uint32_t numSubresources
+		) noexcept;
 
 		void SetScissorRect(const Math::Rectangle& scissorRect) const noexcept;
 		void SetScissorRects(std::span<const Math::Rectangle> scissorRects) const noexcept;

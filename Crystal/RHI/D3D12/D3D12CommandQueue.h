@@ -15,8 +15,8 @@ namespace Crystal {
 		explicit CommandQueue(CommandListType_t cmdListType);
 
 		//Submits commands to be executed on the GPU
-		uint64_t Submit(const CommandContext* context);
-		uint64_t Submit(std::span<const CommandContext* const> contexts);
+		void Submit(CommandContext* context);
+		void Submit(std::span<CommandContext* const> contexts);
 
 		[[nodiscard]] uint64_t Signal();
 		void WaitForFenceValue(uint64_t fenceValue) const;
@@ -25,8 +25,8 @@ namespace Crystal {
 		void Wait(const CommandQueue& rhs) const;
 
 		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D12CommandQueue> GetNativeCommandQueue() const noexcept { return m_d3d12CommandQueue; }
-		[[nodiscard]] const CommandContext& GetCommandList() const noexcept { return *m_context.get(); }
-		[[nodiscard]] CommandContext& GetCommandContext() const noexcept { return *m_context.get(); }
+		[[nodiscard]] const CommandContext& GetCommandList() const noexcept { return *m_context; }
+		[[nodiscard]] CommandContext& GetCommandContext() const noexcept { return *m_context; }
 	private:
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_d3d12CommandQueue;
 		Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;

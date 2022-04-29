@@ -3,6 +3,9 @@ set(PROJECT_NAME CrystalSandbox)
 ################################################################################
 # Target
 ################################################################################
+set(ALL_FILES
+        Main.cpp)
+
 add_executable(${PROJECT_NAME}
         Main.cpp)
 
@@ -30,6 +33,7 @@ target_compile_definitions(
         "NDEBUG"
         ">"
         "WIN32;"
+        "CRYSTALSANDBOX_EXPORTS"
         "_WINDOWS;"
         "_USRDLL;"
         "UNICODE;"

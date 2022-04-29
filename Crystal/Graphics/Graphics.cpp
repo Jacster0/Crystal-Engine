@@ -4,8 +4,29 @@
 #include "../Core/Logging/Logger.h"
 #include "../Core/Utils/StringUtils.h"
 #include "../RHI/SwapChain.h"
-
+#include "RHI/D3D12/D3D12CommandQueue.h"
+#include <DirectXColors.h>
 using namespace Crystal;
+
+void Graphics::Render() {
+	auto& queue = RHICore::get_graphics_queue();
+	auto& ctx = queue.GetCommandContext().AsGraphicsContext();
+
+	static uint64_t cnt{ 0 };
+	const std::vector mCols{
+	    DirectX::Colors::Red,
+	    DirectX::Colors::Green,
+	    DirectX::Colors::Blue };
+
+	ctx.ClearRTV(*m_swapChain->GetRenderTarget().GetTexture(Color0), mCols.at(cnt) /*DirectX::Colors::Red*/);
+	queue.Submit(&ctx);
+
+	m_swapChain->Present();
+
+	if (++cnt == 3) {
+        cnt = 0;
+    }
+}
 
 void Graphics::Initialize(uint32_t width, uint32_t height) {
 	Logger::Info("Graphics device: {}", StringConverter::To<std::string>(RHICore::get_physical_device_description()));
@@ -23,7 +44,7 @@ void Graphics::Resize(USize size) {
 	Resize(size.Width, size.Height);
 }
 
-void Crystal::Graphics::Resize(uint32_t width, uint32_t height) {
+void Graphics::Resize(uint32_t width, uint32_t height) {
 	if (m_clientWidth != width || m_clientHeight != height) [[likely]] {
 		m_clientWidth  = std::max(1u, width);
 		m_clientHeight = std::max(1u, height);

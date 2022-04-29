@@ -38,7 +38,7 @@ void RootSignature::Destroy() {
 	ZeroMemory(m_numDescriptorsPerTable.data(), sizeof(m_numDescriptorsPerTable));
 }
 
-uint32_t Crystal::RootSignature::GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType) const {
+uint32_t RootSignature::GetDescriptorTableBitMask(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType) const {
 	uint32_t descriptorTableBitMask = 0;
 
 	switch (descriptorHeapType) {
@@ -101,7 +101,7 @@ void RootSignature::SetRootSignatureDesc(const D3D12_ROOT_SIGNATURE_DESC1& rootS
 		}
 	}
 
-	auto numStaticSamplers = rootSignatureDesc.NumStaticSamplers;
+    const auto numStaticSamplers = rootSignatureDesc.NumStaticSamplers;
 	D3D12_STATIC_SAMPLER_DESC* staticSamplers = numStaticSamplers > 0 ? new D3D12_STATIC_SAMPLER_DESC[numStaticSamplers] : nullptr;
 
 	if (staticSamplers) {
@@ -120,7 +120,7 @@ void RootSignature::SetRootSignatureDesc(const D3D12_ROOT_SIGNATURE_DESC1& rootS
 	D3D_ROOT_SIGNATURE_VERSION highestVersion = RHICore::get_highest_root_signature_version();
 
 	// Serialize the root signature.
-	ComPtr<ID3DBlob> rootSignatureBlob;
+    const ComPtr<ID3DBlob> rootSignatureBlob;
 	ComPtr<ID3DBlob> errorBlob;
 	
 	auto& device = RHICore::get_device();
