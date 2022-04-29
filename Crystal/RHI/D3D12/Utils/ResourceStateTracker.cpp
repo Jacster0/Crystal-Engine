@@ -23,7 +23,7 @@ void ResourceStateTracker::ResourceBarrier(const D3D12_RESOURCE_BARRIER& barrier
 		const auto iter = m_finalResourceState.find(transitionBarrier.pResource);
 
 		if (iter != m_finalResourceState.end()) {
-			auto& resourceState = iter->second;
+			const auto& resourceState = iter->second;
 
 			//if the known final state of the resource is different
 			if (transitionBarrier.Subresource == allSubResources && !resourceState.SubresourceState.empty()) {
@@ -88,9 +88,7 @@ void ResourceStateTracker::AliasBarrier(const Texture* const resourceBefore, con
 }
 
 uint32_t ResourceStateTracker::FlushPendingResourceBarriers(const CommandContext* context) {
-	if (m_lock.UnLocked()) {
-		Logger::Warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
-	}
+    m_lock.Lock();
 
 	// Resolve the pending resource barriers by checking the global state of the 
     // (sub)resources. Add barriers if the pending state and the global state do
@@ -145,6 +143,7 @@ uint32_t ResourceStateTracker::FlushPendingResourceBarriers(const CommandContext
 	}
 
 	m_pendingResourceBarriers.clear();
+	m_lock.Unlock();
 
 	return numBarriers;
 }
@@ -160,6 +159,7 @@ void ResourceStateTracker::FlushResourceBarriers(const CommandContext* context) 
 
 void ResourceStateTracker::CommitFinalResourceStates() {
 	if (m_lock.UnLocked()) {
+		m_lock.Lock();
 		Logger::Warning("The ResourceStateTracker is unlocked and is therefore not threadsafe!");
 	}
 
@@ -168,9 +168,10 @@ void ResourceStateTracker::CommitFinalResourceStates() {
 	}
 
 	m_finalResourceState.clear();
+	m_lock.Unlock();
 }
 
-void Crystal::ResourceStateTracker::Reset() noexcept {
+void ResourceStateTracker::Reset() noexcept {
 	m_pendingResourceBarriers.clear();
 	m_resourceBarriers.clear();
 	m_finalResourceState.clear();
