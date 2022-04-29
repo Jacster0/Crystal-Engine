@@ -6,10 +6,9 @@ using namespace Crystal::Math;
 
 Camera::Camera(float fov, float aspectRatio, Frustum viewFrustum) noexcept 
 	:
+	m_viewFrustum(viewFrustum),
 	m_fov(fov),
-	m_aspectRatio(aspectRatio),
-	m_viewFrustum(viewFrustum)
-{}
+	m_aspectRatio(aspectRatio) {}
 
 void Camera::SetProjection(float fov, float aspectRatio, Frustum viewFrustum) noexcept {
 	m_fov         = fov;
