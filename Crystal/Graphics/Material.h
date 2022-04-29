@@ -269,7 +269,7 @@ namespace Crystal {
 		.SpecularPower = 32.0f
 	};
 
-	static constexpr MaterialProperties GreenPlastic{
+	static constexpr MaterialProperties GreenPlastic {
 		.Diffuse       = { 0.1f,  0.35f, 0.1f,  1.0f},
 		.Specular      = { 0.45f, 0.55f, 0.45f, 1.0f },
 		.Ambient       = { 0.0f,  0.0f,  0.0f,  1.0f },
