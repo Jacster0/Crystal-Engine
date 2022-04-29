@@ -33,13 +33,13 @@ CRYSTAL_API void create_render_surface(HWND parent, const uint32_t width, const 
 		t1 = std::thread(&Application::Run, application);
 	}
 	catch (const CrystalException& e) {
-		MessageBox::Show(e.what(), e.GetType(), MessageBox::MessageBoxButtons::OK, MessageBox::MessageBoxIcon::Exclamation);
+		MessageBox::Show(e.what(), e.GetType(), MessageBox::Buttons::OK, MessageBox::Icon::Exclamation);
 	}
 	catch (const std::exception& e) {
-		MessageBox::Show(e.what(), "Standard exception", MessageBox::MessageBoxButtons::OK, MessageBox::MessageBoxIcon::Exclamation);
+		MessageBox::Show(e.what(), "Standard exception", MessageBox::Buttons::OK, MessageBox::Icon::Exclamation);
 	}
 	catch (...) {
-		MessageBox::Show("No details available", "unknown exception", MessageBox::MessageBoxButtons::OK, MessageBox::MessageBoxIcon::Exclamation);
+		MessageBox::Show("No details available", "unknown exception", MessageBox::Buttons::OK, MessageBox::Icon::Exclamation);
 	}
 }
 
@@ -61,7 +61,7 @@ CRYSTAL_API void* get_cpu_information() noexcept {
 	cpuInfo.Vendor               = info.Info.Vendor.c_str();
 	cpuInfo.Architecture         = info.Info.Architecture.c_str();
 
-	return static_cast<void*>(&cpuInfo);
+	return &cpuInfo;
 }
 
 CRYSTAL_API void message_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
