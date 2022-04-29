@@ -1,12 +1,10 @@
 #pragma once
-#include <functional>
-#include <memory>
+#include <optional>
 #include <span>
-#include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 #include "Material.h"
-#include <optional>
 #include "assimp/scene.h"
 
 namespace Assimp {
@@ -32,7 +30,7 @@ namespace Crystal {
 		bool LoadSceneFromFile(CommandContext& ctx, std::string_view fileName);
 	private:
 		void ImportScene(CommandContext& ctx, const aiScene& scene, std::string_view parentPath);
-		void ImportMesh(CommandContext& ctx, const aiMesh& mesh);
+		void ImportMesh(CommandContext& ctx, const aiMesh& assimpMesh);
 		void ImportMaterial(CommandContext& ctx, const aiMaterial& aiMat, std::string_view parentPath) noexcept;
 
 		void SetMaterials(Material& material, const aiMaterial& assimpMaterial) const noexcept;
@@ -43,8 +41,8 @@ namespace Crystal {
 
 		static std::optional<const aiScene*> PreProcess(std::string_view fileName) noexcept;
 
-		std::vector<std::reference_wrapper<Mesh>> m_meshes;
-		std::vector<std::reference_wrapper<Material>> m_materials;
+		std::vector<std::unique_ptr<Mesh>> m_meshes;
+		std::vector<std::unique_ptr<Material>> m_materials;
 
 		using MaterialColorFuncPtr = void(Material::*)(const Math::Vector4&);
 		using MaterialValueFuncPtr = void(Material::*)(float);
@@ -55,7 +53,7 @@ namespace Crystal {
 
 			MaterialColorFuncPtr ColorFuncPtr;
 			MaterialValueFuncPtr ValueFuncPtr;
-		};
+		}; 
 
 		std::unordered_map<detail::AssimpMaterialSpecification, MaterialFunction> m_materialFunctionMap =
 		{

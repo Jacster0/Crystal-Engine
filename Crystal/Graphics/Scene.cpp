@@ -1,17 +1,13 @@
 #include "Scene.h"
-
-#include <cassert>
-
-#include "Material.h"
 #include "Mesh.h"
 #include "Core/FileSystem/FileSystem.h"
-
 #include "assimp/Exporter.hpp"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "RHI/RHICore.h"
 #include "RHI/VertexTypes.h"
 #include "RHI/D3D12/Managers/TextureManager.h"
+#include <cassert>
 
 using namespace Crystal;
 
@@ -42,28 +38,27 @@ void Scene::ImportScene(CommandContext& ctx, const aiScene& scene, std::string_v
 
 void Scene::ImportMesh(CommandContext& ctx, const aiMesh& assimpMesh) {
     m_meshes.clear();
-    Mesh mesh;
+    auto mesh = std::make_unique<Mesh>();
 
-    ProcessVertices(ctx, mesh, assimpMesh);
-    ProcessIndices(ctx, mesh, assimpMesh);
+    ProcessVertices(ctx, *mesh, assimpMesh);
+    ProcessIndices(ctx, *mesh, assimpMesh);
 
-    m_meshes.emplace_back(mesh);
+    m_meshes.emplace_back(std::move(mesh));
 }
 
 void Scene::ImportMaterial(CommandContext& ctx, const aiMaterial& aiMat, std::string_view parentPath) noexcept {
-    Material material;
+    auto material = std::make_unique<Material>();
 
-    SetMaterials(material, aiMat);
-    LoadTextures(ctx, material, aiMat, parentPath);
+    SetMaterials(*material, aiMat);
+    LoadTextures(ctx, *material, aiMat, parentPath);
 
-    m_materials.emplace_back(material);
+    m_materials.emplace_back(std::move(material));
 }
 
 void Scene::SetMaterials(Material& material, const aiMaterial& assimpMaterial) const noexcept {
     aiColor4D color{};
     float value{};
 
-    //Set materials
     for (const auto& [spec, func] : m_materialFunctionMap) {
         if (spec.Unit == detail::MaterialUnit::Vec4) {
             if (assimpMaterial.Get(spec.Key.data(), spec.Type, spec.Id, color) == aiReturn_SUCCESS) {
@@ -150,15 +145,15 @@ void Scene::ProcessVertices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMes
         }
     }
 
-        if (aiMesh.HasNormals()) {
-            for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
+    if (aiMesh.HasNormals()) {
+        for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
                 vertices[i].Normal = reinterpret_cast<Math::Vector3&>(aiMesh.mNormals[i]);
-            }
         }
+    }
 
     if (aiMesh.HasTangentsAndBitangents()) {
         for (uint32_t i = 0; i < aiMesh.mNumVertices; i++) {
-            vertices[i].Tangent   = reinterpret_cast<Math::Vector3&>(aiMesh.mTangents[i]);
+            vertices[i].Tangent = reinterpret_cast<Math::Vector3&>(aiMesh.mTangents[i]);
             vertices[i].Bitangent = reinterpret_cast<Math::Vector3&>(aiMesh.mBitangents[i]);
         }
     }
@@ -170,7 +165,7 @@ void Scene::ProcessVertices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMes
     }
 
     BufferDescription vbd = {
-        .Count  = static_cast<uint32_t>(vertices.size()),
+        .Count = static_cast<uint32_t>(vertices.size()),
         .Stride = sizeof(std::decay_t<decltype(vertices)>)
     };
 
@@ -194,7 +189,7 @@ void Scene::ProcessIndices(CommandContext& ctx, Mesh& mesh, const aiMesh& aiMesh
 
         if (!indices.empty()) [[likely]] {
             BufferDescription ibd = {
-                .Count = static_cast<uint32_t>(indices.size()),
+                .Count  = static_cast<uint32_t>(indices.size()),
                 .Stride = sizeof(std::decay_t<decltype(indices)>),
                 .Format = IndexFormat_t::uint_32
             };
