@@ -3,12 +3,9 @@
 #include <iostream>
 
 void Console::Create() noexcept {
-    if(AllocConsole()) {
-        freopen("CONIN$", "r", stdin);
-        freopen("CONOU$", "w", stdout);
-        freopen("CONOU$", "w", stderr);
+    if(!AllocConsole()) {
+        return;
     }
-
     const auto  hCmd = GetStdHandle(STD_OUTPUT_HANDLE);
 
     SMALL_RECT cmdSize {
@@ -26,7 +23,7 @@ void Console::Create() noexcept {
             .Y = 16
         },
         .FontFamily = FF_DONTCARE,
-        .FontWeight =  FW_NORMAL,
+        .FontWeight = FW_NORMAL,
         .FaceName   = L"Consolas"
     };
 
@@ -41,7 +38,7 @@ void Console::Show() noexcept {
 }
 
 void Console::Hide() noexcept {
-    ShowWindow(GetConsoleWindow(), SW_HIDE);
+    ShowWindow(GetConsoleWindow(), SW_HIDE);  
 }
 
 bool Console::Visible() noexcept {
