@@ -1,11 +1,10 @@
 #pragma once
-#include "Platform/Windows/CrystalWindow.h"
 #include "D3D12DescriptorHeap.h"
 
 #include <d3d12.h>
-#include <wrl.h>
-#include <string>
 #include <memory>
+#include <string>
+#include <wrl.h>
 
 namespace Crystal {
 	enum class TextureType {
@@ -36,16 +35,22 @@ namespace Crystal {
 
 		void SetName(std::wstring_view name) noexcept;
 		[[nodiscard]] std::wstring GetName() const noexcept;
-	private:
-		void SetTextureType() noexcept;
+
 
 		[[nodiscard]] bool CheckFormatSupport(D3D12_FORMAT_SUPPORT1 formatSupport) const noexcept;
 		[[nodiscard]] bool CheckFormatSupport(D3D12_FORMAT_SUPPORT2 formatSupport) const noexcept;
 
 		[[nodiscard]] bool CheckSRVSupport() const noexcept;
-		[[nodiscard]] bool CheckRTVSupport() const noexcept; 
+		[[nodiscard]] bool CheckRTVSupport() const noexcept;
 		[[nodiscard]] bool CheckDSVSupport() const noexcept;
-		[[nodiscard]] bool CheckUAVSupport() const noexcept; 
+		[[nodiscard]] bool CheckUAVSupport() const noexcept;
+
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE CreateShaderResourceView(const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc) const noexcept;
+
+		[[nodiscard]] static constexpr DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
+		[[nodiscard]] static constexpr DXGI_FORMAT GetSRGBFormat(DXGI_FORMAT format);
+	private:
+		void SetTextureType() noexcept;
 
 		void CreateViews() noexcept;
 		void CheckFeatureSupport();

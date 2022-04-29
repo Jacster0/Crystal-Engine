@@ -1,3 +1,4 @@
+#include "Platform/Windows/CrystalWindow.h"
 #include "D3D12Texture.h"
 #include "D3D12Core.h"
 
@@ -132,6 +133,64 @@ bool Texture::CheckUAVSupport() const noexcept {
 		CheckFormatSupport(D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE);
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE Texture::CreateShaderResourceView(const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc) const noexcept {
+	RHICore::get_device().CreateShaderResourceView(m_resource.Get(), &srvDesc, m_shaderResourceView.GetDescriptorHandle());
+	return m_shaderResourceView.GetDescriptorHandle();
+}
+
+constexpr DXGI_FORMAT Texture::GetUAVCompatableFormat(DXGI_FORMAT format) {
+	DXGI_FORMAT uavFormat = format;
+
+	switch (format) {
+		case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+		case DXGI_FORMAT_B8G8R8A8_TYPELESS:
+		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+		case DXGI_FORMAT_B8G8R8X8_TYPELESS:
+		case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:
+			uavFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			break;
+		case DXGI_FORMAT_R32_TYPELESS:
+		case DXGI_FORMAT_D32_FLOAT:
+			uavFormat = DXGI_FORMAT_R32_FLOAT;
+			break;
+	}
+
+	return uavFormat;
+}
+
+constexpr DXGI_FORMAT Texture::GetSRGBFormat(DXGI_FORMAT format) {
+	DXGI_FORMAT srgbFormat = format;
+
+	switch (format) {
+	case DXGI_FORMAT_R8G8B8A8_UNORM:
+		srgbFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		break;
+	case DXGI_FORMAT_BC1_UNORM:
+		srgbFormat = DXGI_FORMAT_BC1_UNORM_SRGB;
+		break;
+	case DXGI_FORMAT_BC2_UNORM:
+		srgbFormat = DXGI_FORMAT_BC2_UNORM_SRGB;
+		break;
+	case DXGI_FORMAT_BC3_UNORM:
+		srgbFormat = DXGI_FORMAT_BC3_UNORM_SRGB;
+		break;
+	case DXGI_FORMAT_B8G8R8A8_UNORM:
+		srgbFormat = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+		break;
+	case DXGI_FORMAT_B8G8R8X8_UNORM:
+		srgbFormat = DXGI_FORMAT_B8G8R8X8_UNORM_SRGB;
+		break;
+	case DXGI_FORMAT_BC7_UNORM:
+		srgbFormat = DXGI_FORMAT_BC7_UNORM_SRGB;
+		break;
+	}
+
+	return srgbFormat;
+}
+
 
 void Texture::CreateViews() noexcept {
 	if (m_resource) {
@@ -239,7 +298,7 @@ uint32_t Texture::Height() const noexcept {
 	return m_resourceDesc.Height; 
 }
 
-uint32_t Crystal::Texture::MipmapCount() const noexcept {
+uint32_t Texture::MipmapCount() const noexcept {
 	return m_resourceDesc.MipLevels;
 }
 
