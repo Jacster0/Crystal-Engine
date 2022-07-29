@@ -42,7 +42,8 @@ namespace Crystal{
 
         template<std::derived_from<ISink> T>
         static void AddSink(auto&&... args) noexcept
-            requires std::constructible_from<T, decltype(args)...> {
+            requires std::constructible_from<T, decltype(args)...> 
+        {
             std::scoped_lock lock(Get().m_sinkMutex);
             Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<decltype(args)>(args)...));
         }
@@ -64,7 +65,7 @@ namespace Crystal{
         constexpr void Log(LogLevel lvl, const detail::log_fmt& fmt, auto&&... args) const noexcept {
             std::scoped_lock lock(m_loggingMutex);
 
-            const std::string message = std::format("{}{}", m_tag, std::format(fmt.msg, std::forward<decltype(args)>(args)...));
+            const std::string message = std::format("{}{}", m_tag, std::vformat(fmt.msg, std::make_format_args(std::forward<decltype(args)>(args)...)));
 
             for (const auto& sink : m_sinks) {
                 sink->Emit(message, lvl, fmt.loc);
